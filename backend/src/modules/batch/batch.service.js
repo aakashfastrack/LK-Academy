@@ -2,12 +2,12 @@ const {prisma} = require('../../config/db')
 
 
 // CREATE BATCH
-const createBatch = async ({ name, code, branchId }) => {
+const createBatch = async ({ name, code, courseId }) => {
   return await prisma.batch.create({
     data: {
       name,
       code,
-      branchId: Number(branchId),
+      courseId: Number(courseId),
     },
   });
 };
@@ -16,9 +16,13 @@ const createBatch = async ({ name, code, branchId }) => {
 const getBatches = async () => {
   return await prisma.batch.findMany({
     include: {
-      branch: {
+      course: {
         include:{
-          users:true
+          branch:{
+            include:{
+              users:true
+            }
+          }
         }
       },
       lectureSchedules:{
@@ -36,8 +40,20 @@ const getBatchById = async (id) => {
   return await prisma.batch.findUnique({
     where: { id: Number(id) },
     include: {
-      branch: true,
-      subjects: true,
+      course:{
+        include:{
+          branch:{
+            include:{
+              users:true
+            }
+          }
+        }
+      },
+      lectureSchedules:{
+        include:{
+          subject:true
+        }
+      },
     },
   });
 };

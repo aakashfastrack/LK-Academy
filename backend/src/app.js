@@ -9,6 +9,7 @@ const lectureRoute = require("./modules/lectures/lectures.route");
 const facultyAttRoute = require("./modules/attendance/attendance.route")
 const staffAttendanceRoute = require("./modules/staffAttendance/staffAttendance.route");
 const batchRoutes = require('./modules/batch/batch.route')
+const coursesRoute = require('./modules/courses/courses.route')
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +22,7 @@ app.use("/api/lecture", lectureRoute)
 app.use("/api/attendance", facultyAttRoute)
 app.use("/api/staffAttendance",staffAttendanceRoute)
 app.use("/api/batch", batchRoutes);
+app.use("/api/courses", coursesRoute)
 
 app.get("/", (req, res) => {
   res.json({

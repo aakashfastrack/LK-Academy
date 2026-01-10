@@ -24,13 +24,17 @@ const getAllBranch = async () => {
           role: true,
         },
       },
-      batches: {
+      courses: {
         include: {
-          lectureSchedules: {
-            include:{
-              subject:true
-            }
-          }
+          batches: {
+            include: {
+              lectureSchedules: {
+                include: {
+                  subject: true,
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -42,9 +46,17 @@ const getBranchById = async (id) => {
     where: { id: Number(id) },
     include: {
       users: true,
-      batches: {
+      courses: {
         include: {
-          subjects: true,
+          batches: {
+            include: {
+              lectureSchedules: {
+                include: {
+                  subject: true,
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -53,14 +65,14 @@ const getBranchById = async (id) => {
 
 const updateBranch = async (id, name) => {
   return await prisma.branch.update({
-    where: { id:Number(id) },
+    where: { id: Number(id) },
     data: { name },
   });
 };
 
 const deleteBranch = async (id) => {
   return await prisma.branch.delete({
-    where: { id:Number(id) },
+    where: { id: Number(id) },
   });
 };
 

@@ -96,7 +96,9 @@ const registerUser = async (data) => {
     branchId,
     shiftStartTime,
     shiftEndTime,
-    salary
+    salary,
+    facultyType,
+    lectureRate,
   } = data;
 
   const today = new Date().toISOString().split("T")[0];
@@ -115,6 +117,13 @@ const registerUser = async (data) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   if (role === "STAFF") {
+    const workingMinutesPerDay = Math.floor(
+      (shiftEnd - shiftStart) / (1000 * 60)
+    );
+
+    if (workingMinutesPerDay <= 0) {
+      throw new Error("InValid shift timings");
+    }
     const user = await prisma.user.create({
       data: {
         name,
@@ -124,7 +133,8 @@ const registerUser = async (data) => {
         branchId: branchId || null,
         shiftStartTime: new Date(shiftStart),
         shiftEndTime: new Date(shiftEnd),
-        salary:Number(salary)
+        salary: Number(salary),
+        workingMinutesPerDay,
       },
     });
     return {
@@ -135,59 +145,78 @@ const registerUser = async (data) => {
       branchId: user.branchId,
       shiftStartTime: user.shiftStartTime,
       shiftEndTime: user.shiftEndTime,
-      salary:Number(salary)
+      salary: Number(salary),
     };
   } else {
-    const user = await prisma.user.create({
-      data: {
-        name,
-        phoneNumber,
-        password: hashedPassword,
-        role,
-        branchId: branchId || null,
-      },
-    });
-    return {
-      id: user.id,
-      name: user.name,
-      phoneNumber: user.phoneNumber,
-      role: user.role,
-      branchId: user.branchId,
-    };
-  }
+    if (facultyType === "LECTURE_BASED") {
+      const user = await prisma.user.create({
+        data: {
+          name,
+          phoneNumber,
+          password: hashedPassword,
+          role,
+          branchId: branchId || null,
+          facultyType,
+          salary: Number(salary),
+        },
+      });
 
+      return {
+        id: user.id,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        branchId: user.branchId,
+        facultyType: user.facultyType,
+        salary: user.salary,
+      };
+    } else {
+      const user = await prisma.user.create({
+        data: {
+          name,
+          phoneNumber,
+          password: hashedPassword,
+          role,
+          branchId: branchId || null,
+          lectureRate: lectureRate ? Number(lectureRate) : null,
+        },
+      });
+      return {
+        id: user.id,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        branchId: user.branchId,
+        facultyType: user.facultyType,
+        lectureRate: user.lectureRate,
+      };
+    }
+  }
 };
 
-const changePassword = async(id,newPass,oldPass) =>{
-
-
+const changePassword = async (id, newPass, oldPass) => {
   const user = await prisma.user.findUnique({
-    where:{id}
-  })
+    where: { id },
+  });
 
+  const comparePass = await bcrypt.compare(oldPass, user.password);
 
-  const comparePass = await bcrypt.compare(oldPass,user.password);
-
-
-  if(!comparePass){
+  if (!comparePass) {
     return {
-      data:"wrong pass"
-    }
-  }else{
-    const hashpass = await bcrypt.hash(newPass,10);
+      data: "wrong pass",
+    };
+  } else {
+    const hashpass = await bcrypt.hash(newPass, 10);
     return await prisma.user.update({
-      where:{
-        id
+      where: {
+        id,
       },
-      data:{
-        password:hashpass
-      }
-    })
-
+      data: {
+        password: hashpass,
+      },
+    });
   }
-
-  
-}
+};
 
 const bulkRegisterUser = async (users, CurrentUser) => {
   const createdUser = [];
@@ -248,5 +277,5 @@ module.exports = {
   registerUser,
   bulkRegisterUser,
   registerSuperAdmin,
-  changePassword
+  changePassword,
 };

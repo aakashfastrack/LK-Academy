@@ -3,7 +3,6 @@ const batchService = require("./batch.service");
 // CREATE
 const createBatch = async (req, res) => {
   try {
-    console.log(req.body)
     const batch = await batchService.createBatch(req.body);
     res.status(201).json({ success: true, data: batch });
   } catch (err) {

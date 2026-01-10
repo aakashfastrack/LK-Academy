@@ -68,9 +68,9 @@ const getAllUser = async () => {
       createdAt: true,
       branchId: true,
       branch: {
-        include:{
-          users:true,
-        }
+        include: {
+          users: true,
+        },
       },
       facultySubjects: {
         include: {
@@ -85,18 +85,39 @@ const getAllUser = async () => {
         },
       },
       staffAttendances: true,
-      salary:true
-      // attendances:true
+      salary: true,
+      facultyType: true,
+      lectureRate: true,
+      workingMinutesPerDay:true
     },
   });
 };
 
-const makeBrancheAdmin = async (userId, branchId) => {
+const makeBrancheAdmin = async (currentUserId, userId, branchId) => {
+  if (currentUserId) {
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      select: {
+        previousRole: true,
+      },
+    });
+
+    const previousRole = currentUser.previousRole || "STAFF";
+    await prisma.user.update({
+      where: { id: currentUserId },
+      data: {
+        role: previousRole,
+        previousRole: null,
+      },
+    });
+  }
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
   });
+
+  const preRole = user.role;
 
   if (!user) {
     throw new Error("User not found");
@@ -111,6 +132,7 @@ const makeBrancheAdmin = async (userId, branchId) => {
     data: {
       role: "BRANCH_ADMIN",
       branchId,
+      previousRole: preRole,
     },
   });
 };
@@ -123,11 +145,10 @@ const updateUser = async (
   branchId,
   salary,
   shiftStartTime,
-  shiftEndTime,
+  shiftEndTime
 ) => {
   if (role === "STAFF") {
     const today = new Date().toISOString().split("T")[0];
-    
 
     const shiftStart = new Date(`${today}T${shiftStartTime}`);
     const shiftEnd = new Date(`${today}T${shiftEndTime}`);
@@ -137,16 +158,22 @@ const updateUser = async (
         name,
         phoneNumber,
         role,
-        branchId:Number(branchId),
+        branchId: Number(branchId),
         shiftStartTime: shiftStart,
         shiftEndTime: shiftEnd,
-        salary:Number(salary),
+        salary: Number(salary),
       },
     });
   } else {
     return await prisma.user.update({
       where: { id },
-      data: { name, phoneNumber, role, branchId:Number(branchId), salary:Number(salary) },
+      data: {
+        name,
+        phoneNumber,
+        role,
+        branchId: Number(branchId),
+        salary: Number(salary),
+      },
     });
   }
 };
@@ -160,16 +187,24 @@ const deleteUser = async (id) => {
 const branchDashoard = async () => {
   const branch = await prisma.branch.findMany({
     include: {
-      batches: {
+      courses: {
         include: {
-          lectureSchedules:{
-            include:{
-              subject:true
-            }
-          }
+          batches: {
+            include: {
+              lectureSchedules: {
+                include: {
+                  subject: true
+                }
+              },
+            },
+          },
         },
       },
-      users: true,
+      users: {
+        omit:{
+          password:true
+        }
+      },
       staffAttendances: true,
     },
   });
@@ -182,8 +217,8 @@ const branchDashoard = async () => {
       lectures: {
         include: { attendance: true, batch: true },
       },
-      branch:true,
-      staffAttendances:true
+      branch: true,
+      staffAttendances: true,
     },
   });
 

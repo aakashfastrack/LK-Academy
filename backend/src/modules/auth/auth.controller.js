@@ -33,7 +33,7 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
   try {
-    const { name, phoneNumber, role, branchId, shiftStartTime, shiftEndTime, salary } =
+    const { name, phoneNumber, role, branchId, shiftStartTime, shiftEndTime, salary , facultyType , lectureRate  } =
       req.body;
 
     if (!name || !phoneNumber || !role || !branchId) {
@@ -52,7 +52,9 @@ const register = async (req, res) => {
       branchId,
       shiftStartTime,
       shiftEndTime,
-      salary
+      salary,
+      facultyType,
+      lectureRate
     });
 
     res.status(200).json({

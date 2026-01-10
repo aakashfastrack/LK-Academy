@@ -11,34 +11,39 @@ model Branch {
   id   Int    @id @default(autoincrement())
   name String
 
-  userId           Int?
-  users            User[]
-  // facultySubjects  FacultySubject[]
-  // lectureSchedules LectureSchedule[]
-  // subjects         Subject[]
-  batches          Batch[]
+  userId Int?
+  users  User[]
+
+  courses Course[]
+
   staffAttendances StaffAttendance[]
 
-  createdAt        DateTime          @default(now())
+  createdAt DateTime @default(now())
   // lectureSchedules LectureSchedule[]
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  name           String
-  phoneNumber    String    @unique
-  password       String
-  role           Role
-  salary         Int?
+  id           Int    @id @default(autoincrement())
+  name         String
+  phoneNumber  String @unique
+  password     String
+  role         Role
+  previousRole Role?
+
+  salary               Int?
+  workingMinutesPerDay Int?
+
+  facultyType FACULTY_TYPE?
+  lectureRate Int?
+
   shiftStartTime DateTime?
   shiftEndTime   DateTime?
 
   branchId Int?
   branch   Branch? @relation(fields: [branchId], references: [id])
 
-  facultySubjects FacultySubject[]
-  lectures        LectureSchedule[]
-
+  facultySubjects  FacultySubject[]
+  lectures         LectureSchedule[]
   staffAttendances StaffAttendance[]
 
   createdAt DateTime @default(now())
@@ -125,6 +130,9 @@ model StaffAttendance {
   actualInTime  DateTime
   actualOutTime DateTime?
 
+  lateMinutes  Int @default(0)
+  extraPenalty Int @default(0)
+
   isLate Boolean @default(false)
 
   overtimeMinutes Int @default(0)
@@ -140,12 +148,31 @@ model Batch {
   name String
   code String?
 
-  branchId Int
-  branch   Branch    @relation(fields: [branchId], references: [id])
-  subjects Subject[]
+  // branchId Int
+  // branch   Branch    @relation(fields: [branchId], references: [id])
 
-  createdAt        DateTime          @default(now())
+  courseId Int
+  course   Course @relation(fields: [courseId], references: [id])
+
+  subjects         Subject[]
   lectureSchedules LectureSchedule[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([name, courseId])
+}
+
+model Course {
+  id   Int     @id @default(autoincrement())
+  name String
+  code String?
+
+  branchId Int
+  branch   Branch @relation(fields: [branchId], references: [id])
+
+  batches Batch[]
+
+  createdAt DateTime @default(now())
 
   @@unique([name, branchId])
 }
@@ -168,4 +195,9 @@ enum Role {
   BRANCH_ADMIN
   FACULTY
   STAFF
+}
+
+enum FACULTY_TYPE {
+  LECTURE_BASED
+  SALARY_BASED
 }
