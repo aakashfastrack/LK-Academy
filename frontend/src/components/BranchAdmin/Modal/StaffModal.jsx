@@ -23,6 +23,7 @@ const StaffModal = ({ open, setOpen }) => {
 
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
+  const [date, setDate] = useState(new Date().getFullYear());
 
   const [actualinTime, setActualInTime] = useState(null);
   const [actualoutTime, setActualOutTime] = useState(null);
@@ -75,7 +76,7 @@ const StaffModal = ({ open, setOpen }) => {
   useEffect(() => {
     const userdata = users.find((item) => item.id === staffId);
     setSalary(userdata?.salary);
-    setWorkingMinutesPerDay(userdata?.workingMinutesPerDay)
+    setWorkingMinutesPerDay(userdata?.workingMinutesPerDay);
 
     setStartTime(userdata?.shiftStartTime);
     setEndTime(userdata?.shiftEndTime);
@@ -241,6 +242,7 @@ const StaffModal = ({ open, setOpen }) => {
           shiftEndTime: endTime,
           actualInTime: `${start}T${actualinTime}`,
           actualOutTime: `${end}T${actualoutTime}`,
+          date:date
         },
         {
           headers: {
@@ -277,6 +279,14 @@ const StaffModal = ({ open, setOpen }) => {
             </div>
 
             <div className="flex h-[90%] flex-col gap-5 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 overflow-y-auto overflow-x-hidden">
+              <div>
+                <Label>Date</Label>
+                <Input
+                  value={date}
+                  type={`date`}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </div>
               <div>
                 <Label>Branch</Label>
                 <Input type={`text`} value={branch.name} readOnly />
