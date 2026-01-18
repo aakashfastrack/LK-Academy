@@ -6,7 +6,7 @@ const {
   getUsersByBranch,
   makeBrancheAdmin,
   getAllUser,
-  branchDashoard,
+  branchDashboard,
   updateUser,
   deleteUser,
   userDashboard,
@@ -131,7 +131,7 @@ const AllUser = async (req, res) => {
 
 const DashboardData = async (req, res) => {
   try {
-    const dashboard = await branchDashoard();
+    const dashboard = await branchDashboard();
 
     return res.json({
       success: true,
