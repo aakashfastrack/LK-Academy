@@ -41,7 +41,7 @@ const Login = () => {
     <div className="h-screen w-full overflow-hidden relative bg-gray-100 lg:bg-[url('/bg2.png')] bg-cover bg-center flex justify-center items-center lg:scale-x-[-1]">
       <div className="lg:absolute m-2 rounded-2xl lg:right-0 bg-white min-h-[60%] w-[90%] lg:h-[95%] lg:w-[40%] shadow-2xl flex flex-col items-center py-10 lg:scale-x-[-1] ">
         <div className="">
-          <img src="/header.jpg" alt="" className="h-20" />
+          <img src="/Header.jpg" alt="" className="h-20" />
         </div>
 
         <div className="flex flex-col gap-3 w-[90%] mt-10 ">
