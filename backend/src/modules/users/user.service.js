@@ -247,7 +247,7 @@ const deleteUser = async (id) => {
   });
 };
 
-const branchDashoard = async () => {
+const branchDashboard = async () => {
   const branch = await prisma.branch.findMany({
     include: {
       courses: {
@@ -399,7 +399,7 @@ module.exports = {
   getUsersByBranch,
   makeBrancheAdmin,
   getAllUser,
-  branchDashoard,
+  branchDashboard,
   updateUser,
   deleteUser,
   userDashboard,
