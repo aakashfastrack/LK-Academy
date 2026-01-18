@@ -75,7 +75,7 @@ const Navbar = ({open,setOpen}) => {
     <>
       <div className={`bg-white xl:flex xl:flex-col relative h-full overflow-hidden ${open ? "flex flex-col" : "hidden"} xl:w-[15vw] py-6 rounded-r-lg `}>
         <div className="flex items-center justify-between"> 
-          <Image alt="logo" src={"/header.jpg"} height={200} width={200} />
+          <Image alt="logo" src={"/Header.jpg"} height={200} width={200} />
           <p onClick={()=>setOpen(false)} className="pr-10 font-bold text-3xl cursor-pointer xl:hidden">X</p>
         </div>
         <div className="h-[90%] overflow-auto">
