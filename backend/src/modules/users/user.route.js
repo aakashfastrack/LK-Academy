@@ -26,7 +26,7 @@ router.post(
 );
 
 router.get(
-  "/dashboad",
+  "/dashboard",
   protect,
   requireRole("SUPER_ADMIN","BRANCH_ADMIN"),
   userController.DashboardData
