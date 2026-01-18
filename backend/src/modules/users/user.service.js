@@ -263,11 +263,16 @@ const branchDashboard = async () => {
           },
         },
       },
-      users: {
-        omit: {
-          password: true,
-        },
-      },
+users: {
+  select: {
+    id: true,
+    name: true,
+    phoneNumber: true,
+    role: true,
+    branchId: true,
+  },
+},
+
       staffAttendances: true,
     },
   });
@@ -333,11 +338,15 @@ const userDashboard = async ({ branchId, userId }) => {
           },
         },
       },
-      users: {
-        omit: {
-          password: true,
-        },
-      },
+users: {
+  select: {
+    id: true,
+    name: true,
+    phoneNumber: true,
+    role: true,
+    branchId: true,
+  },
+},
       staffAttendances: true,
     },
   });
