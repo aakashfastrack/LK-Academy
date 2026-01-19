@@ -15,7 +15,14 @@ const coursesRoute = require("./modules/courses/courses.route");
 const uploadRoute = require("./modules/upload/upload.route");
 const uploadStaffRoute = require("./modules/staffUpload/staffUpload.route");
 
-app.use(cors());
+app.use(cors({
+  origin:[
+    "http://localhost:3000",
+    "https://lk-academy.vercel.app"
+  ],
+  methods:["GET","POST","PUT","DELETE"],
+  credentials:true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

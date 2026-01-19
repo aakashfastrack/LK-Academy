@@ -29,11 +29,7 @@ const Navbar = ({open,setOpen}) => {
       icon:"",
       link:"/superadmin/batchmanage"
     },
-    {
-      name: "User Management",
-      icon: "",
-      link: "/superadmin/usermanage",
-    },
+    
     {
       name: "Subject Management",
       icon: "",
@@ -48,6 +44,11 @@ const Navbar = ({open,setOpen}) => {
       name: "Attendance",
       icon: "",
       link: "/superadmin/attendance",
+    },
+    {
+      name: "User Management",
+      icon: "",
+      link: "/superadmin/usermanage",
     },
     {
       name: "Report",

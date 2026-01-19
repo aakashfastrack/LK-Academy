@@ -178,7 +178,7 @@ const updateUser = async (
   salary,
   shiftStartTime,
   shiftEndTime,
-  facultyType
+  facultyType,
 ) => {
   if (role === "STAFF") {
     const today = new Date().toISOString().split("T")[0];
@@ -187,7 +187,7 @@ const updateUser = async (
     const shiftEnd = new Date(`${today}T${shiftEndTime}`);
 
     const workingMinutesPerDay = Math.floor(
-      (shiftEnd - shiftStart) / (1000 * 60)
+      (shiftEnd - shiftStart) / (1000 * 60),
     );
 
     return await prisma.user.update({
@@ -211,7 +211,7 @@ const updateUser = async (
       const shiftEnd = new Date(`${today}T${shiftEndTime}`);
 
       const workingMinutesPerDay = Math.floor(
-        (shiftEnd - shiftStart) / (1000 * 60)
+        (shiftEnd - shiftStart) / (1000 * 60),
       );
 
       return await prisma.user.update({
@@ -264,8 +264,22 @@ const branchDashoard = async () => {
         },
       },
       users: {
-        omit: {
-          password: true,
+        select: {
+          id: true,
+          name: true,
+          phoneNumber: true,
+          createdAt: true,
+          branch: true,
+          branchId: true,
+          facultyType: true,
+          lectureRate: true,
+          salary: true,
+          staffAttendances: true,
+          previousRole: true,
+          role: true,
+          shiftEndTime: true,
+          shiftStartTime: true,
+          workingMinutesPerDay: true,
         },
       },
       staffAttendances: true,

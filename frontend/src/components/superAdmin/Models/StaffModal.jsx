@@ -29,7 +29,7 @@ const StaffModal = ({ open, setOpen }) => {
   const [actualoutTime, setActualOutTime] = useState(null);
   const [salary, setSalary] = useState(null);
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
-  const [date,setDate] = useState(new Date())
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     const loadData = async () => {
@@ -101,7 +101,7 @@ const StaffModal = ({ open, setOpen }) => {
 
     // ---- BASIC CALCS ----
     const actualWorkedMinutes = Math.floor(
-      (actualOut - actualIn) / (1000 * 60)
+      (actualOut - actualIn) / (1000 * 60),
     );
 
     const requiredMinutes = workingMinutesPerDay;
@@ -109,7 +109,7 @@ const StaffModal = ({ open, setOpen }) => {
     // ---- LATE START ----
     const lateMinutes = Math.max(
       0,
-      Math.floor((actualIn - scheduledIn) / (1000 * 60))
+      Math.floor((actualIn - scheduledIn) / (1000 * 60)),
     );
 
     const isLateBeyondGrace = lateMinutes > GRACE_MINUTES;
@@ -195,14 +195,14 @@ const StaffModal = ({ open, setOpen }) => {
           shiftEndTime: endTime,
           actualInTime: `${start}T${actualinTime}`,
           actualOutTime: `${end}T${actualoutTime}`,
-          date: date
+          date: date,
         },
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Attendance Marked Successfully");
@@ -317,12 +317,20 @@ const StaffModal = ({ open, setOpen }) => {
 
               <div>
                 <Label>Late Penalty</Label>
-                <Input
-                  type={`text`}
-                  placeholder={`40mins`}
-                  readOnly
-                  value={Math.floor(staffPreview?.totalPenalty) || 0}
-                />
+                <div className="flex gap-2">
+                  <Input
+                    type={`text`}
+                    placeholder={`fixed Penalty`}
+                    readOnly
+                    value={Math.floor(staffPreview?.fixedPenalty) || 0}
+                  />
+                  <Input
+                    type={`text`}
+                    placeholder={`Extra Penalty`}
+                    readOnly
+                    value={Math.floor(staffPreview?.additionalPenalty) || 0}
+                  />
+                </div>
               </div>
 
               <div>
