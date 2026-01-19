@@ -60,6 +60,8 @@ const StaffModal = ({ open, setOpen }) => {
 
     setWorkingMinutesPerDay(findUser?.workingMinutesPerDay);
     setSalary(findUser?.salary);
+    console.log(findUser?.shiftEndTime);
+    console.log(findUser?.shiftStartTime);
     setStartTime(findUser?.shiftStartTime);
     setEndTime(findUser?.shiftEndTime);
   }, [selectUser]);

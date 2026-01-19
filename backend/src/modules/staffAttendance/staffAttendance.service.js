@@ -187,12 +187,12 @@ const markStaffAttendance = async ({
       actualOutTime,
 
       isLate: calc.isLate,
-      lateMinutes: calc.lateMinutes,
-      extraPenalty: calc.extraPenalty,
-      totalPenalty: calc.totalPenalty,
+      lateMinutes: Math.floor(calc.lateMinutes),
+      extraPenalty: Math.floor(calc.extraPenalty),
+      totalPenalty: Math.floor(calc.totalPenalty),
 
-      overtimeMinutes: calc.overtimeMinutes,
-      overtimePay: calc.overtimePay,
+      overtimeMinutes: Math.floor(calc.overtimeMinutes),
+      overtimePay: Math.floor(calc.overtimePay),
     },
   });
 };
