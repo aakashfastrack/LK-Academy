@@ -1,1 +1,1 @@
-export const mainRoute = "http://localhost:8080"
+export const mainRoute = "https://lk-academy-backend.onrender.com"
