@@ -195,14 +195,14 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
         },
       });
 
-      toast.success("User Deleted Successfully");
-      await refetch();
+      toast.success("User Deactivated Successfully");
       setOpen(false);
+      await refetch();
       // router.refresh();
     } catch (err) {
       toast.error("Error in deleting user");
-      await refetch();
       setOpen(false);
+      await refetch();
       // router.refresh();
     }
   };
@@ -453,7 +453,7 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
             {type === "delete" && (
               <div className="h-full w-full flex flex-col justify-center px-10 gap-5 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 ">
                 <p className="">
-                  You Want To Delete{" "}
+                  You Want To Deactivate{" "}
                   <span className="font-bold text-2xl text-red-600">
                     {name}
                   </span>{" "}

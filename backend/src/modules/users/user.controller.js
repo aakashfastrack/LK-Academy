@@ -10,6 +10,7 @@ const {
   updateUser,
   deleteUser,
   userDashboard,
+  activateUser,
 } = require("./user.service");
 
 const assignToBranch = async (req, res) => {
@@ -216,6 +217,26 @@ const remove = async (req, res) => {
     });
   }
 };
+
+const activate = async(req,res) =>{
+  try{
+
+    const {id} = req.body
+    const data = await activateUser(Number(id));
+
+    res.json({
+      success:true,
+      message:"User activated",
+    })
+
+  }catch(err){
+    res.status(400).json({
+      message:err.message,
+      success:false
+    })
+  }
+}
+
 module.exports = {
   assignToBranch,
   bulkAssignToBranch,
@@ -226,4 +247,5 @@ module.exports = {
   update,
   remove,
   userDashboardData,
+  activate
 };

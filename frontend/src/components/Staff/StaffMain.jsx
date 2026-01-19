@@ -6,7 +6,6 @@ import Image from "next/image";
 import { mainRoute } from "../apiroute";
 
 const StaffMain = () => {
-
   // Helper Function
   const getTodayDateString = () => {
     const now = new Date();
@@ -29,7 +28,9 @@ const StaffMain = () => {
   ];
 
   const formatTime = (isoTime) => {
-    return new Date(isoTime).toLocaleTimeString("en-IN", {
+    if (!isoTime) return "";
+    const date = new Date(isoTime.replace("Z", ""));
+    return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
@@ -61,7 +62,7 @@ const StaffMain = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const facultyData = data.data.faculty
         .filter((user) => user.id === tokn.data.user.id)
@@ -71,7 +72,7 @@ const StaffMain = () => {
       setStaffData(facultyData);
 
       const lectur = data.data.lectures.filter(
-        (lec) => lec.facultyId === tokn.data.user.id
+        (lec) => lec.facultyId === tokn.data.user.id,
       );
     };
 
@@ -135,20 +136,16 @@ const StaffMain = () => {
     "December",
   ];
 
-
   return (
     <>
       <div className="h-screen bg-white m-2 rounded flex flex-col overflow-hidden">
-
         <div className="px-5 py-2 flex justify-between shrink-0">
           <h1 className="font-bold text-2xl">Welcome 👋</h1>
-          
         </div>
 
         <div className="w-full xl:w-[98%] flex-1 mx-auto flex flex-col gap-4 overflow-auto xl:overflow-hidden px-1">
           {/* <div className="flex flex-col xl:grid xl:grid-cols-4 gap-3 w-full [&>div]:rounded overflow-auto [&>div]:shadow-lg grid-rows-1 h-[20vh] [&>div]:flex [&>div]:flex-col [&>div]:justify-center [&>div]:items-center [&>div>h1]:text-2xl [&>div>h1]:font-semibold [&>div>h1]:uppercase [&>div>p]:text-lg [&>div>p]:font-medium [&>div>p]:text-gray-600 [&>div>h1]:text-gray-800 [&>div]:border "> */}
           <div className="flex flex-col xl:grid xl:grid-cols-4 gap-3 w-full [&>div]:rounded [&>div]:shadow-lg xl:grid-rows-1 xl:h-[20vh] [&>div]:flex [&>div]:flex-col [&>div]:justify-center [&>div]:items-center xl:[&>div>h1]:text-2xl [&>div>h1]:font-semibold [&>div>h1]:uppercase xl:[&>div>p]:text-lg [&>div>p]:font-medium [&>div>p]:text-gray-600 [&>div>h1]:text-gray-800 [&>div]:border">
-
             <div className="bg-gray-200 w-full h-full  ">
               <h1>Date Of Joined</h1>
               <p>{formatDate(staffData?.createdAt)}</p>
@@ -164,8 +161,6 @@ const StaffMain = () => {
               <p>{formatTime(staffData?.shiftEndTime)}</p>
             </div>
 
-            
-
             <div className="bg-gray-200 w-full h-full  ">
               <h1>Today OverTime Pay</h1>
               <p>₹{todayAtt?.overtimePay || 0}</p>
@@ -174,7 +169,6 @@ const StaffMain = () => {
 
           {/* <div className="flex flex-col xl:grid xl:grid-cols-4 gap-3 w-full [&>div]:rounded [&>div]:shadow-lg grid-rows-1 h-[20vh] [&>div]:flex [&>div]:flex-col [&>div]:justify-center [&>div]:items-center [&>div>h1]:text-2xl [&>div>h1]:font-semibold [&>div>h1]:uppercase [&>div>p]:text-lg [&>div>p]:font-medium [&>div>p]:text-gray-600 [&>div>h1]:text-gray-800 [&>div]:border "> */}
           <div className="flex flex-col xl:grid xl:grid-cols-4 gap-3 w-full [&>div]:rounded [&>div]:shadow-lg xl:grid-rows-1 xl:h-[20vh] [&>div]:flex [&>div]:flex-col [&>div]:justify-center [&>div]:items-center xl:[&>div>h1]:text-2xl [&>div>h1]:font-semibold [&>div>h1]:uppercase xl:[&>div>p]:text-lg [&>div>p]:font-medium [&>div>p]:text-gray-600 [&>div>h1]:text-gray-800 [&>div]:border">
-
             <div className="bg-gray-200 w-full h-full  ">
               <h1>Days Present</h1>
               <p>{staffData?.staffAttendances?.length || 0}</p>
@@ -195,14 +189,17 @@ const StaffMain = () => {
 
             <div className="bg-gray-200 w-full h-full  ">
               <h1>OverTime(This month)</h1>
-              <p>{overtime > 60 ? `${(overtime/60).toFixed(2)}Hrs` : `${overtime}min`} </p>
+              <p>
+                {overtime > 60
+                  ? `${(overtime / 60).toFixed(2)}Hrs`
+                  : `${overtime}min`}{" "}
+              </p>
             </div>
 
             <div className="bg-gray-200 w-full h-full  ">
               <h1>Branch</h1>
               <p>{staffData.branch?.name}</p>
             </div>
-
           </div>
 
           <div className="flex flex-wrap gap-3 [&>div]:border ">
@@ -214,16 +211,19 @@ const StaffMain = () => {
                     <li key={i}>{item}</li>
                   ))}
                 </ul>
-                {recentAttendance.map((item, i) => (
-                  <ul key={i} className="xl:bg-[#ffffff] my-1 rounded p-1">
-                    <li className="">{item.date}</li>
-                    <li>{item.in}</li>
-                    <li>{item.out}</li>
-                    <li>{item.late}</li>
-                    <li>{item.overtime}</li>
-                    <li>{item.pay}</li>
-                  </ul>
-                ))}
+                {recentAttendance.map((item, i) => {
+                  console.log(item);
+                  return (
+                    <ul key={i} className="xl:bg-[#ffffff] my-1 rounded p-1">
+                      <li className="">{item.date}</li>
+                      <li>{item.in}</li>
+                      <li>{item.out}</li>
+                      <li>{item.late}</li>
+                      <li>{item.overtime}</li>
+                      <li>{item.pay}</li>
+                    </ul>
+                  );
+                })}
               </div>
             </div>
           </div>

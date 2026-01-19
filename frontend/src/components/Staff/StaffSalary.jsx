@@ -47,12 +47,17 @@ const StaffSalary = () => {
     "Penalty",
   ];
 
-  const formatTime = (iso) =>
-    new Date(iso).toLocaleTimeString("en-IN", {
+  const formatTime = (iso) =>{
+    if(!iso) return "";
+
+    const date = new Date(iso.replace("Z",""))
+
+    return date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
+  }
 
   const formatDate = (iso) =>
     new Date(iso).toLocaleDateString("en-IN", {

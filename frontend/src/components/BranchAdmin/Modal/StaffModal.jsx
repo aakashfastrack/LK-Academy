@@ -31,7 +31,10 @@ const StaffModal = ({ open, setOpen }) => {
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
 
   const formatTime = (isoTime) => {
-    return new Date(isoTime).toLocaleTimeString("en-IN", {
+    if(!isoTime) return "";
+
+    const date = new Date(isoTime.replace("Z",""))
+    return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,

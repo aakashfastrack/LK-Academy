@@ -17,7 +17,7 @@ const Dash = () => {
     setBranch(tokn.data.user.branch);
 
     const loadData = async () => {
-      const { data } = await axios.get(`${mainRoute}/api/users/dashboad`, {
+      const { data } = await axios.get(`${mainRoute}/api/users/dashboard`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -33,28 +33,23 @@ const Dash = () => {
         .filter((user) => user.branchId === tokn.data.user.branch.id);
       //   const branchData = data.data.branch;
 
-      console.log(staffData);
-
       const lectur = data.data.lectures.filter(
-        (lec) => lec.batch.course.branchId === tokn.data.user.branch.id
+        (lec) => lec.batch.course.branchId === tokn.data.user.branch.id,
       );
 
-      console.log(data.data.lectures);
       const bran = data.data.branch.find(
-        (branc) => branc.id === tokn.data.user.branch.id
+        (branc) => branc.id === tokn.data.user.branch.id,
       );
-      console.log(bran);
 
       const bat = data.data.batch.filter(
-        (b) => b.course.branchId === tokn.data.user.branch.id
+        (b) => b.course.branchId === tokn.data.user.branch.id,
       );
 
-      console.log(bran);
       setBranchData(bran);
       setFaculty(facultyData);
       setStaff(staffData);
       setLecture(lectur);
-      setBatches(bat)
+      setBatches(bat);
     };
 
     loadData();
@@ -88,7 +83,7 @@ const Dash = () => {
             <p className="text-lg text-gray-600">
               {lecture?.reduce(
                 (sum, lec) => sum + (lec.TotalScheduled || 0),
-                0
+                0,
               )}
             </p>
           </div>
@@ -138,7 +133,7 @@ const Dash = () => {
                 return (
                   count +
                   lec.attendance.filter(
-                    (att) => att.penalty && att.penalty !== "NONE"
+                    (att) => att.penalty && att.penalty !== "NONE",
                   ).length
                 );
               }, 0)}
@@ -147,9 +142,7 @@ const Dash = () => {
 
           <div className="rounded bg-gray-200 shadow-lg border flex flex-col justify-center items-center min-h-35">
             <h1 className="text-xl font-semibold uppercase">Total Batches</h1>
-            <p className="text-lg text-gray-600">
-              {batches?.length || 0}
-            </p>
+            <p className="text-lg text-gray-600">{batches?.length || 0}</p>
           </div>
         </div>
       </div>

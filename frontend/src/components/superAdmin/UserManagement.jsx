@@ -36,13 +36,12 @@ const UserManagement = () => {
     });
 
     console.log(data.data);
-    console.log()
+    console.log();
 
     const filterdata = data.data.filter((user) => user.id !== tok.data.user.id);
     console.log(filterdata);
     setUser(filterdata);
   };
-
 
   useEffect(() => {
     fetchUser();
@@ -54,6 +53,21 @@ const UserManagement = () => {
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
+  };
+
+
+  const ActivateUser = async (Id) => {
+    let tok = JSON.parse(localStorage.getItem("user"));
+    let token = tok.data.token;
+    const { data } = await axios.put(`${mainRoute}/api/users/activate/${Id}`,{
+      id:Id
+    } , {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    await fetchUser()
   };
 
   return (
@@ -88,10 +102,15 @@ const UserManagement = () => {
               return (
                 <ul
                   key={index}
-                  className={`grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50 ${user.isActive ? "bg-gray-100" : "bg-white"}`}
+                  className={`grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50 ${user.isActive ? "bg-white" : "bg-gray-100"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
-                  <li>{user.name}</li>
+                  <li className="flex items-center justify-center gap-2">
+                    {user.name}{" "}
+                    <div
+                      className={`${user.isActive ? "" : "bg-red-500  h-2 w-2 rounded-full "}`}
+                    ></div>
+                  </li>
                   <li>{user.phoneNumber}</li>
                   <li>{formatRole(user.role)}</li>
                   <li>{user.branch?.name || "-"}</li>
@@ -102,13 +121,26 @@ const UserManagement = () => {
                   </li>
                   <li>{user.createdAt.split("T")[0]}</li>
                   <li className="flex justify-center">
-                    <ActionButton
-                      user={user}
-                      setUs={setUs}
-                      setOp={setOpen}
-                      type={type}
-                      setType={setType}
-                    />
+                    {user.isActive ? (
+                      <>
+                        <ActionButton
+                          user={user}
+                          setUs={setUs}
+                          setOp={setOpen}
+                          type={type}
+                          setType={setType}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          onClick={()=>{ActivateUser(user.id)}}
+                          className={`cursor-pointer`}
+                        >
+                          Activate
+                        </Button>
+                      </>
+                    )}
                   </li>
                 </ul>
               );

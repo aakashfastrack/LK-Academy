@@ -22,12 +22,10 @@ const Report = () => {
   const facultyReportHeaders = [
     "id",
     "Faculty Name",
+    "Subject",
+    "Course",
     "Lectures Done",
     "Remaining Lectures",
-    "Late",
-    "Early",
-    "Both",
-    "Total Penalty",
   ];
 
   const getCurrentMonthRange = () => {
@@ -139,9 +137,14 @@ const Report = () => {
     let both = 0;
     let totalPenalty = 0;
     let totalScheduled = 0;
+    let subject = [];
+    let course = [];
 
     lectures.forEach((lec) => {
       totalScheduled += lec.TotalScheduled || 0;
+      let temp = lec.subject.name + "-" + lec.batch.name
+      subject.push(temp)
+      course.push(lec.batch.course.name)
 
       lec.attendance.forEach((att) => {
         conducted++;
@@ -160,6 +163,8 @@ const Report = () => {
       early,
       both,
       totalPenalty,
+      subject,
+      course
     };
   };
 
@@ -218,7 +223,7 @@ const Report = () => {
         )}
         {role === "FACULTY" && (
           <div className=" h-[94%] w-full overflow-auto">
-            <ul className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-8  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
+            <ul className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
               {facultyReportHeaders.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
@@ -233,16 +238,14 @@ const Report = () => {
                     setUser(staff);
                   }}
                   key={index}
-                  className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-8 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
+                  className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
                 >
                   <li className="font-semibold">{index + 1}</li>
                   <li>{staff.name}</li>
+                  <li>{stats.subject.join(", ")}</li>
+                  <li>{stats.course.join(", ")}</li>
                   <li>{stats.conducted}</li>
                   <li>{stats.remaining}</li>
-                  <li>{stats.late}</li>
-                  <li>{stats.early}</li>
-                  <li>{stats.both}</li>
-                  <li>{stats.totalPenalty}</li>
                 </ul>
               );
             })}

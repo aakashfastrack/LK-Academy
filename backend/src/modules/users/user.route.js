@@ -48,4 +48,6 @@ router.delete(
   userController.remove
 )
 
+router.put("/activate/:id",protect,requireRole("SUPER_ADMIN"),userController.activate)
+
 module.exports = router;

@@ -43,6 +43,8 @@ const FacultyModal = ({ open, setOpen }) => {
   const [course, setCourse] = useState(null);
 
   const formatTime = (isoTime) => {
+    if(!isoTime) return "";
+    const date = new Date(isoTime.replace("Z",""))
     return new Date(isoTime).toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -137,66 +139,12 @@ const FacultyModal = ({ open, setOpen }) => {
     }
   }, [facultyType]);
 
-  // const calculateFacultyPenaltyUI = ({
-  //   plannedStart,
-  //   plannedEnd,
-  //   actualStart,
-  //   actualEnd,
-  //   lectureAmount,
-  // }) => {
-  //   let isLate = false;
-  //   let isEarly = false;
-
-  //   if (actualStart - plannedStart > FIFTEEN_MIN) {
-  //     isLate = true;
-  //   }
-
-  //   if (plannedEnd - actualEnd > FIFTEEN_MIN) {
-  //     isEarly = true;
-  //   }
-
-  //   let penalty = "NONE";
-
-  //   if (isLate && isEarly) penalty = "BOTH";
-  //   else if (isLate) penalty = "LATE_START";
-  //   else if (isEarly) penalty = "EARLY_END";
-
-  //   return {
-  //     penalty,
-  //     payableAmount: lectureAmount,
-  //     message:
-  //       penalty === "NONE"
-  //         ? "No Penalty"
-  //         : penalty === "LATE_START"
-  //         ? "Late Start Penalty"
-  //         : penalty === "EARLY_END"
-  //         ? "Early End Penalty"
-  //         : "Late Start + Early End Penalty",
-  //   };
-  // };
-
   const [cancelled, setCancelled] = useState(false);
 
   const [penaltyPreview, setPenaltyPreview] = useState(null);
 
   const lectureAmount = 500;
 
-  // useEffect(() => {
-  //   if (!startTime || !endTime || !actualIn || !actualOut) return;
-  //   const start = startTime.split("T")[0];
-  //   const end = endTime.split("T")[0];
-
-  //   const result = calculateFacultyPenaltyUI({
-  //     plannedStart: new Date(startTime),
-  //     plannedEnd: new Date(endTime),
-  //     actualStart: new Date(`${start}T${actualIn}`),
-  //     actualEnd: new Date(`${end}T${actualOut}`),
-  //     // isCancelledNoStudents: cancelled,
-  //     lectureAmount,
-  //   });
-
-  //   setPenaltyPreview(result);
-  // }, [startTime, endTime, actualIn, actualOut]);
 
   function applyStatusOnPayout(calculatedPayout, status) {
     if (status === "MISSED") return 0;

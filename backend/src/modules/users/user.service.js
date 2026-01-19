@@ -424,6 +424,19 @@ const userDashboard = async ({ branchId, userId }) => {
   };
 };
 
+
+const activateUser = async(id) =>{
+  return await prisma.user.update({
+    where:{
+      id:id,
+    },
+    data:{
+      isActive:true
+    }
+  })
+
+}
+
 module.exports = {
   assignUserToBranch,
   bulkAssignUsersToBranch,
@@ -434,4 +447,5 @@ module.exports = {
   updateUser,
   deleteUser,
   userDashboard,
+  activateUser
 };

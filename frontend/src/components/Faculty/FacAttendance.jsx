@@ -21,8 +21,9 @@ const FacAttendance = () => {
     });
 
   const formatTime = (iso) => {
-    if (iso === "") return;
-    return new Date(iso).toLocaleTimeString("en-IN", {
+    if (!iso) return;
+    const date = new Date(iso.replace("Z",""))
+    return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,

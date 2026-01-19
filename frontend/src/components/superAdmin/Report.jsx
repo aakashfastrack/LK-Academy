@@ -23,7 +23,6 @@ const Report = () => {
     "Faculty Name",
     "Subjects",
     "Courses",
-    "Batches",
     "Lectures Done",
     "Remaining Lectures",
     // "Late",
@@ -153,9 +152,8 @@ const Report = () => {
       console.log(lec)
       totalScheduled += lec.TotalScheduled || 0;
 
-      subject.push(lec?.subject?.name)
+      subject.push(lec?.subject?.name+"-"+lec?.batch?.name)
       course.push(lec?.batch?.course?.name);
-      batch.push(lec?.batch?.name)
 
       lec.attendance.forEach((att) => {
         conducted++;
@@ -247,7 +245,7 @@ const Report = () => {
         )}
         {role === "FACULTY" && (
           <div className=" h-[94%] w-full overflow-auto">
-            <ul className="grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-7  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
+            <ul className="grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
               {facultyReportHeaders.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
@@ -263,7 +261,7 @@ const Report = () => {
                   setUser(staff);
                 }}
                   key={index}
-                  className="grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-7 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
+                  className="grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
                 >
                   <li className="font-semibold">{index + 1}</li>
                   <li>{staff.name}</li>
