@@ -51,8 +51,10 @@ const LectureManagement = () => {
   ];
 
 
-  const formatTime = (isoTime) => {
-  return new Date(isoTime).toLocaleTimeString("en-IN", {
+const formatTime = (time) => {
+  const date = new Date(time);
+
+  return date.toLocaleTimeString("en-IN", {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
