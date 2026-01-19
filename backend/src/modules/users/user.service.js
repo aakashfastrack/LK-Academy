@@ -67,6 +67,7 @@ const getAllUser = async () => {
       role: true,
       createdAt: true,
       branchId: true,
+      isActive:true,
       branch: {
         include: {
           users: true,
