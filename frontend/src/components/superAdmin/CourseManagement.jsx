@@ -20,6 +20,7 @@ const CourseManagement = () => {
     "Action",
   ];
 
+  console.log("hello")
   const fetchCourse = async () => {
     try {
       const tok = JSON.parse(localStorage.getItem("user")).data.token;
