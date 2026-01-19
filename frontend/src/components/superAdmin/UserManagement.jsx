@@ -88,7 +88,7 @@ const UserManagement = () => {
               return (
                 <ul
                   key={index}
-                  className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
+                  className={`grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50 ${user.isActive ? "bg-gray-100" : "bg-white"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
                   <li>{user.name}</li>

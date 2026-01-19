@@ -46,6 +46,8 @@ model User {
   branchId Int?
   branch   Branch? @relation(fields: [branchId], references: [id])
 
+  isActive  Boolean @default(true)
+
   facultySubjects    FacultySubject[]
   lectures           LectureSchedule[]
   staffAttendances   StaffAttendance[]

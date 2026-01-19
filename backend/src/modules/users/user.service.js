@@ -248,9 +248,15 @@ const updateUser = async (
 };
 
 const deleteUser = async (id) => {
-  return await prisma.user.delete({
-    where: { id },
-  });
+
+  return await prisma.user.update({
+    where:{
+      id:id
+    },
+    data:{
+      isActive:false
+    }
+  })
 };
 
 const branchDashboard = async () => {

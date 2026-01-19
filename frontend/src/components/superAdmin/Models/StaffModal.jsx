@@ -67,7 +67,10 @@ const StaffModal = ({ open, setOpen }) => {
   }, [selectUser]);
 
   const formatTime = (isoTime) => {
-    return new Date(isoTime).toLocaleTimeString("en-IN", {
+    if(!isoTime) return "";
+    const iso = isoTime.replace("Z","")
+    let date = new Date(iso)
+    return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,

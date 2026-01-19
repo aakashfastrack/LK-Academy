@@ -17,6 +17,10 @@ const loginUser = async (phoneNumber, password) => {
     throw new Error(`Invalid phoneNumber or password`);
   }
 
+  if(!user.isActive){
+    throw new Error(`Not allowed to login`);
+  }
+
   const token = jwt.sign(
     {
       id: user.id,
