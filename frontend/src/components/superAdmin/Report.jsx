@@ -77,7 +77,7 @@ const Report = () => {
         totalOvertimeMinutes: 0,
         totalOvertimePay: 0,
         totalPenalty: 0,
-      }
+      },
     );
   };
 
@@ -149,10 +149,10 @@ const Report = () => {
     let batch = [];
 
     lectures.forEach((lec) => {
-      console.log(lec)
+      console.log(lec);
       totalScheduled += lec.TotalScheduled || 0;
 
-      subject.push(lec?.subject?.name+"-"+lec?.batch?.name)
+      subject.push(lec?.subject?.name + "-" + lec?.batch?.name);
       course.push(lec?.batch?.course?.name);
 
       lec.attendance.forEach((att) => {
@@ -174,7 +174,7 @@ const Report = () => {
       totalPenalty,
       subject,
       course,
-      batch
+      batch,
     };
   };
 
@@ -224,10 +224,15 @@ const Report = () => {
                     setUser(staff);
                   }}
                   key={index}
-                  className="grid grid-cols-[60px_180px_260px_220px_140px_140px_140px_140px] xl:grid-cols-8 px-4 py-3 xl:border-b border-gray-500 text-center items-center hover:bg-gray-50"
+                  className={`grid grid-cols-[60px_180px_260px_220px_140px_140px_140px_140px] xl:grid-cols-8 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center   ${staff.isActive ? "bg-white" : "hover:bg-gray-50 bg-gray-100"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
-                  <li>{staff.name}</li>
+                  <li className="flex items-center justify-center gap-2">
+                    {staff.name}
+                    <div
+                      className={`${staff.isActive ? "" : "bg-red-500  h-2 w-2 rounded-full "}`}
+                    ></div>
+                  </li>
                   <li>{stats.daysPresent}</li>
                   <li>{stats.lateDays}</li>
                   <li>{stats.totalLateMinutes}</li>
@@ -256,18 +261,27 @@ const Report = () => {
 
               return (
                 <ul
-                onClick={()=>{
-                  setOpen(true);
-                  setUser(staff);
-                }}
+                  onClick={() => {
+                    setOpen(true);
+                    setUser(staff);
+                  }}
                   key={index}
-                  className="grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
+                  className={`grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center   ${staff.isActive ? "bg-white" : "hover:bg-gray-50 bg-gray-100"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
-                  <li>{staff.name}</li>
-                  <li>{stats.subject.join(", ")}</li>
-                  <li>{stats.course.join(", ")}</li>
-                  <li>{stats.batch.join(", ")}</li>
+                  <li className="flex items-center justify-center gap-2">
+                    {staff.name}
+                    <div
+                      className={`${staff.isActive ? "" : "bg-red-500  h-2 w-2 rounded-full "}`}
+                    ></div>
+                  </li>
+                  <li>
+                    {stats.subject.length > 0 ? stats.subject.join(", ") : "-"}
+                  </li>
+                  <li>
+                    {stats.course.length > 0 ? stats.course.join(", ") : "-"}
+                  </li>
+                  {/* <li>{stats.batch.join(", ")}</li> */}
                   <li>{stats.conducted}</li>
                   <li>{stats.remaining}</li>
                   {/* <li>{stats.late}</li>
@@ -281,7 +295,12 @@ const Report = () => {
         )}
       </div>
 
-      <ReportModels open={open} setOpen={setOpen} user={user} setUser={setUser} />
+      <ReportModels
+        open={open}
+        setOpen={setOpen}
+        user={user}
+        setUser={setUser}
+      />
     </>
   );
 };

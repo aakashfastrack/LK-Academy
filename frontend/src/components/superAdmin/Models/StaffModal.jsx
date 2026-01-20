@@ -46,8 +46,8 @@ const StaffModal = ({ open, setOpen }) => {
       const userData = await fetchUser();
       const filterUser = userData
         .filter((user) => user.branchId === selectBranch)
-        .filter((user) => user.role === "STAFF");
-      console.log(filterUser);
+        .filter((user) => user.role === "STAFF").filter((user)=> user.isActive === true);
+      
       setUsers(filterUser);
     };
     loadData();

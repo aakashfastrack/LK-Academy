@@ -43,8 +43,8 @@ const FacultyModal = ({ open, setOpen }) => {
   const [course, setCourse] = useState(null);
 
   const formatTime = (isoTime) => {
-    if(!isoTime) return "";
-    const date = new Date(isoTime.replace("Z",""))
+    if (!isoTime) return "";
+    const date = new Date(isoTime.replace("Z", ""));
     return new Date(isoTime).toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -61,7 +61,8 @@ const FacultyModal = ({ open, setOpen }) => {
       const user = await fetchUser();
       const filteruser = user
         .filter((user) => user.branchId === id)
-        .filter((user) => user.role === "FACULTY");
+        .filter((user) => user.role === "FACULTY")
+        .filter((user) => user.isActive === true);
       setUser(filteruser);
     };
 
@@ -79,7 +80,7 @@ const FacultyModal = ({ open, setOpen }) => {
     });
 
     const filtereddata = data.data.filter(
-      (batch) => batch.course.branchId === branchid
+      (batch) => batch.course.branchId === branchid,
     );
     // console.log(filtereddata);
     setBatch(filtereddata);
@@ -120,7 +121,7 @@ const FacultyModal = ({ open, setOpen }) => {
   useEffect(() => {
     const loadData = async () => {
       const findplanned = subject.find(
-        (item) => item.subjectId === subjectId.subject.id
+        (item) => item.subjectId === subjectId.subject.id,
       );
       console.log(findplanned);
       setLect(findplanned);
@@ -144,7 +145,6 @@ const FacultyModal = ({ open, setOpen }) => {
   const [penaltyPreview, setPenaltyPreview] = useState(null);
 
   const lectureAmount = 500;
-
 
   function applyStatusOnPayout(calculatedPayout, status) {
     if (status === "MISSED") return 0;
@@ -173,7 +173,7 @@ const FacultyModal = ({ open, setOpen }) => {
 
     const workedMinutes = Math.max(
       0,
-      Math.floor((actualEnd - actualStart) / (1000 * 60))
+      Math.floor((actualEnd - actualStart) / (1000 * 60)),
     );
 
     const lectureEquivalent = workedMinutes / LECTURE_MINUTES;
@@ -193,10 +193,10 @@ const FacultyModal = ({ open, setOpen }) => {
         penalty === "NONE"
           ? "On Time"
           : penalty === "LATE_START"
-          ? "Late Start"
-          : penalty === "EARLY_END"
-          ? "Early End"
-          : "Late + Early",
+            ? "Late Start"
+            : penalty === "EARLY_END"
+              ? "Early End"
+              : "Late + Early",
     };
   }
 
@@ -261,14 +261,14 @@ const FacultyModal = ({ open, setOpen }) => {
           actualEndTime: `${today}T${actualOut}`,
           status: status,
           payout: payout,
-          date:date
+          date: date,
         },
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Attendance Marked Successfully");
@@ -300,7 +300,7 @@ const FacultyModal = ({ open, setOpen }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${tok}`,
           },
-        }
+        },
       );
 
       toast.success("Attendance Marked Successfully");
@@ -445,7 +445,7 @@ const FacultyModal = ({ open, setOpen }) => {
                     <Input
                       type={`text`}
                       value={`${formatTime(startTime)} - ${formatTime(
-                        endTime
+                        endTime,
                       )}`}
                       readOnly
                     />

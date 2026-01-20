@@ -114,7 +114,7 @@ const FacultyModal = ({ open, setOpen }) => {
   useEffect(() => {
     const loadData = async () => {
       const userData = await fetchUser();
-      const facultyOnly = userData.filter((user) => user.role === "FACULTY");
+      const facultyOnly = userData.filter((user) => user.role === "FACULTY").filter((user) => user.isActive === true);
       setUsers(facultyOnly);
       setFilteredFaculty(facultyOnly);
     };

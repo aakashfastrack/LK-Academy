@@ -74,7 +74,7 @@ const Report = () => {
         totalOvertimeMinutes: 0,
         totalOvertimePay: 0,
         totalPenalty: 0,
-      }
+      },
     );
   };
 
@@ -82,10 +82,10 @@ const Report = () => {
   const [staffReportData, setStaffReportData] = useState([]);
   const { fetchUser, fetchBranch } = useManagement();
 
-  useEffect(()=>{
-    const branch = JSON.parse(localStorage.getItem("user")).data.user.branch
-    setBran(branch)
-  },[])
+  useEffect(() => {
+    const branch = JSON.parse(localStorage.getItem("user")).data.user.branch;
+    setBran(branch);
+  }, []);
 
   useEffect(() => {
     if (role === "FACULTY") {
@@ -142,9 +142,9 @@ const Report = () => {
 
     lectures.forEach((lec) => {
       totalScheduled += lec.TotalScheduled || 0;
-      let temp = lec.subject.name + "-" + lec.batch.name
-      subject.push(temp)
-      course.push(lec.batch.course.name)
+      let temp = lec.subject.name + "-" + lec.batch.name;
+      subject.push(temp);
+      course.push(lec.batch.course.name);
 
       lec.attendance.forEach((att) => {
         conducted++;
@@ -164,7 +164,7 @@ const Report = () => {
       both,
       totalPenalty,
       subject,
-      course
+      course,
     };
   };
 
@@ -202,10 +202,15 @@ const Report = () => {
                     setUser(staff);
                   }}
                   key={index}
-                  className="grid grid-cols-[60px_180px_260px_220px_140px_140px_140px_140px] xl:grid-cols-8 px-4 py-3 xl:border-b border-gray-500 text-center items-center hover:bg-gray-50"
+                  className={`grid grid-cols-[60px_180px_260px_220px_140px_140px_140px_140px] xl:grid-cols-8 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center ${staff.isActive ? "bg-white" : "hover:bg-gray-50 bg-gray-100"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
-                  <li>{staff.name}</li>
+                  <li className="flex items-center justify-center gap-2">
+                    {staff.name}
+                    <div
+                      className={`${staff.isActive ? "" : "bg-red-500  h-2 w-2 rounded-full "}`}
+                    ></div>
+                  </li>
                   <li>{stats.daysPresent}</li>
                   <li>{stats.lateDays}</li>
                   <li>{stats.totalLateMinutes}</li>
@@ -238,10 +243,15 @@ const Report = () => {
                     setUser(staff);
                   }}
                   key={index}
-                  className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
+                  className={`grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center   ${staff.isActive ? "bg-white" : "hover:bg-gray-50 bg-gray-100"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
-                  <li>{staff.name}</li>
+                  <li className="flex items-center justify-center gap-2">
+                    {staff.name}
+                    <div
+                      className={`${staff.isActive ? "" : "bg-red-500  h-2 w-2 rounded-full "}`}
+                    ></div>
+                  </li>
                   <li>{stats.subject.join(", ")}</li>
                   <li>{stats.course.join(", ")}</li>
                   <li>{stats.conducted}</li>

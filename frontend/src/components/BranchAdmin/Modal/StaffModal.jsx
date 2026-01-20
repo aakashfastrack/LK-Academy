@@ -31,9 +31,9 @@ const StaffModal = ({ open, setOpen }) => {
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
 
   const formatTime = (isoTime) => {
-    if(!isoTime) return "";
+    if (!isoTime) return "";
 
-    const date = new Date(isoTime.replace("Z",""))
+    const date = new Date(isoTime.replace("Z", ""));
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -67,7 +67,8 @@ const StaffModal = ({ open, setOpen }) => {
 
       const filterData = userDate
         .filter((user) => user.role === "STAFF")
-        .filter((user) => user.branchId === branchId);
+        .filter((user) => user.branchId === branchId)
+        .filter((user) => user.isActive === true);
 
       // console.log(filterData)
       setUser(filterData);
@@ -154,7 +155,7 @@ const StaffModal = ({ open, setOpen }) => {
 
     // ---- BASIC CALCS ----
     const actualWorkedMinutes = Math.floor(
-      (actualOut - actualIn) / (1000 * 60)
+      (actualOut - actualIn) / (1000 * 60),
     );
 
     const requiredMinutes = workingMinutesPerDay;
@@ -162,7 +163,7 @@ const StaffModal = ({ open, setOpen }) => {
     // ---- LATE START ----
     const lateMinutes = Math.max(
       0,
-      Math.floor((actualIn - scheduledIn) / (1000 * 60))
+      Math.floor((actualIn - scheduledIn) / (1000 * 60)),
     );
 
     const isLateBeyondGrace = lateMinutes > GRACE_MINUTES;
@@ -245,14 +246,14 @@ const StaffModal = ({ open, setOpen }) => {
           shiftEndTime: endTime,
           actualInTime: `${start}T${actualinTime}`,
           actualOutTime: `${end}T${actualoutTime}`,
-          date:date
+          date: date,
         },
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       toast.success("Attendance Marked Successfully");
       setOpen(false);
