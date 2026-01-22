@@ -131,6 +131,7 @@ model StaffAttendance {
   branchId Int
   branch   Branch @relation(fields: [branchId], references: [id])
 
+  status         STAFF_ATTENDANCE_STATUS  @default(PRESENT)
   date           DateTime
   shiftStartTime DateTime
   shiftEndTime   DateTime
@@ -271,4 +272,9 @@ enum Role {
 enum FACULTY_TYPE {
   LECTURE_BASED
   SALARY_BASED
+}
+
+enum STAFF_ATTENDANCE_STATUS {
+  PRESENT
+  ONLEAVE
 }

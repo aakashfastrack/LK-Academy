@@ -25,7 +25,7 @@ function calculateStaffAttendance({
   // -------- ACTUAL WORK --------
   const actualWorkedMinutes = Math.max(
     0,
-    Math.floor((actualOutTime - actualInTime) / (1000 * 60))
+    Math.floor((actualOutTime - actualInTime) / (1000 * 60)),
   );
 
   // -------- REQUIRED --------
@@ -34,7 +34,7 @@ function calculateStaffAttendance({
   // -------- LATE --------
   const lateMinutes = Math.max(
     0,
-    Math.floor((actualInTime - shiftStartTime) / (1000 * 60))
+    Math.floor((actualInTime - shiftStartTime) / (1000 * 60)),
   );
 
   // -------- SHORTFALL --------
@@ -82,7 +82,8 @@ const markStaffAttendance = async ({
   shiftEndTime,
   actualInTime,
   actualOutTime,
-  date
+  date,
+  status,
 }) => {
   const staff = await prisma.user.findUnique({
     where: { id: staffId },
@@ -106,18 +107,18 @@ const markStaffAttendance = async ({
 
   let date1 = new Date(date);
 
-
   date1.setUTCHours(0, 0, 0, 0);
 
   return await prisma.staffAttendance.create({
     data: {
       staffId,
       branchId,
-      date:date,
+      date: date,
       shiftStartTime,
       shiftEndTime,
       actualInTime,
       actualOutTime,
+      status,
 
       isLate: calc.isLate,
       lateMinutes: Math.floor(calc.lateMinutes),
@@ -150,6 +151,9 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
     where: { id: staffId },
   });
 
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const perDaySalary = staff.salary / daysInMonth;
+
   if (!staff || !staff.salary) {
     throw new Error("Staff salary not configured");
   }
@@ -174,8 +178,14 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
   let totalOvertimePay = 0;
   let lateDaysCount = 0;
   let totalPenalties = 0;
+  let leaveDays = 0;
+  const PAID_LEAVE_LIMIT = 4;
 
   attendance.forEach((a) => {
+    if (a.status === "ONLEAVE") {
+      leaveDays += 1;
+      return;
+    }
     if (a.isLate) {
       lateDaysCount += 1;
       fixedLatePenalties += 50;
@@ -186,8 +196,15 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
     totalOvertimePay += a.overtimePay || 0;
   });
 
+  const unpaidLeaveDays = Math.max(0, leaveDays - PAID_LEAVE_LIMIT);
+  const leaveDeduction = unpaidLeaveDays * perDaySalary;
+
   const netPay =
-    staff.salary - fixedLatePenalties - totalExtaPenalties + totalOvertimePay;
+    staff.salary -
+    fixedLatePenalties -
+    totalExtaPenalties -
+    leaveDeduction +
+    totalOvertimePay;
 
   return {
     staffId,
@@ -197,6 +214,13 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
     monthlySalary: staff.salary,
 
     breakdown: {
+      daysInMonth,
+      perDaySalary: Math.floor(perDaySalary),
+      leaveDays,
+      paidLeavesUsed: Math.min(leaveDays, PAID_LEAVE_LIMIT),
+      unpaidLeaveDays,
+      leaveDeduction: Math.floor(leaveDeduction),
+
       lateDays: lateDaysCount,
       fixedLatePenalties,
       totalExtaPenalties,

@@ -31,6 +31,8 @@ const StaffModal = ({ open, setOpen }) => {
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
   const [date, setDate] = useState(new Date());
 
+  const [status, setStatus] = useState("Present");
+
   useEffect(() => {
     const loadData = async () => {
       const branchData = await fetchBranch();
@@ -46,8 +48,9 @@ const StaffModal = ({ open, setOpen }) => {
       const userData = await fetchUser();
       const filterUser = userData
         .filter((user) => user.branchId === selectBranch)
-        .filter((user) => user.role === "STAFF").filter((user)=> user.isActive === true);
-      
+        .filter((user) => user.role === "STAFF")
+        .filter((user) => user.isActive === true);
+
       setUsers(filterUser);
     };
     loadData();
@@ -67,9 +70,9 @@ const StaffModal = ({ open, setOpen }) => {
   }, [selectUser]);
 
   const formatTime = (isoTime) => {
-    if(!isoTime) return "";
-    const iso = isoTime.replace("Z","")
-    let date = new Date(iso)
+    if (!isoTime) return "";
+    const iso = isoTime.replace("Z", "");
+    let date = new Date(iso);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -117,8 +120,8 @@ const StaffModal = ({ open, setOpen }) => {
       Math.floor((actualIn - scheduledIn) / (1000 * 60)),
     );
 
-    console.log(lateMinutes)
-    console.log(perMinuteRate)
+    console.log(lateMinutes);
+    console.log(perMinuteRate);
 
     const isLateBeyondGrace = lateMinutes > GRACE_MINUTES;
 
@@ -174,8 +177,8 @@ const StaffModal = ({ open, setOpen }) => {
       monthlySalary: salary,
       workingDays: workingDays,
       workingMinutesPerDay: workingMinutesPerDay,
-      scheduledIn: new Date(startTime.replace("Z","")),
-      scheduledOut: new Date(endTime.replace("Z","")),
+      scheduledIn: new Date(startTime.replace("Z", "")),
+      scheduledOut: new Date(endTime.replace("Z", "")),
       actualIn: new Date(`${start}T${actualinTime}`),
       actualOut: actualoutTime ? new Date(`${end}T${actualoutTime}`) : null,
     });
@@ -204,6 +207,7 @@ const StaffModal = ({ open, setOpen }) => {
           actualInTime: `${start}T${actualinTime}`,
           actualOutTime: `${end}T${actualoutTime}`,
           date: date,
+          status:status
         },
         {
           headers: {
@@ -285,85 +289,109 @@ const StaffModal = ({ open, setOpen }) => {
                 </Select>
               </div>
 
-              <div>
-                <div>
-                  <Label>Shift In Time</Label>
-                  <Input type={`text`} readOnly value={formatTime(startTime)} />
-                </div>
-                <div>
-                  <Label>Shift Out Time</Label>
-                  <Input type={`text`} readOnly value={formatTime(endTime)} />
-                </div>
+              <div className="">
+                <Label>Status</Label>
+                <Select value={status} onValueChange={(v) => setStatus(v)}>
+                  <SelectTrigger className={`w-full`}>
+                    <SelectValue placeholder={`Status`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={"PRESENT"}>Present</SelectItem>
+                    <SelectItem value={"ONLEAVE"}>Absent</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+              {status === "PRESENT" && (
+                <>
+                  <div>
+                    <div>
+                      <Label>Shift In Time</Label>
+                      <Input
+                        type={`text`}
+                        readOnly
+                        value={formatTime(startTime)}
+                      />
+                    </div>
+                    <div>
+                      <Label>Shift Out Time</Label>
+                      <Input
+                        type={`text`}
+                        readOnly
+                        value={formatTime(endTime)}
+                      />
+                    </div>
+                  </div>
 
-              <div>
-                <div>
-                  <Label>In Time</Label>
-                  <Input
-                    type={`time`}
-                    onChange={(e) => setActualInTime(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label>Out Time</Label>
-                  <Input
-                    type={`time`}
-                    onChange={(e) => setActualOutTime(e.target.value)}
-                  />
-                </div>
-              </div>
+                  <div>
+                    <div>
+                      <Label>In Time</Label>
+                      <Input
+                        type={`time`}
+                        onChange={(e) => setActualInTime(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label>Out Time</Label>
+                      <Input
+                        type={`time`}
+                        onChange={(e) => setActualOutTime(e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-              <div>
-                <Label>Late Entry</Label>
-                <Input
-                  type={`text`}
-                  value={`${staffPreview?.lateEntry}`}
-                  placeholder={`Yes/No`}
-                  readOnly
-                />
-              </div>
+                  <div>
+                    <Label>Late Entry</Label>
+                    <Input
+                      type={`text`}
+                      value={`${staffPreview?.lateEntry}`}
+                      placeholder={`Yes/No`}
+                      readOnly
+                    />
+                  </div>
 
-              <div>
-                <Label>Late Penalty</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type={`text`}
-                    placeholder={`fixed Penalty`}
-                    readOnly
-                    value={Math.floor(staffPreview?.fixedPenalty) || 0}
-                  />
-                  <Input
-                    type={`text`}
-                    placeholder={`Extra Penalty`}
-                    readOnly
-                    value={Math.floor(staffPreview?.additionalPenalty) || 0}
-                  />
-                </div>
-              </div>
+                  <div>
+                    <Label>Late Penalty</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type={`text`}
+                        placeholder={`fixed Penalty`}
+                        readOnly
+                        value={Math.floor(staffPreview?.fixedPenalty) || 0}
+                      />
+                      <Input
+                        type={`text`}
+                        placeholder={`Extra Penalty`}
+                        readOnly
+                        value={Math.floor(staffPreview?.additionalPenalty) || 0}
+                      />
+                    </div>
+                  </div>
 
-              <div>
-                <Label>Overtime Duration(mins)</Label>
-                <Input
-                  type={`text`}
-                  placeholder={`70mins`}
-                  readOnly
-                  value={
-                    staffPreview?.overtimeMinutes >= 30
-                      ? staffPreview?.overtimeMinutes
-                      : 0 || 0
-                  }
-                />
-              </div>
+                  <div>
+                    <Label>Overtime Duration(mins)</Label>
+                    <Input
+                      type={`text`}
+                      placeholder={`70mins`}
+                      readOnly
+                      value={
+                        staffPreview?.overtimeMinutes >= 30
+                          ? staffPreview?.overtimeMinutes
+                          : 0 || 0
+                      }
+                    />
+                  </div>
 
-              <div>
-                <Label>Overtime Pay</Label>
-                <Input
-                  type={`text`}
-                  placeholder={`100`}
-                  value={staffPreview?.overtimePay || 0}
-                  readOnly
-                />
-              </div>
+                  <div>
+                    <Label>Overtime Pay</Label>
+                    <Input
+                      type={`text`}
+                      placeholder={`100`}
+                      value={staffPreview?.overtimePay || 0}
+                      readOnly
+                    />
+                  </div>
+                </>
+              )}
 
               <div className="flex-row! w-full [&>Button]:cursor-pointer">
                 <Button

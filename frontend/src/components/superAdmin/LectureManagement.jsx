@@ -53,9 +53,9 @@ const LectureManagement = () => {
     if (!isoIst) return "";
 
     // 🔥 remove Z so JS treats it as local time
-    // const safeIso = isoIst.replace("Z", "");
+    const safeIso = isoIst.replace("Z", "");
 
-    const date = new Date(isoIst);
+    const date = new Date(safeIso);
 
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
@@ -98,8 +98,6 @@ const LectureManagement = () => {
 
           {lectureData.length > 0 ? (
             lectureData.map((lecture, index) => {
-              console.log(formatTime(lecture.startTime));
-              console.log(toAmPm(lecture.startTime));
               return (
                 <ul
                   key={index}

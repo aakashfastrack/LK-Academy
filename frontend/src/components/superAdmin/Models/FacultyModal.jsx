@@ -57,7 +57,7 @@ const FacultyModal = ({ open, setOpen }) => {
     // 🔥 remove Z so JS treats it as local time
     const safeIso = isoIst;
 
-    const date = new Date(safeIso);
+    const date = new Date(safeIso.replace("Z",""));
 
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
@@ -203,8 +203,7 @@ const FacultyModal = ({ open, setOpen }) => {
     lectureRate,
   }) {
     const FIFTEEN_MIN = 15 * 60 * 1000;
-    console.log(plannedStart)
-    console.log(actualStart)
+
 
     let isLate = actualStart - plannedStart > FIFTEEN_MIN;
     let isEarly = plannedEnd - actualEnd > FIFTEEN_MIN;
@@ -266,8 +265,8 @@ const FacultyModal = ({ open, setOpen }) => {
     const date = lecture.startTime.split("T")[0];
 
     const result = calculateLectureBasedFaculty({
-      plannedStart: new Date(lecture.startTime),
-      plannedEnd: new Date(lecture.endTime),
+      plannedStart: new Date(lecture.startTime.replace("Z","")),
+      plannedEnd: new Date(lecture.endTime.replace("Z","")),
       actualStart: new Date(`${date}T${inTime}`),
       actualEnd: new Date(`${date}T${outTime}`),
       lectureRate: selectFaculty.lectureRate,

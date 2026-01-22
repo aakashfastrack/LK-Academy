@@ -80,7 +80,6 @@ function calculateLectureBasedFacultyBackend({
     (plannedEndTime - actualEndTime) / (1000 * 60)
   );
 
-  console.log(lateMinutes)
   const isLate = lateMinutes > FIFTEEN_MIN;
   const isEarly = earlyMinutes > FIFTEEN_MIN;
 
