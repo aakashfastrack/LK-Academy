@@ -140,7 +140,7 @@ const StaffModal = ({ open, setOpen }) => {
       isLateBeyondGrace || shortfallMinutes > 15 ? FIXED_PENALTY : 0;
     let additionalPenalty = 0;
 
-    if (shortfallMinutes >= GRACE_MINUTES) {
+    if (shortfallMinutes > GRACE_MINUTES) {
       const penaltyMinutes = shortfallMinutes;
       additionalPenalty = penaltyMinutes * perMinuteRate;
     }

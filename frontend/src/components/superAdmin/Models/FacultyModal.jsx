@@ -216,7 +216,7 @@ const FacultyModal = ({ open, setOpen }) => {
     else if (isLate) penalty = "LATE_START";
     else if (isEarly) penalty = "EARLY_END";
 
-    let TotalP = LateMin + EarlyMin
+    let TotalP = LateMin + EarlyMin;
 
     let totalPenaltyMin = TotalP > FIFTEEN_MIN ? TotalP : 0;
 
@@ -312,11 +312,16 @@ const FacultyModal = ({ open, setOpen }) => {
           },
         },
       );
+
       toast.success("Attendance Marked Successfully");
       setOpen(false);
       router.refresh();
     } catch (err) {
-      toast.error("Error in marking attendance");
+      if (err?.response?.data?.message === "Already Marked") {
+        toast.warning("Already marked Attedance for this lecture");
+      } else {
+        toast.error("Error in marking attendance");
+      }
       setOpen(false);
       router.refresh();
     }
@@ -542,10 +547,7 @@ const FacultyModal = ({ open, setOpen }) => {
                     <Input
                       type={`text`}
                       placeholder={`Penalty`}
-                      value={
-                        `${penaltyPreview?.totalPenaltyMin} mins` ||
-                        "0"
-                      }
+                      value={`${penaltyPreview?.totalPenaltyMin} mins` || "0"}
                       readOnly
                     />
                   </div>

@@ -134,6 +134,17 @@ const markLectureAttendance = async ({
     },
   });
 
+  const att = await prisma.lectureAttendance.findFirst({
+    where:{
+      lectureId:Number(lecture.id),
+      date:date
+    }
+  })
+
+  if(att){
+    throw new Error("Already Marked")
+  }
+
   if (!lecture) throw new Error("Lecture not found");
 
   let penalty = "NONE";
