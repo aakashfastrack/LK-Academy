@@ -21,7 +21,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     // 🔥 remove Z so JS treats it as local time
     const safeIso = isoIst;
 
-    const date = new Date(safeIso.replace("Z",""));
+    const date = new Date(safeIso.replace("Z", ""));
 
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
@@ -46,7 +46,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     return (
       lectures
         .filter(
-          (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0
+          (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0,
         )
 
         // 🔥 flatten lectures → attendance rows
@@ -65,19 +65,19 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               date: formatDate(att.date || lec.StartDate),
               subject: lec.subject?.name || "-",
               plannedTime: `${formatTime(lec.startTime)} – ${formatTime(
-                lec.endTime
+                lec.endTime,
               )}`,
               actualTime:
                 att.actualStartTime && att.actualEndTime
                   ? `${formatTime(att.actualStartTime)} – ${formatTime(
-                      att.actualEndTime
+                      att.actualEndTime,
                     )}`
                   : "-",
               status,
               penalty: att.penalty || "NONE",
               sortTime: att.actualStartTime || att.date, // for sorting
             };
-          })
+          }),
         )
 
         // 🔥 latest first
@@ -117,7 +117,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${tok.data.token}`,
               },
-            }
+            },
           );
 
           setServerData(data.data);
@@ -131,11 +131,11 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${tok.data.token}`,
               },
-            }
+            },
           );
 
-          console.log(data.data)
-          setServerData(data.data)
+          console.log(data.data);
+          setServerData(data.data);
         }
       } catch (err) {
         console.log(err);
@@ -201,8 +201,8 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                         item.status === "Conducted"
                           ? "text-green-600"
                           : item.status === "Missed"
-                          ? "text-red-600"
-                          : "text-yellow-600"
+                            ? "text-red-600"
+                            : "text-yellow-600"
                       }
                     >
                       {item.status}
@@ -212,31 +212,51 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                 ))}
 
               {lecData.length > 0 &&
-                lecData.map((item, i) => (
-                  <ul
-                    key={i}
-                    className={`grid grid-cols-[100px_180px_260px_220px_140px_140px] ${
-                      typ === "LECTURE_BASED"
-                        ? `xl:grid-cols-6`
-                        : `xl:grid-cols-5`
-                    } text-center border-b p-2`}
-                  >
-                    <li>{formatDate(item.date)}</li>
-                    <li>{`${formatTime(
-                      item.faculty?.shiftStartTime || item?.shiftStartTime
-                    )}-${formatTime(item.faculty?.shiftEndTime || item?.shiftEndTime)}`}</li>
-                    <li>{formatTime(item?.inTime || item?.actualInTime) || "-"}</li>
-                    <li>{formatTime(item?.outTime || item?.actualOutTime) || "-"}</li>
-                    <li
-                      className={
-                        !item.isLeave ? "text-green-600" : "text-red-600"
-                      }
+                lecData.map((item, i) => {
+                  console.log(item.status)
+                  return (
+                    <ul
+                      key={i}
+                      className={`grid grid-cols-[100px_180px_260px_220px_140px_140px] ${
+                        typ === "LECTURE_BASED"
+                          ? `xl:grid-cols-6`
+                          : `xl:grid-cols-5`
+                      } text-center border-b p-2`}
                     >
-                      {item.isLeave ? "On Leave" : "Present"}
-                    </li>
-                    <li>{item.penalty}</li>
-                  </ul>
-                ))}
+                      <li>{formatDate(item.date)}</li>
+                      <li>{`${formatTime(
+                        item.faculty?.shiftStartTime || item?.shiftStartTime,
+                      )}-${formatTime(item.faculty?.shiftEndTime || item?.shiftEndTime)}`}</li>
+                      <li>
+                        {formatTime(item?.inTime || item?.actualInTime) || "-"}
+                      </li>
+                      <li>
+                        {formatTime(item?.outTime || item?.actualOutTime) ||
+                          "-"}
+                      </li>
+                      {userdata.role === "STAFF" ? (
+                        <li
+                          className={
+                            item.status === "ONLEAVE"
+                              ? "text-red-600"
+                              : "text-green-600"
+                          }
+                        >
+                          {item.status === "ONLEAVE" ? "On Leave" : "Present"}
+                        </li>
+                      ) : (
+                        <li
+                          className={
+                            !item.isLeave ? "text-green-600" : "text-red-600"
+                          }
+                        >
+                          {item.isLeave ? "On Leave" : "Present"}
+                        </li>
+                      )}
+                      <li>{item.penalty}</li>
+                    </ul>
+                  );
+                })}
             </div>
           </div>
         </div>
