@@ -218,7 +218,7 @@ const FacultyModal = ({ open, setOpen }) => {
 
     let TotalP = LateMin + EarlyMin;
 
-    let totalPenaltyMin = TotalP > FIFTEEN_MIN ? TotalP : 0;
+    let totalPenaltyMin = TotalP * 60 * 1000 > FIFTEEN_MIN ? TotalP : 0;
 
     const workedMinutes = Math.max(
       0,
