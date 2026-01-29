@@ -213,7 +213,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
 
               {lecData.length > 0 &&
                 lecData.map((item, i) => {
-                  console.log(item.status)
+                  // console.log(item)
                   return (
                     <ul
                       key={i}
@@ -228,11 +228,14 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                         item.faculty?.shiftStartTime || item?.shiftStartTime,
                       )}-${formatTime(item.faculty?.shiftEndTime || item?.shiftEndTime)}`}</li>
                       <li>
-                        {formatTime(item?.inTime || item?.actualInTime) || "-"}
+                        {item?.status === "PRESENT"
+                          ? formatTime(item?.inTime || item?.actualInTime)
+                          : "-"}
                       </li>
                       <li>
-                        {formatTime(item?.outTime || item?.actualOutTime) ||
-                          "-"}
+                        {item?.status === "PRESENT"
+                          ? formatTime(item?.outTime || item?.actualOutTime)
+                          : "-"}
                       </li>
                       {userdata.role === "STAFF" ? (
                         <li

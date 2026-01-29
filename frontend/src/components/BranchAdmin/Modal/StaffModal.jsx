@@ -70,7 +70,7 @@ const StaffModal = ({ open, setOpen }) => {
         .filter((user) => user.branchId === branchId)
         .filter((user) => user.isActive === true);
 
-      // console.log(filterData)
+      console.log(filterData);
       setUser(filterData);
     };
 
@@ -143,7 +143,7 @@ const StaffModal = ({ open, setOpen }) => {
       isLateBeyondGrace || shortfallMinutes > 15 ? FIXED_PENALTY : 0;
     let additionalPenalty = 0;
 
-    if (shortfallMinutes >= GRACE_MINUTES) {
+    if (shortfallMinutes > GRACE_MINUTES) {
       const penaltyMinutes = shortfallMinutes;
       additionalPenalty = penaltyMinutes * perMinuteRate;
     }
@@ -180,8 +180,8 @@ const StaffModal = ({ open, setOpen }) => {
       monthlySalary: salary,
       workingDays: workingDays,
       workingMinutesPerDay: workingMinutesPerDay,
-      scheduledIn: new Date(startTime),
-      scheduledOut: new Date(endTime),
+      scheduledIn: new Date(startTime.replace("Z", "")),
+      scheduledOut: new Date(endTime.replace("Z", "")),
       actualIn: new Date(`${start}T${actualinTime}`),
       actualOut: actualoutTime ? new Date(`${end}T${actualoutTime}`) : null,
     });
@@ -319,12 +319,20 @@ const StaffModal = ({ open, setOpen }) => {
 
               <div>
                 <Label>Late Penalty</Label>
-                <Input
-                  type={`text`}
-                  placeholder={`40mins`}
-                  readOnly
-                  value={Math.floor(staffPreview?.totalPenalty) || 0}
-                />
+                <div className="flex gap-2">
+                  <Input
+                    type={`text`}
+                    placeholder={`fixed Penalty`}
+                    readOnly
+                    value={Math.floor(staffPreview?.fixedPenalty) || 0}
+                  />
+                  <Input
+                    type={`text`}
+                    placeholder={`Extra Penalty`}
+                    readOnly
+                    value={Math.floor(staffPreview?.additionalPenalty) || 0}
+                  />
+                </div>
               </div>
 
               <div>

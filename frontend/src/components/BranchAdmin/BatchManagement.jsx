@@ -35,7 +35,9 @@ const BatchManagement = () => {
         },
       });
 
-      setBranches(data.data);
+      console.log(data.data);
+      const filterdata = data.data.filter((dat) => dat.course.branchId === tok.data.user.branchId)
+      setBranches(filterdata);
     };
 
     fetchBranches();
@@ -57,7 +59,7 @@ const BatchManagement = () => {
             Add Batch
           </Button>
         </div>
-        <div className="w-full">
+        <div className="w-full overflow-auto">
           <ul className="grid grid-cols-7 xl:px-4 text-sm py-3 border-b border-gray-500 font-bold text-center">
             {lists.map((item, index) => (
               <li key={index}>{item}</li>

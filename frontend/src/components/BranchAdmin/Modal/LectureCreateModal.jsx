@@ -101,8 +101,9 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
       console.log(data.data);
 
       const filtereddata = data.data.filter(
-        (batch) => batch.course.branchId === tok.data.user.branchId
+        (batch) => batch.course.branchId === tok.data.user.branchId,
       );
+      console.log(filtereddata);
       setbatch(filtereddata);
     };
 
@@ -110,26 +111,31 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
   }, []);
 
   useEffect(() => {
+    const loadData = async () => {
+      const subject = await fetchSubject();
+      const filtersubject = subject.filter((sub) => sub.batch.id === batchId);
+
+      setSubj(filtersubject);
+    };
+
+    loadData();
+  }, [batchId]);
+
+  useEffect(() => {
     const branchdata = JSON.parse(localStorage.getItem("user"));
     console.log(branchdata);
     const loadData = async () => {
-      const subject = await fetchSubject();
       const userdata = await fetchUser();
 
-      console.log(subject);
+      // console.log(subject);
 
       const filteruserdata = userdata
         .filter((user) => user.role === "FACULTY")
         .filter((user) => user.branchId === branchdata.data.user.branch.id);
 
-      const filtersubject = subject.filter(
-        (sub) => sub.batch.course.branchId === branchdata.data.user.branch.id
-      );
-
       console.log(filteruserdata);
-      console.log(filtersubject);
+      // console.log(filtersubject);
 
-      setSubj(filtersubject);
       setUser(filteruserdata);
     };
 
@@ -159,7 +165,7 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       toast.success("Lecture Created Successfully");
       setOpen(false);
@@ -196,7 +202,7 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       toast.success("Lecture Edited Successfully");
       // router.refresh();
@@ -254,8 +260,8 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
                 {type === "create"
                   ? "Create a New Lecture"
                   : type === "edit"
-                  ? "Edit Lecture"
-                  : "Delete Lecture"}
+                    ? "Edit Lecture"
+                    : "Delete Lecture"}
               </h1>
             </div>
             {type === "create" && (
@@ -279,7 +285,7 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
                     <SelectContent>
                       {batch.map((item, i) => (
                         <SelectItem key={i} value={item.id}>
-                          {item.name}
+                          {`${item.name} - ${item.course.name}`}
                         </SelectItem>
                       ))}
                     </SelectContent>

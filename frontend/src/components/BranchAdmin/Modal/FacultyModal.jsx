@@ -45,7 +45,7 @@ const FacultyModal = ({ open, setOpen }) => {
   const formatTime = (isoTime) => {
     if (!isoTime) return "";
     const date = new Date(isoTime.replace("Z", ""));
-    return new Date(isoTime).toLocaleTimeString("en-IN", {
+    return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
@@ -80,7 +80,7 @@ const FacultyModal = ({ open, setOpen }) => {
     });
 
     const filtereddata = data.data.filter(
-      (batch) => batch.course.branchId === branchid,
+      (batch) => batch.course.id === course,
     );
     // console.log(filtereddata);
     setBatch(filtereddata);
@@ -88,7 +88,8 @@ const FacultyModal = ({ open, setOpen }) => {
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchCourse();
-      setCourses(data);
+      const filterdata = data.filter((dat) => dat.branchId === branchid);
+      setCourses(filterdata);
     };
     loadData();
   }, [branchid]);
@@ -102,9 +103,9 @@ const FacultyModal = ({ open, setOpen }) => {
       const lecturedata = await fetchLecture();
       console.log(lecturedata);
 
-      const filterlecture = lecturedata
-        .filter((lec) => lec.faculty.id === Number(facultyId.id))
-        .filter((lec) => lec.batchId === selectedBatch);
+      const filterlecture = lecturedata.filter(
+        (lec) => lec.batchId === selectedBatch,
+      );
 
       // selectedBatch
       console.log(filterlecture);
@@ -165,11 +166,16 @@ const FacultyModal = ({ open, setOpen }) => {
 
     let isLate = actualStart - plannedStart > FIFTEEN_MIN;
     let isEarly = plannedEnd - actualEnd > FIFTEEN_MIN;
+    let LateMin = (actualStart - plannedStart) / (60 * 1000);
+    let EarlyMin = (plannedEnd - actualEnd) / (60 * 1000);
 
     let penalty = "NONE";
     if (isLate && isEarly) penalty = "BOTH";
     else if (isLate) penalty = "LATE_START";
     else if (isEarly) penalty = "EARLY_END";
+
+    let TotalP = LateMin + EarlyMin;
+    let totalPenaltyMin = TotalP * 60 * 1000 > FIFTEEN_MIN ? TotalP : 0;
 
     const workedMinutes = Math.max(
       0,
@@ -177,7 +183,6 @@ const FacultyModal = ({ open, setOpen }) => {
     );
 
     const lectureEquivalent = workedMinutes / LECTURE_MINUTES;
-    console.log(lectureEquivalent);
 
     const calculatedPayout =
       lectureEquivalent > 1
@@ -189,6 +194,7 @@ const FacultyModal = ({ open, setOpen }) => {
       workedMinutes,
       lectureEquivalent: Number(lectureEquivalent.toFixed(2)),
       calculatedPayout,
+      totalPenaltyMin,
       message:
         penalty === "NONE"
           ? "On Time"
@@ -211,11 +217,10 @@ const FacultyModal = ({ open, setOpen }) => {
       return;
 
     const date = subjectId.startTime.split("T")[0];
-    console.log(subjectId);
 
     const result = calculateLectureBasedFaculty({
-      plannedStart: new Date(subjectId.startTime),
-      plannedEnd: new Date(subjectId.endTime),
+      plannedStart: new Date(subjectId.startTime.replace("Z", "")),
+      plannedEnd: new Date(subjectId.endTime.replace("Z", "")),
       actualStart: new Date(`${date}T${actualIn}`),
       actualEnd: new Date(`${date}T${actualOut}`),
       lectureRate: facultyId.lectureRate,
@@ -487,7 +492,7 @@ const FacultyModal = ({ open, setOpen }) => {
                       type={`text`}
                       placeholder={`Penalty`}
                       readOnly
-                      value={penaltyPreview?.message || "0"}
+                      value={`${penaltyPreview?.totalPenaltyMin || "0"} mins`}
                     />
                   </div>
                 </>

@@ -166,7 +166,7 @@ const CourseModels = ({ open, setOpen, type, course, refetch }) => {
                     <Label htmlFor={`branch`}>Branch</Label>
                     <Input
                       placeholder={"Branch"}
-                      value={branchs.name}
+                      value={branchs?.name}
                       readOnly
                     />
                   </div>

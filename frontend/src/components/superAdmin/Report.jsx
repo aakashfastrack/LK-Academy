@@ -21,8 +21,9 @@ const Report = () => {
   const facultyReportHeaders = [
     "id",
     "Faculty Name",
-    "Subjects",
     "Courses",
+    "Subjects",
+    "Total",
     "Lectures Done",
     "Remaining Lectures",
     // "Late",
@@ -149,7 +150,6 @@ const Report = () => {
     let batch = [];
 
     lectures.forEach((lec) => {
-      console.log(lec);
       totalScheduled += lec.TotalScheduled || 0;
 
       subject.push(lec?.subject?.name + "-" + lec?.batch?.name);
@@ -175,6 +175,7 @@ const Report = () => {
       subject,
       course,
       batch,
+      totalScheduled
     };
   };
 
@@ -217,6 +218,7 @@ const Report = () => {
 
             {staffReportData.map((staff, index) => {
               const stats = getStaffStats(staff.staffAttendances);
+
               return (
                 <ul
                   onClick={() => {
@@ -250,7 +252,7 @@ const Report = () => {
         )}
         {role === "FACULTY" && (
           <div className=" h-[94%] w-full overflow-auto">
-            <ul className="grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
+            <ul className="grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px_200px] xl:grid-cols-7  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
               {facultyReportHeaders.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
@@ -266,7 +268,7 @@ const Report = () => {
                     setUser(staff);
                   }}
                   key={index}
-                  className={`grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center   ${staff.isActive ? "bg-white" : "hover:bg-gray-50 bg-gray-100"}`}
+                  className={`grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px_200px] xl:grid-cols-7 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center   ${staff.isActive ? "bg-white" : "hover:bg-gray-50 bg-gray-100"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
                   <li className="flex items-center justify-center gap-2">
@@ -276,12 +278,14 @@ const Report = () => {
                     ></div>
                   </li>
                   <li>
-                    {stats.subject.length > 0 ? stats.subject.join(", ") : "-"}
-                  </li>
-                  <li>
                     {stats.course.length > 0 ? stats.course.join(", ") : "-"}
                   </li>
+                  <li>
+                    {stats.subject.length > 0 ? stats.subject.join(", ") : "-"}
+                  </li>
+
                   {/* <li>{stats.batch.join(", ")}</li> */}
+                  <li>{stats.totalScheduled}</li>
                   <li>{stats.conducted}</li>
                   <li>{stats.remaining}</li>
                   {/* <li>{stats.late}</li>

@@ -547,7 +547,7 @@ const FacultyModal = ({ open, setOpen }) => {
                     <Input
                       type={`text`}
                       placeholder={`Penalty`}
-                      value={`${penaltyPreview?.totalPenaltyMin} mins` || "0"}
+                      value={`${penaltyPreview?.totalPenaltyMin || 0} mins`}
                       readOnly
                     />
                   </div>
