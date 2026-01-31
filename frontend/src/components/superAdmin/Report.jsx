@@ -22,7 +22,6 @@ const Report = () => {
     "id",
     "Faculty Name",
     "Detail",
-    "Total",
     "Lectures Done",
     "Remaining Lectures",
     // "Late",
