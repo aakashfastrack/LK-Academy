@@ -178,7 +178,7 @@ const CourseModels = ({ open, setOpen, type, course, refetch }) => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button onClick={addCourse}>Add New Branch</Button>
+                  <Button onClick={addCourse}>Add New Course</Button>
                 </div>
               </>
             )}
@@ -216,7 +216,7 @@ const CourseModels = ({ open, setOpen, type, course, refetch }) => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={editCourse}>Edit Branch</Button>
+                <Button onClick={editCourse}>Edit Course</Button>
               </div>
             )}
 

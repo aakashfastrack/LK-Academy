@@ -419,7 +419,7 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
                 </div>
 
                 <div className="">
-                  <Button onClick={handleCreateLecture}>Submit</Button>
+                  <Button onClick={handleCreateLecture}>Add new Lecture</Button>
                 </div>
               </div>
             )}
@@ -563,7 +563,7 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
                 </div>
 
                 <div className="">
-                  <Button onClick={handleEdit}>Edit</Button>
+                  <Button onClick={handleEdit}>Edit Lecture</Button>
                 </div>
               </div>
             )}

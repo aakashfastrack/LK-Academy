@@ -189,6 +189,7 @@ const FacultyModal = ({ open, setOpen }) => {
         ? Number((lectureEquivalent * lectureRate).toFixed(2))
         : lectureRate;
 
+
     return {
       penalty,
       workedMinutes,
@@ -228,6 +229,8 @@ const FacultyModal = ({ open, setOpen }) => {
 
     const finalPayout = applyStatusOnPayout(result.calculatedPayout, status);
 
+    console.log(finalPayout);
+
     console.log(result);
     setPenaltyPreview(result);
     setPayout(finalPayout);
@@ -265,7 +268,7 @@ const FacultyModal = ({ open, setOpen }) => {
           actualStartTime: `${today}T${actualIn}`,
           actualEndTime: `${today}T${actualOut}`,
           status: status,
-          payout: payout,
+          payout: Math.floor(payout),
           date: date,
         },
         {

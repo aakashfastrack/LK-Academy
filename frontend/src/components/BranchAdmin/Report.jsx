@@ -22,8 +22,7 @@ const Report = () => {
   const facultyReportHeaders = [
     "id",
     "Faculty Name",
-    "Subject",
-    "Course",
+    "Details",
     "Lectures Done",
     "Remaining Lectures",
   ];
@@ -130,41 +129,45 @@ const Report = () => {
     "Total Penalty",
   ];
 
+  const [openFaculty, setOpenFaculty] = useState(null);
+
   const getLectureAttendanceStats = (lectures) => {
-    let conducted = 0;
-    let late = 0;
-    let early = 0;
-    let both = 0;
-    let totalPenalty = 0;
     let totalScheduled = 0;
-    let subject = [];
-    let course = [];
+    let conducted = 0;
+
+    // ✅ Batch wise grouping
+    const batchMap = {};
 
     lectures.forEach((lec) => {
+      const subjectName = lec?.subject?.name;
+      const batchName = lec?.batch?.name;
+      const courseName = lec?.batch?.course?.name;
+
+      const key = `${courseName}-${batchName}-${subjectName}`;
+
+      if (!batchMap[key]) {
+        batchMap[key] = {
+          subject: subjectName,
+          batch: batchName,
+          course: courseName,
+          total: lec.TotalScheduled || 0,
+          done: 0,
+        };
+      }
+
       totalScheduled += lec.TotalScheduled || 0;
-      let temp = lec.subject.name + "-" + lec.batch.name;
-      subject.push(temp);
-      course.push(lec.batch.course.name);
 
-      lec.attendance.forEach((att) => {
-        conducted++;
-
-        if (att.penalty === "LATE_START") late++;
-        if (att.penalty === "EARLY_END") early++;
-        if (att.penalty === "BOTH") both++;
-        if (att.penalty !== "NONE") totalPenalty++;
+      lec.attendance.forEach(() => {
+        batchMap[key].done += 1;
+        conducted += 1;
       });
     });
 
     return {
+      totalScheduled,
       conducted,
       remaining: totalScheduled - conducted,
-      late,
-      early,
-      both,
-      totalPenalty,
-      subject,
-      course,
+      batches: Object.values(batchMap), // ✅ nested rows
     };
   };
 
@@ -228,7 +231,7 @@ const Report = () => {
         )}
         {role === "FACULTY" && (
           <div className=" h-[94%] w-full overflow-auto">
-            <ul className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
+            <ul className="grid grid-cols-[60px_180px_140px_140px_140px] xl:grid-cols-5  px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
               {facultyReportHeaders.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
@@ -236,27 +239,65 @@ const Report = () => {
 
             {facultyReportData.map((staff, index) => {
               const stats = getLectureAttendanceStats(staff.lectures);
+
               return (
-                <ul
-                  onClick={() => {
-                    setOpen(true);
-                    setUser(staff);
-                  }}
-                  key={index}
-                  className={`grid grid-cols-[60px_180px_200px_260px_220px_140px_140px_120px_100px] xl:grid-cols-6 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center   ${staff.isActive ? "bg-white" : "hover:bg-gray-50 bg-gray-100"}`}
-                >
-                  <li className="font-semibold">{index + 1}</li>
-                  <li className="flex items-center justify-center gap-2">
-                    {staff.name}
-                    <div
-                      className={`${staff.isActive ? "" : "bg-red-500  h-2 w-2 rounded-full "}`}
-                    ></div>
-                  </li>
-                  <li>{stats.subject.join(", ")}</li>
-                  <li>{stats.course.join(", ")}</li>
-                  <li>{stats.conducted}</li>
-                  <li>{stats.remaining}</li>
-                </ul>
+                <div key={index}>
+                  {/* Main Faculty Row */}
+                  <ul
+                    className="grid grid-cols-[60px_180px_140px_140px_140px]
+        xl:grid-cols-5 px-4 py-3 border-b text-center items-center hover:bg-gray-50"
+                  >
+                    <li>{index + 1}</li>
+                    <li>{staff.name}</li>
+
+                    <li>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenFaculty(openFaculty === index ? null : index);
+                        }}
+                      >
+                        {openFaculty === index ? "Hide" : "View"}
+                      </Button>
+                    </li>
+
+                    <li>{stats.conducted}</li>
+                    <li>{stats.remaining}</li>
+                  </ul>
+
+                  {/* Nested Breakdown */}
+                  {openFaculty === index && (
+                    <div className="bg-gray-50 border rounded p-3 mx-6 mb-2">
+                      <table className="w-full text-sm border">
+                        <thead className="bg-gray-200">
+                          <tr>
+                            <th>Course</th>
+                            <th>Batch</th>
+                            <th>Subject</th>
+                            <th>Total</th>
+                            <th>Done</th>
+                            <th>Remaining</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {stats.batches.map((b, i) => (
+                            <tr key={i} className="border-t text-center">
+                              <td>{b.course}</td>
+                              <td>{b.batch}</td>
+                              <td>{b.subject}</td>
+                              <td>{b.total}</td>
+                              <td>{b.done}</td>
+                              <td>{b.total - b.done}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>

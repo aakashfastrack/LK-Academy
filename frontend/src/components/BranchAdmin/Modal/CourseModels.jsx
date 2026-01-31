@@ -170,7 +170,7 @@ const CourseModels = ({ open, setOpen, type, course, refetch }) => {
                       readOnly
                     />
                   </div>
-                  <Button onClick={addCourse}>Add New Branch</Button>
+                  <Button onClick={addCourse}>Add New Course</Button>
                 </div>
               </>
             )}
@@ -193,7 +193,7 @@ const CourseModels = ({ open, setOpen, type, course, refetch }) => {
                   <Label htmlFor={`branch`}>Branch</Label>
                   <Input placeholder={"Branch"} value={branchs.name} readOnly />
                 </div>
-                <Button onClick={editCourse}>Edit Branch</Button>
+                <Button onClick={editCourse}>Edit Course</Button>
               </div>
             )}
 

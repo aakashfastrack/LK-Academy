@@ -336,7 +336,7 @@ const SubjectModel = ({ open, setOpen, subject, type, refetch }) => {
                     <span className="font-bold text-2xl text-red-600">
                       {name}
                     </span>{" "}
-                    Branch
+                    Subject
                   </p>
                   <Button
                     onClick={deleteBranch}

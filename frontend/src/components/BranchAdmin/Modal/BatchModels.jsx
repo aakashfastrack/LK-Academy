@@ -41,7 +41,7 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
   }, [branch]);
 
   // const [branchId,setBranchId] = useState(branch?.id || "")
-  const { fetchBranch } = useManagement();
+  const { fetchBranch, fetchCourse } = useManagement();
 
   const [branchname, setBranchName] = useState("");
   const [branchAdmin, setBranchAdmin] = useState("");
@@ -63,6 +63,19 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    const loaddata = async () => {
+      const data = await fetchCourse();
+
+      // console.log(data);
+
+      const filterdata = data.filter((dat) => dat.branchId === branchId);
+
+      setCourses(filterdata);
+    };
+    loaddata();
+  }, [branchId]);
 
   const addBranch = async () => {
     try {

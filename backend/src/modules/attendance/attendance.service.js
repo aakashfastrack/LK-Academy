@@ -100,7 +100,10 @@ function calculateLectureBasedFacultyBackend({
 
   // ---------- PAYOUT ----------
   let lectureEquivalent = workedMinutes / LECTURE_MINUTES;
-  let payout = Number((lectureEquivalent * lectureRate).toFixed(2));
+  let payout =
+    lectureEquivalent > 1
+      ? Number((lectureEquivalent * lectureRate).toFixed(2))
+      : lectureRate;
 
   // ---------- STATUS OVERRIDES ----------
   if (status === "CANCELLED") {
@@ -135,14 +138,14 @@ const markLectureAttendance = async ({
   });
 
   const att = await prisma.lectureAttendance.findFirst({
-    where:{
-      lectureId:Number(lecture.id),
-      date:date
-    }
-  })
+    where: {
+      lectureId: Number(lecture.id),
+      date: date,
+    },
+  });
 
-  if(att){
-    throw new Error("Already Marked")
+  if (att) {
+    throw new Error("Already Marked");
   }
 
   if (!lecture) throw new Error("Lecture not found");
@@ -196,7 +199,7 @@ const markLectureAttendance = async ({
       payout: payout !== NaN ? payout : 0,
       status,
       date: date,
-      penaltyMin:Number(penaltyMin)
+      penaltyMin: Number(penaltyMin),
     },
   });
   return data;

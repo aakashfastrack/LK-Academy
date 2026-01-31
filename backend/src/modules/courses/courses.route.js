@@ -9,7 +9,7 @@ const { requireRole } = require("../../middleware/role.middleware");
 router.post(
     "/",
     protect,
-    requireRole("SUPER_ADMIN"),
+    requireRole("SUPER_ADMIN","BRANCH_ADMIN"),
     courseController.createCourse
 )
 

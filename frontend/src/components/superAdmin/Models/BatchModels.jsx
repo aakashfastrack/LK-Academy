@@ -40,9 +40,9 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
     if (branch?.course?.branch?.id) {
       setBranchId(branch.course.branch.id);
     }
-    if(branch?.course?.id){
-      setCourseId(branch.course.id)
-    }    
+    if (branch?.course?.id) {
+      setCourseId(branch.course.id);
+    }
   }, [branch]);
 
   // const [branchId,setBranchId] = useState(branch?.id || "")
@@ -70,12 +70,12 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchCourse();
-
-      setCourses(data);
+      const filterdata = data.filter((dat) => dat.branchId === branchId);
+      setCourses(filterdata);
     };
 
     loadData();
-  }, [list]);
+  }, [branchId]);
 
   const addBranch = async () => {
     try {
@@ -89,7 +89,7 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       toast.success("Batch Created");
       setOpen(false);
@@ -118,7 +118,7 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       toast.success("Batch Created");
       setOpen(false);
@@ -149,7 +149,7 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Edited successfully");
@@ -268,7 +268,7 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
                   </Select>
                 </div> */}
 
-                <Button onClick={addBranch}>Add New Branch</Button>
+                <Button onClick={addBranch}>Add New Batch</Button>
               </div>
             )}
 
@@ -354,7 +354,11 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
 
                 <div className="">
                   <Label htmlFor="courseId">Course</Label>
-                  <Select value={courseId} onValueChange={(v) => setCourseId(v)} id="courseId">
+                  <Select
+                    value={courseId}
+                    onValueChange={(v) => setCourseId(v)}
+                    id="courseId"
+                  >
                     <SelectTrigger className={`w-full`}>
                       <SelectValue placeholder="Course" />
                     </SelectTrigger>
@@ -368,7 +372,7 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
                   </Select>
                 </div>
 
-                <Button onClick={editBranch}>Edit Branch</Button>
+                <Button onClick={editBranch}>Edit Batch</Button>
               </div>
             )}
 
@@ -380,7 +384,7 @@ const BatchModels = ({ open, type, setOpen, branch, badmin, refetch }) => {
                     <span className="font-bold text-2xl text-red-600">
                       {branch.name}
                     </span>{" "}
-                    Branch
+                    Batch
                   </p>
                   <Button
                     onClick={deleteBranch}
