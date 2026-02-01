@@ -267,6 +267,10 @@ const Report = () => {
                 <div key={index}>
                   {/* Main Faculty Row */}
                   <ul
+                    onClick={() => {
+                      setOpen(true);
+                      setUser(staff);
+                    }}
                     className="grid grid-cols-[60px_180px_140px_140px_140px]
                     xl:grid-cols-5 px-4 py-3 border-b text-center items-center hover:bg-gray-50"
                   >
