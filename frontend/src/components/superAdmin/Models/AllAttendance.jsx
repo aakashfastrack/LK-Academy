@@ -256,7 +256,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                           {item.isLeave ? "On Leave" : "Present"}
                         </li>
                       )}
-                      <li>{item.penalty}</li>
+                      <li>{item.penaltyMin > 15 ? item.penaltyMin : 0}</li>
                     </ul>
                   );
                 })}

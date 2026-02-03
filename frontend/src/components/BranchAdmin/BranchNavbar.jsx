@@ -25,14 +25,19 @@ const BranchNavbar = ({ open, setOpen }) => {
       link: "/branchadmin/staff",
     },
     {
-      name:"Course Management",
-      icon:"",
-      link:"/branchadmin/coursemanage"
+      name: "Subject Management",
+      icono: "",
+      link: "/branchadmin/subjectmanagement",
     },
     {
-      name:"Batch Management",
-      icon:"",
-      link:"/branchadmin/batchmanage"
+      name: "Course Management",
+      icon: "",
+      link: "/branchadmin/coursemanage",
+    },
+    {
+      name: "Batch Management",
+      icon: "",
+      link: "/branchadmin/batchmanage",
     },
     {
       name: "Lecture Management",
@@ -50,9 +55,9 @@ const BranchNavbar = ({ open, setOpen }) => {
       link: "/branchadmin/report",
     },
     {
-      name:"Historical Data",
-      icon:"",
-      link:"/branchadmin/history"
+      name: "Historical Data",
+      icon: "",
+      link: "/branchadmin/history",
     },
     {
       name: "Profile",
@@ -82,7 +87,7 @@ const BranchNavbar = ({ open, setOpen }) => {
             X
           </p>
         </div>
-        <div className="">
+        <div className="h-[90%] overflow-auto">
           <ul className="relative px-2 xl:px-0 xl:pl-2">
             {lists.map((item, index) => (
               <li

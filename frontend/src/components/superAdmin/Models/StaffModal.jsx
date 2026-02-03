@@ -31,7 +31,7 @@ const StaffModal = ({ open, setOpen }) => {
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
   const [date, setDate] = useState(new Date());
 
-  const [status, setStatus] = useState("Present");
+  const [status, setStatus] = useState("PRESENT");
 
   useEffect(() => {
     const loadData = async () => {
@@ -101,51 +101,77 @@ const StaffModal = ({ open, setOpen }) => {
     const GRACE_MINUTES = 15;
     const FIXED_PENALTY = 50;
 
-    if (!actualOut || !monthlySalary || !workingMinutesPerDay || !scheduledIn)
+    if (!actualOut || !monthlySalary || !workingMinutesPerDay || !scheduledIn) {
+      console.log(
+        actualOut,
+        "-",
+        monthlySalary,
+        "-",
+        workingMinutesPerDay,
+        "-",
+        scheduledIn,
+      );
       return null;
+    }
 
+    console.log(1);
     const totalMonthlyMinutes = workingDays * workingMinutesPerDay;
+    console.log(2);
     const perMinuteRate = monthlySalary / totalMonthlyMinutes;
+    console.log(3);
 
     // ---- BASIC CALCS ----
     const actualWorkedMinutes = Math.floor(
       (actualOut - actualIn) / (1000 * 60),
     );
+    console.log(4);
 
     const requiredMinutes = workingMinutesPerDay;
+    console.log(5);
 
     // ---- LATE START ----
     const lateMinutes = Math.max(
       0,
       Math.floor((actualIn - scheduledIn) / (1000 * 60)),
     );
-
-    console.log(lateMinutes);
-    console.log(perMinuteRate);
+    console.log(6);
 
     const isLateBeyondGrace = lateMinutes > GRACE_MINUTES;
+    console.log(7);
 
     // ---- SHORTFALL ----
     const shortfallMinutes = Math.max(0, requiredMinutes - actualWorkedMinutes);
+    console.log(8);
 
     // ---- OVERTIME ----
     const extraMinutes = Math.max(0, actualWorkedMinutes - requiredMinutes);
+    console.log(9);
 
     const overtimeMinutes = Math.floor(extraMinutes);
+    console.log(10);
+
     const overtimePay =
       overtimeMinutes >= 30 ? Math.floor(overtimeMinutes * perMinuteRate) : 0;
+
+    console.log(11);
 
     // ---- PENALTY ----
     let fixedPenalty =
       isLateBeyondGrace || shortfallMinutes > 15 ? FIXED_PENALTY : 0;
+
+    console.log(12);
+
     let additionalPenalty = 0;
+    console.log(13);
 
     if (shortfallMinutes > GRACE_MINUTES) {
       const penaltyMinutes = shortfallMinutes;
       additionalPenalty = penaltyMinutes * perMinuteRate;
     }
+    console.log(13);
 
     const totalPenalty = fixedPenalty + additionalPenalty;
+    console.log(14);
 
     return {
       requiredMinutes,
@@ -170,15 +196,26 @@ const StaffModal = ({ open, setOpen }) => {
     if (!startTime || !endTime || !actualinTime || !actualoutTime) return;
     const start = startTime.split("T")[0];
     const end = endTime.split("T")[0];
+    let s = startTime.replace("Z","")
+    let e = endTime.replace("Z","")
 
     const workingDays = getDaysInCurrentMonth();
+    console.log(
+      salary,
+      workingDays,
+      workingMinutesPerDay,
+      start,
+      end,
+      actualinTime,
+      actualoutTime,
+    );
 
     const result = calculateStaffAttendanceUI({
       monthlySalary: salary,
       workingDays: workingDays,
       workingMinutesPerDay: workingMinutesPerDay,
-      scheduledIn: new Date(startTime.replace("Z", "")),
-      scheduledOut: new Date(endTime.replace("Z", "")),
+      scheduledIn: new Date(s),
+      scheduledOut: new Date(e),
       actualIn: new Date(`${start}T${actualinTime}`),
       actualOut: actualoutTime ? new Date(`${end}T${actualoutTime}`) : null,
     });
@@ -207,7 +244,7 @@ const StaffModal = ({ open, setOpen }) => {
           actualInTime: `${start}T${actualinTime}`,
           actualOutTime: `${end}T${actualoutTime}`,
           date: date,
-          status:status
+          status: status,
         },
         {
           headers: {
