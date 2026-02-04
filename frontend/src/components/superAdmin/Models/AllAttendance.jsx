@@ -75,7 +75,8 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                   : "-",
               status,
               penalty: att.penalty || "NONE",
-              sortTime: att.actualStartTime || att.date, // for sorting
+              sortTime: att.actualStartTime || att.date,
+              penaltyMin: att.penaltyMin,
             };
           }),
         )
@@ -96,6 +97,8 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     "Status",
     "Penalty",
   ];
+
+  const myLecturHeaders = ["Date", "Planned Time", "Total time worked","Status"];
 
   const lecHeader = ["Date", "Planned Time", "InTime", "OutTime", "Status"];
 
@@ -119,7 +122,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               },
             },
           );
-
+          console.log(data.data);
           setServerData(data.data);
         } else if (role === "STAFF") {
           const { data } = await axios.get(
@@ -150,9 +153,18 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
       console.log(uiData);
       setMyLecturesData(uiData);
     } else {
+      console.log(serverData);
       setLecData(serverData);
     }
   }, [serverData]);
+
+  function convertMinToHours(time) {
+    if (time >= 60) {
+      return `${Math.floor(time / 60)} hr ${time % 60} mins`;
+    } else {
+      return `${time} mins`;
+    }
+  }
 
   return (
     <>
@@ -174,12 +186,18 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
             <div className="w-[98%]  h-full items-center overflow-auto xl:overflow-x-hidden">
               <ul
                 className={`grid grid-cols-[100px_180px_260px_220px_140px_140px] ${
-                  typ === "LECTURE_BASED" ? `xl:grid-cols-6` : `xl:grid-cols-5`
+                  typ === "LECTURE_BASED"
+                    ? `xl:grid-cols-6`
+                    : typ === "SALARY_BASED"
+                      ? `xl:grid-cols-4`
+                      : `xl:grid-cols-5`
                 } text-center border-b p-2 font-semibold`}
               >
                 {typ === "LECTURE_BASED"
                   ? myLectureHeaders.map((item, i) => <li key={i}>{item}</li>)
-                  : lecHeader.map((item, i) => <li key={i}>{item}</li>)}
+                  : typ === "SALARY_BASED"
+                    ? myLecturHeaders.map((item, i) => <li key={i}>{item}</li>)
+                    : lecHeader.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
 
               {myLecturesData.length > 0 &&
@@ -189,7 +207,9 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                     className={`grid grid-cols-[100px_180px_260px_220px_140px_140px] ${
                       typ === "LECTURE_BASED"
                         ? `xl:grid-cols-6`
-                        : `xl:grid-cols-5`
+                        : typ === "SALARY_BASED"
+                          ? `xl:grid-cols-4`
+                          : `xl:grid-cols-5`
                     } text-center border-b p-2`}
                   >
                     <li>{item.date}</li>
@@ -207,20 +227,21 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                     >
                       {item.status}
                     </li>
-                    <li>{item.penalty}</li>
+                    <li>{convertMinToHours(item.penaltyMin)}</li>
                   </ul>
                 ))}
 
               {lecData.length > 0 &&
                 lecData.map((item, i) => {
-                  // console.log(item)
                   return (
                     <ul
                       key={i}
                       className={`grid grid-cols-[100px_180px_260px_220px_140px_140px] ${
                         typ === "LECTURE_BASED"
                           ? `xl:grid-cols-6`
-                          : `xl:grid-cols-5`
+                          : typ === "SALARY_BASED"
+                            ? `xl:grid-cols-4`
+                            : `xl:grid-cols-5`
                       } text-center border-b p-2`}
                     >
                       <li>{formatDate(item.date)}</li>
@@ -228,15 +249,22 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                         item.faculty?.shiftStartTime || item?.shiftStartTime,
                       )}-${formatTime(item.faculty?.shiftEndTime || item?.shiftEndTime)}`}</li>
                       <li>
-                        {item?.status === "PRESENT"
-                          ? formatTime(item?.inTime || item?.actualInTime)
-                          : "-"}
+                        {userdata.role === "STAFF"
+                          ? item?.status === "PRESENT"
+                            ? formatTime(item?.inTime || item?.actualInTime)
+                            : "-"
+                          : !item?.isLeave
+                            ? convertMinToHours(item?.workingMinutes)
+                            : "-"}
                       </li>
-                      <li>
-                        {item?.status === "PRESENT"
-                          ? formatTime(item?.outTime || item?.actualOutTime)
-                          : "-"}
-                      </li>
+
+                      {userdata.role === "STAFF" && (
+                        <li>
+                          {item?.status === "PRESENT"
+                            ? formatTime(item?.outTime || item?.actualOutTime)
+                            : "-"}
+                        </li>
+                      )}
                       {userdata.role === "STAFF" ? (
                         <li
                           className={
@@ -256,7 +284,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                           {item.isLeave ? "On Leave" : "Present"}
                         </li>
                       )}
-                      <li>{item.penaltyMin > 15 ? item.penaltyMin : 0}</li>
                     </ul>
                   );
                 })}
