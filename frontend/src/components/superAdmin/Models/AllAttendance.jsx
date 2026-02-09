@@ -98,9 +98,22 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     "Penalty",
   ];
 
-  const myLecturHeaders = ["Date", "Planned Time", "Total time worked","Status"];
+  const myLecturHeaders = [
+    "Date",
+    "Planned Time",
+    "Total time worked",
+    "Status",
+  ];
 
-  const lecHeader = ["Date", "Planned Time", "InTime", "OutTime", "Status"];
+  const lecHeader = [
+    "Date",
+    "Planned Time",
+    "InTime",
+    "OutTime",
+    "late penalty",
+    "overtime",
+    "Status",
+  ];
 
   useEffect(() => {
     const tok = JSON.parse(localStorage.getItem("user"));
@@ -190,7 +203,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                     ? `xl:grid-cols-6`
                     : typ === "SALARY_BASED"
                       ? `xl:grid-cols-4`
-                      : `xl:grid-cols-5`
+                      : `xl:grid-cols-7`
                 } text-center border-b p-2 font-semibold`}
               >
                 {typ === "LECTURE_BASED"
@@ -209,7 +222,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                         ? `xl:grid-cols-6`
                         : typ === "SALARY_BASED"
                           ? `xl:grid-cols-4`
-                          : `xl:grid-cols-5`
+                          : `xl:grid-cols-7`
                     } text-center border-b p-2`}
                   >
                     <li>{item.date}</li>
@@ -233,6 +246,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
 
               {lecData.length > 0 &&
                 lecData.map((item, i) => {
+                  console.log(item)
                   return (
                     <ul
                       key={i}
@@ -241,7 +255,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                           ? `xl:grid-cols-6`
                           : typ === "SALARY_BASED"
                             ? `xl:grid-cols-4`
-                            : `xl:grid-cols-5`
+                            : `xl:grid-cols-7`
                       } text-center border-b p-2`}
                     >
                       <li>{formatDate(item.date)}</li>
@@ -265,6 +279,14 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                             : "-"}
                         </li>
                       )}
+                      {
+                        userdata.role === "STAFF" && (
+                          <>
+                            <li className={`${item?.totalPenalty>0 ? "text-red-600" :"text-black"}`}>₹{item?.totalPenalty || 0}</li>
+                            <li className={`${item?.overtimePay>0 ? "text-green-600" :"text-black"}`}>₹{item?.overtimePay || 0}</li>
+                          </>
+                        )
+                      }
                       {userdata.role === "STAFF" ? (
                         <li
                           className={
