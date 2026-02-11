@@ -23,7 +23,7 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
 
   const isoTo24Hour = (isoString) => {
     if (!isoString) return "";
-    const date = new Date(isoString);
+    const date = new Date(isoString.replace("Z",""));
     return date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",

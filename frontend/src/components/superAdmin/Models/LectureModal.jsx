@@ -19,7 +19,7 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
   const router = useRouter();
   const isoTo24Hour = (isoString) => {
     if (!isoString) return "";
-    const safeIso = isoString;
+    const safeIso = isoString.replace("Z","");
     const date = new Date(safeIso);
     return date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
