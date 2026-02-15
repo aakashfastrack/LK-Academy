@@ -405,7 +405,7 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
                     <SelectContent>
                       {batch.map((item, i) => (
                         <SelectItem key={i} value={item.id}>
-                          {item.name}
+                          {`${item.name} - ${item.course.name}`}
                         </SelectItem>
                       ))}
                     </SelectContent>
