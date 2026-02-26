@@ -37,8 +37,14 @@ const FacultyModal = ({ open, setOpen }) => {
   const [subjectId, setSubjectId] = useState({});
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
-  const [actualIn, setActualIn] = useState(null);
-  const [actualOut, setActualOut] = useState(null);
+
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toTimeString().slice(0, 5);
+  };
+
+  const [actualIn, setActualIn] = useState(getCurrentTime());
+  const [actualOut, setActualOut] = useState(getCurrentTime());
   const [facultyType, setFacultyType] = useState(null);
   const [course, setCourse] = useState(null);
 
@@ -188,7 +194,6 @@ const FacultyModal = ({ open, setOpen }) => {
       lectureEquivalent > 1
         ? Number((lectureEquivalent * lectureRate).toFixed(2))
         : lectureRate;
-
 
     return {
       penalty,

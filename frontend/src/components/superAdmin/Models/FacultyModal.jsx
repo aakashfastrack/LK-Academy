@@ -45,8 +45,13 @@ const FacultyModal = ({ open, setOpen }) => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
 
-  const [inTime, setIntime] = useState(null);
-  const [outTime, setOuttime] = useState(null);
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toTimeString().slice(0, 5);
+  };
+
+  const [inTime, setIntime] = useState(getCurrentTime());
+  const [outTime, setOuttime] = useState(getCurrentTime());
 
   const { fetchBranch, fetchUser, fetchSubject, fetchLecture, fetchCourse } =
     useManagement();

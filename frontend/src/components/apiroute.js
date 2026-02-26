@@ -1,3 +1,3 @@
-export const mainRoute = "https://lk-academy-backend.onrender.com"
-// export const mainRoute = "http://localhost:8080"
+// export const mainRoute = "https://med-decide-stability-philadelphia.trycloudflare.com"
+export const mainRoute = "http://localhost:8080"
 
