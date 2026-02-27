@@ -1,3 +1,1 @@
-// export const mainRoute = "https://med-decide-stability-philadelphia.trycloudflare.com"
-export const mainRoute = "http://localhost:8080"
-
+export const mainRoute = process.env.NEXT_PUBLIC_API_URL
