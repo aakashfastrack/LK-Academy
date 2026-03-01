@@ -53,7 +53,8 @@ function calculateStaffAttendance({
   // -------- OVERTIME --------
   const extraMinutes = Math.max(0, actualWorkedMinutes - requiredMinutes);
 
-  const overtimeMinutes = Math.floor(extraMinutes) >= 30 ? Math.floor(extraMinutes) : 0;
+  const overtimeMinutes =
+    Math.floor(extraMinutes) >= 30 ? Math.floor(extraMinutes) : 0;
   const overtimePay =
     overtimeMinutes >= 30 ? Math.floor(overtimeMinutes * perMinuteRate) : 0;
 
@@ -94,10 +95,10 @@ const markStaffAttendance = async ({
   }
 
   const calc = calculateStaffAttendance({
-    shiftStartTime,
-    shiftEndTime,
-    actualInTime,
-    actualOutTime,
+    shiftStartTime: new Date(shiftStartTime),
+    shiftEndTime: new Date(shiftEndTime),
+    actualInTime: new Date(actualInTime),
+    actualOutTime: new Date(actualOutTime),
     monthlySalary: staff.salary,
     workingMinutesPerDay: staff.workingMinutesPerDay,
   });
@@ -105,15 +106,14 @@ const markStaffAttendance = async ({
   // let date1 = new Date();
   // let date = new Date(date1.setHours(0, 0, 0, 0));
 
-  let date1 = new Date(date);
-
-  date1.setUTCHours(0, 0, 0, 0);
+  const attendanceDate = new Date(date);
+  attendanceDate.setUTCHours(0, 0, 0, 0);
 
   return await prisma.staffAttendance.create({
     data: {
       staffId,
       branchId,
-      date: date,
+      date: attendanceDate,
       shiftStartTime,
       shiftEndTime,
       actualInTime,

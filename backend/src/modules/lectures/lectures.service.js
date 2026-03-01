@@ -11,16 +11,15 @@ const createlectureSchedule = async (
     endTime,
     TotalScheduled,
   },
-  currentUser
+  currentUser,
 ) => {
+  console.log("StartTime", startTime);
+  console.log("EndTime", endTime);
+  const startDateTime = new Date(startTime);
+  const endDateTime = new Date(endTime);
 
-  console.log("StartTime",startTime)
-  console.log("EndTime",endTime)
-  const startDateTime = new Date(`${StartDate}T${startTime}`);
-  const endDateTime = new Date(`${StartDate}T${endTime}`);
-
-  console.log("Date set krna",new Date(startTime))
-  console.log("start Date",startDateTime)
+  console.log("Date set krna", new Date(startTime));
+  console.log("start Date", startDateTime);
 
   if (endDateTime <= startDateTime) {
     throw new Error("End time must be after start time");
@@ -85,12 +84,12 @@ const getLectureByIdAndType = async (id, type, month, year) => {
       },
       include: {
         attendance: {
-          where:{
-            date:{
-              gte:start,
-              lte:end
-            }
-          }
+          where: {
+            date: {
+              gte: start,
+              lte: end,
+            },
+          },
         },
         subject: true,
       },
@@ -180,11 +179,8 @@ const updateLecture = async (
   EndDate,
   startTime,
   endTime,
-  TotalScheduled
+  TotalScheduled,
 ) => {
-  const startDateTime = new Date(`${StartDate}T${startTime}`);
-  const endDateTime = new Date(`${StartDate}T${endTime}`);
-
   return await prisma.lectureSchedule.update({
     where: { id },
     data: {
@@ -193,8 +189,8 @@ const updateLecture = async (
       batchId,
       StartDate: new Date(StartDate),
       EndDate: new Date(EndDate),
-      startTime: startDateTime,
-      endTime: endDateTime,
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
       TotalScheduled: TotalScheduled ? Number(TotalScheduled) : null,
     },
   });

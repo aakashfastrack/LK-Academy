@@ -17,7 +17,7 @@ const loginUser = async (phoneNumber, password) => {
     throw new Error(`Invalid phoneNumber or password`);
   }
 
-  if(!user.isActive){
+  if (!user.isActive) {
     throw new Error(`Not allowed to login`);
   }
 
@@ -29,7 +29,7 @@ const loginUser = async (phoneNumber, password) => {
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN,
-    }
+    },
   );
 
   return {
@@ -41,7 +41,7 @@ const loginUser = async (phoneNumber, password) => {
       role: user.role,
       branchId: user.branchId,
       branch: user.branch,
-      type:user.facultyType
+      type: user.facultyType,
     },
   };
 };
@@ -81,7 +81,7 @@ const registerSuperAdmin = async (data) => {
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN,
-    }
+    },
   );
 
   return {
@@ -109,11 +109,10 @@ const registerUser = async (data) => {
     facultyType,
   } = data;
 
-  const today = new Date().toISOString().split("T")[0];
+  // const today = new Date().toISOString().split("T")[0];
 
-  const shiftStart = new Date(`${today}T${shiftStartTime}`);
-  const shiftEnd = new Date(`${today}T${shiftEndTime}`);
-
+  // const shiftStart = new Date(`${today}T${shiftStartTime}`);
+  // const shiftEnd = new Date(`${today}T${shiftEndTime}`);
 
   const existingUser = await prisma.user.findUnique({
     where: { phoneNumber },
@@ -125,9 +124,15 @@ const registerUser = async (data) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const shiftStart = shiftStartTime ? new Date(shiftStartTime) : null;
+  const shiftEnd = shiftEndTime ? new Date(shiftEndTime) : null;
+
   if (role === "STAFF") {
+    if (!shiftStart || !shiftEnd) {
+      throw new Error("Shift timings required for staff");
+    }
     const workingMinutesPerDay = Math.floor(
-      (shiftEnd - shiftStart) / (1000 * 60)
+      (shiftEnd - shiftStart) / (1000 * 60),
     );
 
     if (workingMinutesPerDay <= 0) {
@@ -158,8 +163,11 @@ const registerUser = async (data) => {
     };
   } else {
     if (facultyType === "SALARY_BASED") {
+      if (!shiftStart || !shiftEnd) {
+        throw new Error("Shift timings required for salary based faculty");
+      }
       const workingMinutesPerDay = Math.floor(
-        (shiftEnd - shiftStart) / (1000 * 60)
+        (shiftEnd - shiftStart) / (1000 * 60),
       );
 
       if (workingMinutesPerDay <= 0) {
