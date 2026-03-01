@@ -50,7 +50,7 @@ const FacultyModal = ({ open, setOpen }) => {
 
   const formatTime = (isoTime) => {
     if (!isoTime) return "";
-    const date = new Date(isoTime.replace("Z", ""));
+    const date = new Date(isoTime);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -225,8 +225,8 @@ const FacultyModal = ({ open, setOpen }) => {
     const date = subjectId.startTime.split("T")[0];
 
     const result = calculateLectureBasedFaculty({
-      plannedStart: new Date(subjectId.startTime.replace("Z", "")),
-      plannedEnd: new Date(subjectId.endTime.replace("Z", "")),
+      plannedStart: new Date(subjectId.startTime),
+      plannedEnd: new Date(subjectId.endTime),
       actualStart: new Date(`${date}T${actualIn}`),
       actualEnd: new Date(`${date}T${actualOut}`),
       lectureRate: facultyId.lectureRate,
@@ -270,8 +270,8 @@ const FacultyModal = ({ open, setOpen }) => {
         `${mainRoute}/api/attendance/lecture/attendance`,
         {
           lectureId: lect.id,
-          actualStartTime: `${today}T${actualIn}`,
-          actualEndTime: `${today}T${actualOut}`,
+          actualStartTime: new Date(`${today}T${actualIn}`).toISOString(),
+          actualEndTime: new Date(`${today}T${actualOut}`).toISOString(),
           status: status,
           payout: Math.floor(payout),
           date: date,

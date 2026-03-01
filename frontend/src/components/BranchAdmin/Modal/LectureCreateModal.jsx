@@ -23,7 +23,7 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
 
   const isoTo24Hour = (isoString) => {
     if (!isoString) return "";
-    const date = new Date(isoString.replace("Z",""));
+    const date = new Date(isoString);
     return date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
@@ -144,6 +144,11 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
     setBranch(branchdata.data.user.branch);
   }, []);
 
+  const combineDateTimeToISO = (dateStr, timeStr) => {
+    if (!dateStr || !timeStr) return null;
+    return new Date(`${dateStr}T${timeStr}`).toISOString();
+  };
+
   const handleCreate = async () => {
     try {
       let tokn = JSON.parse(localStorage.getItem("user"));
@@ -156,8 +161,8 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
           batchId: batchId,
           StartDate,
           EndDate,
-          startTime,
-          endTime,
+          startTime: combineDateTimeToISO(StartDate, startTime),
+          endTime: combineDateTimeToISO(StartDate, endTime),
           TotalScheduled: totalLecture,
         },
         {
@@ -193,8 +198,8 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
           batchId: batchId,
           StartDate,
           EndDate,
-          startTime,
-          endTime,
+          startTime: combineDateTimeToISO(StartDate, startTime),
+          endTime: combineDateTimeToISO(EndDate, endTime),
           TotalScheduled: totalLecture,
         },
         {

@@ -13,7 +13,7 @@ const StaffMain = () => {
   };
 
   const toISTDateString = (date) => {
-    return new Date(date).toLocaleDateString("en-CA", {
+    return new Date(date).toLocaleDateString("en-IN", {
       timeZone: "Asia/Kolkata",
     });
   };
@@ -29,7 +29,7 @@ const StaffMain = () => {
 
   const formatTime = (isoTime) => {
     if (!isoTime) return "";
-    const date = new Date(isoTime.replace("Z", ""));
+    const date = new Date(isoTime);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",

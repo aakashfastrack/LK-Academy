@@ -17,7 +17,7 @@ import { toast } from "sonner";
 const UserModal = ({ open, setOpen, type, user, refetch }) => {
   const isoTo24Hour = (isoString) => {
     if (!isoString) return "";
-    const date = new Date(isoString.replace("Z",""));
+    const date = new Date(isoString);
     return date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",

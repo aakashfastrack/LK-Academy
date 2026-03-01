@@ -27,7 +27,7 @@ const Lecture = () => {
 
   const formatTime = (isoTime) => {
     if(!isoTime) return "";
-    const date = new Date(isoTime.replace("Z",""))
+    const date = new Date(isoTime)
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",

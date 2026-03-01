@@ -19,7 +19,7 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
   const router = useRouter();
   const isoTo24Hour = (isoString) => {
     if (!isoString) return "";
-    const safeIso = isoString.replace("Z","");
+    const safeIso = isoString;
     const date = new Date(safeIso);
     return date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
@@ -32,7 +32,7 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
     if (!isoIst) return "";
 
     // 🔥 remove Z so JS treats it as local time
-    const safeIso = isoIst.replace("Z", "");
+    const safeIso = isoIst;
 
     const date = new Date(safeIso);
 
@@ -173,6 +173,13 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
     loadData();
   }, [bat]);
 
+  const combineDateTimeToISO = (dateStr, timeStr) => {
+    if (!dateStr || !timeStr) return null;
+    let data =  new Date(`${dateStr}T${timeStr}`).toISOString();
+    console.log(data)
+    return data
+  };
+
   const handleCreateLecture = async () => {
     try {
       let tok = JSON.parse(localStorage.getItem("user"));
@@ -186,8 +193,8 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
           batchId: bat,
           StartDate: startDate,
           EndDate: endDate,
-          startTime: intime,
-          endTime: outtime,
+          startTime: combineDateTimeToISO(startDate,intime),
+          endTime: combineDateTimeToISO(startDate,outtime),
           TotalScheduled: totalLecture,
         },
         {
@@ -225,8 +232,8 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
           branchId: Branc,
           StartDate: startDate,
           EndDate: endDate,
-          startTime: intime,
-          endTime: outtime,
+          startTime: combineDateTimeToISO(startDate,intime),
+          endTime: combineDateTimeToISO(startDate,outtime),
           TotalScheduled: totalLecture,
         },
         {

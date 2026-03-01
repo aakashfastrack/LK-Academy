@@ -33,7 +33,7 @@ const StaffModal = ({ open, setOpen }) => {
   const formatTime = (isoTime) => {
     if (!isoTime) return "";
 
-    const date = new Date(isoTime.replace("Z", ""));
+    const date = new Date(isoTime);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -139,8 +139,7 @@ const StaffModal = ({ open, setOpen }) => {
       overtimeMinutes >= 30 ? Math.floor(overtimeMinutes * perMinuteRate) : 0;
 
     // ---- PENALTY ----
-    let fixedPenalty =
-      isLateBeyondGrace ? FIXED_PENALTY : 0;
+    let fixedPenalty = isLateBeyondGrace ? FIXED_PENALTY : 0;
     let additionalPenalty = 0;
 
     if (shortfallMinutes > GRACE_MINUTES) {
@@ -180,10 +179,12 @@ const StaffModal = ({ open, setOpen }) => {
       monthlySalary: salary,
       workingDays: workingDays,
       workingMinutesPerDay: workingMinutesPerDay,
-      scheduledIn: new Date(startTime.replace("Z", "")),
-      scheduledOut: new Date(endTime.replace("Z", "")),
-      actualIn: new Date(`${start}T${actualinTime}`),
-      actualOut: actualoutTime ? new Date(`${end}T${actualoutTime}`) : null,
+      scheduledIn: new Date(startTime),
+      scheduledOut: new Date(endTime),
+      actualIn: new Date(new Date(`${start}T${actualinTime}`)).toISOString(),
+      actualOut: actualoutTime
+        ? new Date(new Date(`${end}T${actualoutTime}`)).toISOString()
+        : null,
     });
 
     setStaffPreview(result);
@@ -204,9 +205,9 @@ const StaffModal = ({ open, setOpen }) => {
           branchId: branch.id,
           shiftStartTime: startTime,
           shiftEndTime: endTime,
-          actualInTime: `${start}T${actualinTime}`,
-          actualOutTime: `${end}T${actualoutTime}`,
-          date: date,
+          actualInTime: new Date(`${start}T${actualinTime}`).toISOString(),
+          actualOutTime: new Date(`${end}T${actualoutTime}`).toISOString(),
+          date: new Date(date).toISOString(),
         },
         {
           headers: {

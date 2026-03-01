@@ -25,9 +25,7 @@ const LectureManagement = () => {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    console.log(data.data);
-
+    
     setLectureData(data.data);
   };
 
@@ -53,7 +51,7 @@ const LectureManagement = () => {
     if (!isoIst) return "";
 
     // 🔥 remove Z so JS treats it as local time
-    const safeIso = isoIst.replace("Z", "");
+    const safeIso = isoIst;
 
     const date = new Date(safeIso);
 

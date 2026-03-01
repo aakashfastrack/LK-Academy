@@ -62,7 +62,7 @@ const FacultyModal = ({ open, setOpen }) => {
     // 🔥 remove Z so JS treats it as local time
     const safeIso = isoIst;
 
-    const date = new Date(safeIso.replace("Z", ""));
+    const date = new Date(safeIso);
 
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
@@ -272,8 +272,8 @@ const FacultyModal = ({ open, setOpen }) => {
     const date = lecture.startTime.split("T")[0];
 
     const result = calculateLectureBasedFaculty({
-      plannedStart: new Date(lecture.startTime.replace("Z", "")),
-      plannedEnd: new Date(lecture.endTime.replace("Z", "")),
+      plannedStart: new Date(lecture.startTime),
+      plannedEnd: new Date(lecture.endTime),
       actualStart: new Date(`${date}T${inTime}`),
       actualEnd: new Date(`${date}T${outTime}`),
       lectureRate: selectFaculty.lectureRate,
@@ -304,8 +304,8 @@ const FacultyModal = ({ open, setOpen }) => {
         `${mainRoute}/api/attendance/lecture/attendance`,
         {
           lectureId: lecture.id,
-          actualStartTime: `${today}T${inTime}`,
-          actualEndTime: `${today}T${outTime}`,
+          actualStartTime: new Date(`${today}T${inTime}`).toISOString(),
+          actualEndTime: new Date(`${today}T${outTime}`).toISOString(),
           status: status,
           payout: payout,
           date,

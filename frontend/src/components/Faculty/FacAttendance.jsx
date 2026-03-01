@@ -22,7 +22,7 @@ const FacAttendance = () => {
 
   const formatTime = (iso) => {
     if (!iso) return;
-    const date = new Date(iso.replace("Z",""))
+    const date = new Date(iso)
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",

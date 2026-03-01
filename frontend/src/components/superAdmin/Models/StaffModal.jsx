@@ -71,7 +71,7 @@ const StaffModal = ({ open, setOpen }) => {
 
   const formatTime = (isoTime) => {
     if (!isoTime) return "";
-    const iso = isoTime.replace("Z", "");
+    const iso = isoTime;
     let date = new Date(iso);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
@@ -145,8 +145,7 @@ const StaffModal = ({ open, setOpen }) => {
       overtimeMinutes >= 30 ? Math.floor(overtimeMinutes * perMinuteRate) : 0;
 
     // ---- PENALTY ----
-    let fixedPenalty =
-      isLateBeyondGrace ? FIXED_PENALTY : 0;
+    let fixedPenalty = isLateBeyondGrace ? FIXED_PENALTY : 0;
 
     let additionalPenalty = 0;
 
@@ -180,28 +179,21 @@ const StaffModal = ({ open, setOpen }) => {
     if (!startTime || !endTime || !actualinTime || !actualoutTime) return;
     const start = startTime.split("T")[0];
     const end = endTime.split("T")[0];
-    let s = startTime.replace("Z", "");
-    let e = endTime.replace("Z", "");
+    let s = startTime;
+    let e = endTime;
 
     const workingDays = getDaysInCurrentMonth();
-    console.log(
-      salary,
-      workingDays,
-      workingMinutesPerDay,
-      start,
-      end,
-      actualinTime,
-      actualoutTime,
-    );
 
     const result = calculateStaffAttendanceUI({
       monthlySalary: salary,
       workingDays: workingDays,
       workingMinutesPerDay: workingMinutesPerDay,
-      scheduledIn: new Date(s),
-      scheduledOut: new Date(e),
-      actualIn: new Date(`${start}T${actualinTime}`),
-      actualOut: actualoutTime ? new Date(`${end}T${actualoutTime}`) : null,
+      scheduledIn: new Date(startTime),
+      scheduledOut: new Date(endTime),
+      actualIn: new Date(new Date(`${start}T${actualinTime}`).toISOString()),
+      actualOut: actualoutTime
+        ? new Date(new Date(`${end}T${actualoutTime}`)).toISOString()
+        : null,
     });
     console.log(result);
 
@@ -225,9 +217,9 @@ const StaffModal = ({ open, setOpen }) => {
           branchId: selectBranch,
           shiftStartTime: startTime,
           shiftEndTime: endTime,
-          actualInTime: `${start}T${actualinTime}`,
-          actualOutTime: `${end}T${actualoutTime}`,
-          date: date,
+          actualInTime: new Date(`${start}T${actualinTime}`).toISOString(),
+          actualOutTime: new Date(`${end}T${actualoutTime}`).toISOString(),
+          date: new Date(date).toISOString(),
           status: status,
         },
         {

@@ -21,7 +21,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     // 🔥 remove Z so JS treats it as local time
     const safeIso = isoIst;
 
-    const date = new Date(safeIso.replace("Z", ""));
+    const date = new Date(safeIso);
 
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
@@ -135,7 +135,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               },
             },
           );
-          console.log(data.data);
           setServerData(data.data);
         } else if (role === "STAFF") {
           const { data } = await axios.get(
@@ -163,7 +162,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   useEffect(() => {
     if (typ === "LECTURE_BASED") {
       const uiData = mapLecturesToUI(serverData);
-      console.log(uiData);
       setMyLecturesData(uiData);
     } else {
       console.log(serverData);
