@@ -177,8 +177,10 @@ const update = async (req, res) => {
       salary,
       shiftStartTime,
       shiftEndTime,
+      facultyType
     } = req.body;
 
+    console.log("user update ke liye aaya hai ")
     const user = await updateUser(
       id,
       name,
@@ -187,8 +189,11 @@ const update = async (req, res) => {
       branchId,
       salary,
       shiftStartTime,
-      shiftEndTime
+      shiftEndTime,
+      facultyType
     );
+    console.log("user updated")
+
     res.json({
       success: true,
       message: "User Updated",

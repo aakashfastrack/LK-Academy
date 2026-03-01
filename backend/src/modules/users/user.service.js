@@ -100,7 +100,7 @@ const getAllUser = async () => {
       facultyType: true,
       lectureRate: true,
       workingMinutesPerDay: true,
-      isActive:true
+      isActive: true,
     },
   });
 };
@@ -142,7 +142,7 @@ const makeBrancheAdmin = async (userId, branchId) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
-  console.log("user",user);
+  console.log("user", user);
 
   if (!user) {
     throw new Error("User not found");
@@ -162,7 +162,7 @@ const makeBrancheAdmin = async (userId, branchId) => {
     },
   });
 
-  console.log("Updated User",updatedUser);
+  console.log("Updated User", updatedUser);
 
   // 5️⃣ Branch ko naye admin se link karo
   const newAdmin = await prisma.branch.update({
@@ -187,6 +187,7 @@ const updateUser = async (
   shiftEndTime,
   facultyType,
 ) => {
+  console.log("user updating ");
   if (role === "STAFF") {
     const today = new Date().toISOString().split("T")[0];
 
@@ -211,11 +212,15 @@ const updateUser = async (
       },
     });
   } else {
+    console.log("faculty");
     if (facultyType === "SALARY_BASED") {
+      console.log("Salary");
       const today = new Date().toISOString().split("T")[0];
 
       const shiftStart = new Date(`${today}T${shiftStartTime}`);
       const shiftEnd = new Date(`${today}T${shiftEndTime}`);
+      console.log(shiftStart);
+      console.log(shiftEnd);
 
       const workingMinutesPerDay = Math.floor(
         (shiftEnd - shiftStart) / (1000 * 60),
@@ -234,30 +239,30 @@ const updateUser = async (
           workingMinutesPerDay: workingMinutesPerDay,
         },
       });
+    } else {
+      return await prisma.user.update({
+        where: { id },
+        data: {
+          name,
+          phoneNumber,
+          role,
+          branchId: Number(branchId),
+          lectureRate: Number(salary),
+        },
+      });
     }
-    return await prisma.user.update({
-      where: { id },
-      data: {
-        name,
-        phoneNumber,
-        role,
-        branchId: Number(branchId),
-        lectureRate: Number(salary),
-      },
-    });
   }
 };
 
 const deleteUser = async (id) => {
-
   return await prisma.user.update({
-    where:{
-      id:id
+    where: {
+      id: id,
     },
-    data:{
-      isActive:false
-    }
-  })
+    data: {
+      isActive: false,
+    },
+  });
 };
 
 const branchDashboard = async () => {
@@ -424,18 +429,16 @@ const userDashboard = async ({ branchId, userId }) => {
   };
 };
 
-
-const activateUser = async(id) =>{
+const activateUser = async (id) => {
   return await prisma.user.update({
-    where:{
-      id:id,
+    where: {
+      id: id,
     },
-    data:{
-      isActive:true
-    }
-  })
-
-}
+    data: {
+      isActive: true,
+    },
+  });
+};
 
 module.exports = {
   assignUserToBranch,
@@ -447,5 +450,5 @@ module.exports = {
   updateUser,
   deleteUser,
   userDashboard,
-  activateUser
+  activateUser,
 };

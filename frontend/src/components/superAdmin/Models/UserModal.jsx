@@ -132,7 +132,7 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       toast.success("User Created Successfully");
       setOpen(false);
@@ -162,13 +162,14 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
           shiftStartTime: shiftInTime,
           shiftEndTime: shiftOutTime,
           salary: salary,
+          facultyType: facultyType,
         },
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       toast.success("User Updated Successfully");
       setOpen(false);

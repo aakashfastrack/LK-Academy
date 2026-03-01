@@ -98,6 +98,10 @@ const getLectureByIdAndType = async (id, type, month, year) => {
     return await prisma.facultyAttendance.findMany({
       where: {
         facultyId: Number(id),
+        date: {
+          gte: start,
+          lte: end,
+        },
       },
       include: {
         faculty: true,
