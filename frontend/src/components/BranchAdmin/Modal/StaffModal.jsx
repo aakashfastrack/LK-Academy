@@ -181,9 +181,9 @@ const StaffModal = ({ open, setOpen }) => {
       workingMinutesPerDay: workingMinutesPerDay,
       scheduledIn: new Date(startTime),
       scheduledOut: new Date(endTime),
-      actualIn: new Date(new Date(`${start}T${actualinTime}`)).toISOString(),
+      actualIn: new Date(new Date(`${start}T${actualinTime}`).toISOString()),
       actualOut: actualoutTime
-        ? new Date(new Date(`${end}T${actualoutTime}`)).toISOString()
+        ? new Date(new Date(`${end}T${actualoutTime}`).toISOString())
         : null,
     });
 
