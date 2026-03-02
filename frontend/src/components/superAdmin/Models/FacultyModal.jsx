@@ -231,11 +231,11 @@ const FacultyModal = ({ open, setOpen }) => {
     );
 
     const lectureEquivalent = workedMinutes / LECTURE_MINUTES;
+    console.log(lectureEquivalent);
 
-    const calculatedPayout =
-      lectureEquivalent > 1
-        ? Number((lectureEquivalent * lectureRate).toFixed(2))
-        : lectureRate;
+    const calculatedPayout = Number(
+      (lectureEquivalent * lectureRate).toFixed(2),
+    );
 
     return {
       penalty,
@@ -282,7 +282,7 @@ const FacultyModal = ({ open, setOpen }) => {
     const finalPayout = applyStatusOnPayout(result.calculatedPayout, status);
 
     setPenaltyPreview(result);
-    setPayout(finalPayout);
+    setPayout(Math.floor(finalPayout));
   }, [lecture, status, inTime, outTime]);
 
   useEffect(() => {

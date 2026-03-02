@@ -67,8 +67,6 @@ function calculateLectureBasedFacultyBackend({
   const actualStartTime = new Date(actualStart);
   const actualEndTime = new Date(actualEnd);
 
-  console.log(actualStartTime - plannedStartTime);
-
   // ---------- PENALTY LABEL ----------
   const lateMinutes = Math.max(
     0,
@@ -100,10 +98,7 @@ function calculateLectureBasedFacultyBackend({
 
   // ---------- PAYOUT ----------
   let lectureEquivalent = workedMinutes / LECTURE_MINUTES;
-  let payout =
-    lectureEquivalent > 1
-      ? Number((lectureEquivalent * lectureRate).toFixed(2))
-      : lectureRate;
+  let payout = Number((lectureEquivalent * lectureRate).toFixed(2));
 
   // ---------- STATUS OVERRIDES ----------
   if (status === "CANCELLED") {
@@ -118,7 +113,7 @@ function calculateLectureBasedFacultyBackend({
     penalty,
     workedMinutes,
     lectureEquivalent: Number(lectureEquivalent.toFixed(2)),
-    payout,
+    payout: Math.floor(payout),
     totalPenaltyMin,
   };
 }

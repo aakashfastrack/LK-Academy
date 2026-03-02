@@ -190,10 +190,13 @@ const FacultyModal = ({ open, setOpen }) => {
 
     const lectureEquivalent = workedMinutes / LECTURE_MINUTES;
 
-    const calculatedPayout =
-      lectureEquivalent > 1
-        ? Number((lectureEquivalent * lectureRate).toFixed(2))
-        : lectureRate;
+    const calculatedPayout = Number(
+      (lectureEquivalent * lectureRate).toFixed(2),
+    );
+
+    // const calculatedPayout = Number(
+    //   (lectureEquivalent * lectureRate).toFixed(2),
+    // );
 
     return {
       penalty,
@@ -227,8 +230,8 @@ const FacultyModal = ({ open, setOpen }) => {
     const result = calculateLectureBasedFaculty({
       plannedStart: new Date(subjectId.startTime),
       plannedEnd: new Date(subjectId.endTime),
-      actualStart: new Date(`${date}T${actualIn}`),
-      actualEnd: new Date(`${date}T${actualOut}`),
+      actualStart: new Date(new Date(`${date}T${actualIn}`).toISOString()),
+      actualEnd: new Date(new Date(`${date}T${actualOut}`).toISOString()),
       lectureRate: facultyId.lectureRate,
     });
 
@@ -238,7 +241,7 @@ const FacultyModal = ({ open, setOpen }) => {
 
     console.log(result);
     setPenaltyPreview(result);
-    setPayout(finalPayout);
+    setPayout(Math.floor(finalPayout));
   }, [subjectId, actualIn, actualOut, status]);
 
   const settingpayout = async () => {
