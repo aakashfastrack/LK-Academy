@@ -27,8 +27,12 @@ const StaffModal = ({ open, setOpen }) => {
 
   const [status, setStatus] = useState("PRESENT");
 
-  const [actualinTime, setActualInTime] = useState(null);
-  const [actualoutTime, setActualOutTime] = useState(null);
+  const [actualinTime, setActualInTime] = useState(
+    new Date().toISOString().split("T")[1],
+  );
+  const [actualoutTime, setActualOutTime] = useState(
+    new Date().toISOString().split("T")[1],
+  );
   const [salary, setSalary] = useState(null);
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
 
@@ -227,6 +231,8 @@ const StaffModal = ({ open, setOpen }) => {
       setOpen(false);
       router.refresh();
     } catch (err) {
+      console.log(err);
+      console.log(err.message);
       toast.error("Error in marking attendance");
       setOpen(false);
       router.refresh();
