@@ -26,7 +26,7 @@ const StaffModal = ({ open, setOpen }) => {
   const [endTime, setEndTime] = useState(null);
 
   const [actualinTime, setActualInTime] = useState(null);
-  const [actualoutTime, setActualOutTime] = useState(null);
+  const [actualoutTime, setActualOutTime] = useState();
   const [salary, setSalary] = useState(null);
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
   const [date, setDate] = useState(new Date());
@@ -209,6 +209,16 @@ const StaffModal = ({ open, setOpen }) => {
 
       const start = startTime.split("T")[0];
       const end = endTime.split("T")[0];
+      console.log(start);
+      console.log(end);
+
+      if (!actualinTime && !actualoutTime) {
+        setActualInTime(startTime.split("T")[1]);
+        setActualOutTime(endTime.split("T")[1]);
+      }
+
+      console.log(actualinTime);
+      console.log(actualoutTime);
 
       const { data } = await axios.post(
         `${mainRoute}/api/staffAttendance`,
@@ -235,6 +245,8 @@ const StaffModal = ({ open, setOpen }) => {
       setOpen(false);
       router.refresh();
     } catch (err) {
+      console.log(err);
+      console.log(err.message);
       toast.error("Error in marking attendance");
       setOpen(false);
       router.refresh();

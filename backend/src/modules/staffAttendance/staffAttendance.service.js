@@ -171,8 +171,6 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
     },
   });
 
-  console.log(attendance);
-
   let fixedLatePenalties = 0;
   let totalExtaPenalties = 0;
   let totalOvertimePay = 0;
