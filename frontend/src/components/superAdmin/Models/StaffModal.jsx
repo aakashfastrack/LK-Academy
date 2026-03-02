@@ -25,8 +25,8 @@ const StaffModal = ({ open, setOpen }) => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
 
-  const [actualinTime, setActualInTime] = useState(null);
-  const [actualoutTime, setActualOutTime] = useState();
+  const [actualinTime, setActualInTime] = useState((new Date()).toISOString().split("T")[1]);
+  const [actualoutTime, setActualOutTime] = useState((new Date()).toISOString().split("T")[1]);
   const [salary, setSalary] = useState(null);
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
   const [date, setDate] = useState(new Date());
