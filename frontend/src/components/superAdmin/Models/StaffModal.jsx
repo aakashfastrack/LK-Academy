@@ -25,8 +25,12 @@ const StaffModal = ({ open, setOpen }) => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
 
-  const [actualinTime, setActualInTime] = useState((new Date()).toISOString().split("T")[1]);
-  const [actualoutTime, setActualOutTime] = useState((new Date()).toISOString().split("T")[1]);
+  const [actualinTime, setActualInTime] = useState(
+    new Date().toISOString().split("T")[1],
+  );
+  const [actualoutTime, setActualOutTime] = useState(
+    new Date().toISOString().split("T")[1],
+  );
   const [salary, setSalary] = useState(null);
   const [workingMinutesPerDay, setWorkingMinutesPerDay] = useState(null);
   const [date, setDate] = useState(new Date());
@@ -192,7 +196,7 @@ const StaffModal = ({ open, setOpen }) => {
       scheduledOut: new Date(endTime),
       actualIn: new Date(new Date(`${start}T${actualinTime}`).toISOString()),
       actualOut: actualoutTime
-        ? new Date(new Date(`${end}T${actualoutTime}`)).toISOString()
+        ? new Date(new Date(`${end}T${actualoutTime}`).toISOString())
         : null,
     });
     console.log(result);
@@ -218,7 +222,6 @@ const StaffModal = ({ open, setOpen }) => {
         console.log(actualinTime);
         console.log(actualoutTime);
       }
-
 
       const { data } = await axios.post(
         `${mainRoute}/api/staffAttendance`,
