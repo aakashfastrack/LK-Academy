@@ -215,10 +215,10 @@ const StaffModal = ({ open, setOpen }) => {
       if (!actualinTime && !actualoutTime) {
         setActualInTime(startTime.split("T")[1]);
         setActualOutTime(endTime.split("T")[1]);
+        console.log(actualinTime);
+        console.log(actualoutTime);
       }
 
-      console.log(actualinTime);
-      console.log(actualoutTime);
 
       const { data } = await axios.post(
         `${mainRoute}/api/staffAttendance`,
