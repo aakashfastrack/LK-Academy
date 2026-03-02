@@ -223,7 +223,7 @@ const FacultyModal = ({ open, setOpen }) => {
 
     let TotalP = LateMin + EarlyMin;
 
-    let totalPenaltyMin = TotalP * 60 * 1000 > FIFTEEN_MIN ? TotalP : 0;
+    let totalPenaltyMin = TotalP * 60 * 1000 >= FIFTEEN_MIN ? TotalP : 0;
 
     const workedMinutes = Math.max(
       0,
@@ -231,11 +231,11 @@ const FacultyModal = ({ open, setOpen }) => {
     );
 
     const lectureEquivalent = workedMinutes / LECTURE_MINUTES;
-    console.log(lectureEquivalent);
 
-    const calculatedPayout = Number(
-      (lectureEquivalent * lectureRate).toFixed(2),
-    );
+    const calculatedPayout =
+      lectureEquivalent <= 0.875
+        ? Number((lectureEquivalent * lectureRate).toFixed(2))
+        : lectureRate;
 
     return {
       penalty,

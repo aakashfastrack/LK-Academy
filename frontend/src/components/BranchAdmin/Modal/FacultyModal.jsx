@@ -190,9 +190,10 @@ const FacultyModal = ({ open, setOpen }) => {
 
     const lectureEquivalent = workedMinutes / LECTURE_MINUTES;
 
-    const calculatedPayout = Number(
-      (lectureEquivalent * lectureRate).toFixed(2),
-    );
+    const calculatedPayout =
+      lectureEquivalent <= 0.875
+        ? Number((lectureEquivalent * lectureRate).toFixed(2))
+        : lectureRate;
 
     // const calculatedPayout = Number(
     //   (lectureEquivalent * lectureRate).toFixed(2),
