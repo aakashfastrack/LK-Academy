@@ -98,7 +98,11 @@ function calculateLectureBasedFacultyBackend({
 
   // ---------- PAYOUT ----------
   let lectureEquivalent = workedMinutes / LECTURE_MINUTES;
-  let payout = Number((lectureEquivalent * lectureRate).toFixed(2));
+
+  let payout =
+    lectureEquivalent <= 0.875
+      ? Number((lectureEquivalent * lectureRate).toFixed(2))
+      : lectureRate;
 
   // ---------- STATUS OVERRIDES ----------
   if (status === "CANCELLED") {
