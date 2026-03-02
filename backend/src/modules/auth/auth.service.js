@@ -124,8 +124,15 @@ const registerUser = async (data) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const shiftStart = shiftStartTime ? new Date(shiftStartTime) : null;
-  const shiftEnd = shiftEndTime ? new Date(shiftEndTime) : null;
+  const today = new Date().toISOString().split("T")[0];
+  console.log(today);
+
+  const shiftStart = shiftStartTime
+    ? new Date(`${today}T${shiftStartTime}`)
+    : null;
+  const shiftEnd = shiftEndTime ? new Date(`${today}T${shiftEndTime}`) : null;
+  console.log(shiftStart);
+  console.log(shiftEnd);
 
   if (role === "STAFF") {
     if (!shiftStart || !shiftEnd) {
@@ -145,8 +152,8 @@ const registerUser = async (data) => {
         password: hashedPassword,
         role,
         branchId: branchId || null,
-        shiftStartTime: new Date(shiftStart),
-        shiftEndTime: new Date(shiftEnd),
+        shiftStartTime: new Date(shiftStart.toISOString()),
+        shiftEndTime: new Date(shiftEnd.toISOString()),
         salary: Number(salary),
         workingMinutesPerDay,
       },
@@ -182,8 +189,8 @@ const registerUser = async (data) => {
           role,
           branchId: branchId || null,
           facultyType,
-          shiftStartTime: shiftStart,
-          shiftEndTime: shiftEnd,
+          shiftStartTime: new Date(shiftStart.toISOString()),
+          shiftEndTime: new Date(shiftEnd.toISOString()),
           salary: Number(salary),
         },
       });

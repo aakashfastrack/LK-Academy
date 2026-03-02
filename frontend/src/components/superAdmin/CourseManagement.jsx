@@ -20,7 +20,6 @@ const CourseManagement = () => {
     "Action",
   ];
 
-  console.log("hello")
   const fetchCourse = async () => {
     try {
       const tok = JSON.parse(localStorage.getItem("user")).data.token;
@@ -44,7 +43,7 @@ const CourseManagement = () => {
 
   return (
     <>
-      <div className="h-full bg-white m-2 rounded flex flex-col items-center p-4 py-6 overflow-hidden">
+      <div className="h-[91%] bg-white m-2 rounded flex flex-col overflow-hidden gap-5 p-4 py-6 flex-wrap ">
         <div className="w-full flex items-center justify-end">
           <Button
             variant="secondary"
@@ -58,7 +57,7 @@ const CourseManagement = () => {
           </Button>
         </div>
 
-        <div className="w-full">
+        <div className="w-full h-[91%] overflow-y-auto overflow-x-auto xl:overflow-x-hidden pb-10">
           <ul
             className={`grid grid-cols-${lists.length} xl:px-4 text-sm py-3 border-b border-gray-500 font-bold text-center`}
           >

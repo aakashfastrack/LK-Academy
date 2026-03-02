@@ -43,7 +43,7 @@ const BatchManagement = () => {
   return (
     <>
       {/* <div className="h-full w-full p-4 py-6 flex flex-wrap gap-5 flex-col items-center "> */}
-      <div className="h-full bg-white m-2 rounded flex flex-col items-center p-4 py-6 overflow-hidden">
+      <div className="h-[91%] bg-white m-2 rounded flex flex-col overflow-hidden gap-5 p-4 py-6 flex-wrap ">
         <div className="w-full flex items-center justify-end">
           <Button
             variant="secondary"
@@ -56,7 +56,7 @@ const BatchManagement = () => {
             Add Batch
           </Button>
         </div>
-        <div className="w-full">
+        <div className="w-full h-[91%] overflow-y-auto overflow-x-auto xl:overflow-x-hidden pb-10">
           <ul className="grid grid-cols-7 xl:px-4 text-sm py-3 border-b border-gray-500 font-bold text-center">
             {lists.map((item, index) => (
               <li key={index}>{item}</li>
