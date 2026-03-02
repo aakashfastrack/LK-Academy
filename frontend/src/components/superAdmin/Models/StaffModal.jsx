@@ -227,9 +227,13 @@ const StaffModal = ({ open, setOpen }) => {
           branchId: selectBranch,
           shiftStartTime: startTime,
           shiftEndTime: endTime,
-          actualInTime: new Date(`${start}T${actualinTime}`).toISOString(),
-          actualOutTime: new Date(`${end}T${actualoutTime}`).toISOString(),
-          date: new Date(date).toISOString(),
+          actualInTime: new Date(
+            new Date(`${start}T${actualinTime}`).toISOString(),
+          ),
+          actualOutTime: new Date(
+            new Date(`${end}T${actualoutTime}`).toISOString(),
+          ),
+          date: new Date(new Date(date).toISOString()),
           status: status,
         },
         {
