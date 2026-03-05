@@ -107,7 +107,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
 
   const handleSendWhatsappMsg = () => {
     const message = `
-*Faculty Monthly Summary*
+*Staff Monthly Summary*
 
 *Name*: ${user.name}
 *Branch*: ${user.branch.name}
