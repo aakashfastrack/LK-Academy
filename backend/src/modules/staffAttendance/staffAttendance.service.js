@@ -15,12 +15,33 @@ function calculateStaffAttendance({
   actualOutTime,
   monthlySalary,
   workingMinutesPerDay,
+  status,
 }) {
   const GRACE_MINUTES = 15;
   const FIXED_PENALTY = 50;
 
   const workingDays = getDaysInCurrentMonth();
   const perMinuteRate = monthlySalary / (workingDays * workingMinutesPerDay);
+
+  console.log(status);
+  if (status === "ONLEAVE") {
+    return {
+      lateMinutes: 0,
+      isLate: false,
+
+      actualWorkedMinutes: 0,
+      shortfallMinutes: 0,
+
+      fixedPenalty: 0,
+      extraPenalty: 0,
+      totalPenalty: 0,
+
+      overtimeMinutes: 0,
+      overtimePay: 0,
+
+      perMinuteRate: Number(perMinuteRate.toFixed(2)),
+    };
+  }
 
   // -------- ACTUAL WORK --------
   const actualWorkedMinutes = Math.max(
@@ -101,6 +122,7 @@ const markStaffAttendance = async ({
     actualOutTime: new Date(actualOutTime),
     monthlySalary: staff.salary,
     workingMinutesPerDay: staff.workingMinutesPerDay,
+    status,
   });
 
   // let date1 = new Date();
