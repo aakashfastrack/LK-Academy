@@ -91,9 +91,14 @@ const Report = () => {
       const loadData = async () => {
         const data = await fetchUser();
         let filterData = data.filter((user) => user.role === "FACULTY");
+        console.log(filterData);
         if (bran) {
-          const fdata = filterData.filter((user) => user.branchId === bran.id);
-          console.log(fdata);
+          const fdata = filterData.filter((user) =>
+            user.lectures?.some(
+              (lecture) => lecture.batch?.course?.branchId === bran.id,
+            ),
+          );
+          console.log(fdata.length);
           setFacultyReportData(fdata);
         } else {
           setFacultyReportData(filterData);
