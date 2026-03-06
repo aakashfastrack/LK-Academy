@@ -301,14 +301,15 @@ async function getLecturesForFacultyOnDate(facultyId, date) {
 async function autoMarkLectureAttendanceForSalaryFaculty({
   facultyId,
   attendanceDate,
+  lecture
 }) {
-  const lectures = await getLecturesForFacultyOnDate(facultyId, attendanceDate);
+  // const lectures = await getLecturesForFacultyOnDate(facultyId, attendanceDate);
 
-  for (const lecture of lectures) {
+  for (const lectu of lecture) {
     await prisma.lectureAttendance.upsert({
       where: {
         lectureId_date: {
-          lectureId: lecture.id,
+          lectureId: lectu.id,
           date: attendanceDate,
         },
       },
@@ -318,10 +319,10 @@ async function autoMarkLectureAttendanceForSalaryFaculty({
         penalty: "NONE",
       },
       create: {
-        lectureId: lecture.id,
+        lectureId: lectu.id,
         date: attendanceDate,
-        actualStartTime: lecture.startTime,
-        actualEndTime: lecture.endTime,
+        actualStartTime: lectu.startTime,
+        actualEndTime: lectu.endTime,
         status: "CONDUCTED",
         payout: 0,
         penalty: "NONE",
@@ -337,7 +338,9 @@ const markSalaryBasedFacultyAttendance = async ({
   inTime,
   outTime,
   isLeave,
+  lecture
 }) => {
+  console.log(lecture)
   const faculty = await prisma.user.findUnique({
     where: {
       id: facultyId,
@@ -416,6 +419,7 @@ const markSalaryBasedFacultyAttendance = async ({
     await autoMarkLectureAttendanceForSalaryFaculty({
       facultyId,
       attendanceDate,
+      lecture
     });
   }
 

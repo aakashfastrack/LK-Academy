@@ -41,6 +41,8 @@ const FacultyModal = ({ open, setOpen }) => {
   const [filteredLecture, setFilteredLecture] = useState([]);
 
   const [selectFaculty, setSelectFaulty] = useState({});
+  const [faclec, setFacLec] = useState([]);
+  const [lectList, setLectList] = useState([]);
 
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
@@ -80,6 +82,11 @@ const FacultyModal = ({ open, setOpen }) => {
 
     loadBranch();
   }, []);
+
+  useEffect(() => {
+    console.log(selectFaculty);
+    setFacLec(selectFaculty.lectures);
+  }, [selectFaculty]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -345,6 +352,7 @@ const FacultyModal = ({ open, setOpen }) => {
           inTime: inTime,
           outTime: outTime,
           isLeave: status,
+          lecture: lectList,
         },
         {
           headers: {
@@ -356,12 +364,24 @@ const FacultyModal = ({ open, setOpen }) => {
 
       toast.success("Attendance Marked Successfully");
       setOpen(false);
+      setLectList([]);
       router.refresh();
     } catch (err) {
       toast.error("Error in marking attendance");
       setOpen(false);
       router.refresh();
     }
+  };
+
+  const handleAddLect = (v) => {
+    if (lectList.includes(v)) {
+      return;
+    }
+    setLectList([...lectList, v]);
+  };
+
+  const handleDelete = (delUser) => {
+    setLectList(lectList.filter((sel) => sel.id !== delUser.id));
   };
 
   return (
@@ -505,6 +525,42 @@ const FacultyModal = ({ open, setOpen }) => {
                   )}
                 </Select>
               </div>
+
+              {facultyType === "SALARY_BASED" && (
+                <>
+                  <div className="">
+                    <Label>Lectures</Label>
+                    <Select onValueChange={(v) => handleAddLect(v)}>
+                      <SelectTrigger className={`w-full`}>
+                        <SelectValue placeholder={`Lectures`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {faclec.map((item, i) => (
+                          <SelectItem key={i} value={item}>
+                            {`${item?.subject?.name}-${item?.batch?.course?.branch?.name}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="flex gap-2 flex-wrap">
+                      {lectList.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-wrap gap-2 items-center justify-center text-sm bg-[#be6b66] text-white p-1 rounded "
+                        >
+                          {`${item?.subject?.name}-${item?.batch?.name}-${item?.batch?.course?.name}-${item?.batch?.course?.branch?.name}`}
+                          <div
+                            onClick={() => handleDelete(item)}
+                            className="text-black cursor-pointer"
+                          >
+                            x
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
 
               {(status === "CONDUCTED" || facultyType === "SALARY_BASED") && (
                 <>
