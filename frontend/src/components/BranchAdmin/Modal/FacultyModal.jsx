@@ -66,7 +66,6 @@ const FacultyModal = ({ open, setOpen }) => {
       setBranchId(data.data.user.branchId);
       const user = await fetchUser();
       const filteruser = user
-        .filter((user) => user.branchId === id)
         .filter((user) => user.role === "FACULTY")
         .filter((user) => user.isActive === true);
       setUser(filteruser);
