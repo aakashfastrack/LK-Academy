@@ -116,10 +116,10 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
     })}
 
 *Late Penalty*: ${chartData?.breakdown?.fixedLatePenalties}
-*Extra Penalty*: ${chartData?.breakdown?.totalExtaPenalties}
-*Overtime Pay*: ${chartData?.breakdown?.totalOvertimePay}
+*Work Hour Shortfall Deduction*: ${chartData?.breakdown?.totalExtaPenalties}
+*Overtime Compensation*: ${chartData?.breakdown?.totalOvertimePay}
 
-*This Month Salary*: ${chartData?.netPay}
+*Net Salary for the Monthy*: ${chartData?.netPay}
   `.trim();
 
     const whatsappURL = `https://wa.me/${
