@@ -188,6 +188,9 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                 onClick={() => {
                   setOpen(false);
                   // setUser({});
+                  setLecData([])
+                  setMyLecturesData([])
+                  setServerData([])
                 }}
               >
                 x

@@ -43,7 +43,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
     {
       length: cYear - 2024 + 1,
     },
-    (_, i) => 2024 + i
+    (_, i) => 2024 + i,
   );
 
   const [chartData, setChartData] = useState({});
@@ -66,9 +66,8 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${tok}`,
             },
-          }
+          },
         );
-        console.log(data.data)
         setChartData(data.data);
       } else if (facultyRole === "FACULTY") {
         if (user?.facultyType === "LECTURE_BASED") {
@@ -81,7 +80,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${tok}`,
               },
-            }
+            },
           );
           console.log("Lecture based banda:=>", data.data);
           setChartData(data.data);
@@ -95,7 +94,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${tok}`,
               },
-            }
+            },
           );
           console.log("Salary based banda:=>", data.data);
           setChartData(data.data);

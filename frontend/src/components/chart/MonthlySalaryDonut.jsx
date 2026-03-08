@@ -1,21 +1,17 @@
 "use client";
 
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
 const COLORS = {
-  net: "#16a34a",        // green
-  late: "#dc2626",       // red
-  extra: "#f97316",      // orange
-  overtime: "#2563eb",   // blue
+  net: "#16a34a", // green
+  late: "#dc2626", // red
+  extra: "#f97316", // orange
+  overtime: "#2563eb", // blue
 };
 
 const MonthlySalaryDonut = ({ data }) => {
+  const extraPay = Math.floor(data?.breakdown?.extraPay).toString();
+  console.log(data);
   const chartData = [
     {
       name: "Net Pay",
@@ -39,8 +35,10 @@ const MonthlySalaryDonut = ({ data }) => {
     },
   ].filter((d) => d.value > 0);
 
-  const monthName = new Date(data.year, data.month - 1)
-    .toLocaleString("en-IN", { month: "long" });
+  const monthName = new Date(data.year, data.month - 1).toLocaleString(
+    "en-IN",
+    { month: "long" },
+  );
 
   return (
     <div className="flex flex-col items-center">
@@ -53,7 +51,7 @@ const MonthlySalaryDonut = ({ data }) => {
           data={chartData}
           cx="50%"
           cy="50%"
-          innerRadius={70} 
+          innerRadius={70}
           outerRadius={120}
           paddingAngle={2}
           dataKey="value"
@@ -68,11 +66,19 @@ const MonthlySalaryDonut = ({ data }) => {
       </PieChart>
 
       {/* Center Text */}
-      <div className="text-center mt-3">
-        <p className="text-sm text-gray-500">Net Pay</p>
-        <p className="text-2xl font-bold text-green-600">
-          ₹{data.netPay}
-        </p>
+      <div className="flex justify-around w-full">
+        <div className="text-center mt-3">
+          <p className="text-sm text-gray-500">Leave Pay</p>
+          <p
+            className={`text-2xl font-bold ${data?.breakdown?.extraPay > 0 ? "text-green-600" : "text-red-600"}`}
+          >
+            {data?.breakdown?.extraPay>0 ? extraPay.padStart(extraPay.length+1,"₹") : Math.floor(data?.breakdown?.extraPay).toString().split("-").join("-₹") || 0}
+          </p>
+        </div>
+        <div className="text-center mt-3">
+          <p className="text-sm text-gray-500">Net Pay</p>
+          <p className="text-2xl font-bold text-green-600">₹{data.netPay}</p>
+        </div>
       </div>
     </div>
   );
