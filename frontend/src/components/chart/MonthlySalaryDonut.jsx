@@ -43,7 +43,7 @@ const MonthlySalaryDonut = ({ data }) => {
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-lg font-semibold mb-2">
-        Salary Breakdown – {monthName} {data.year}
+        Salary Breakdown – {monthName} 
       </h2>
 
       <PieChart width={320} height={320}>

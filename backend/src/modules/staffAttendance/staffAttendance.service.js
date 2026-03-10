@@ -219,14 +219,23 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
 
   const unpaidLeaveDays = Math.max(0, leaveDays - PAID_LEAVE_LIMIT);
   const leaveDeduction = unpaidLeaveDays * perDaySalary;
-  extraPay = (PAID_LEAVE_LIMIT-leaveDays)*perDaySalary;
+  extraPay = (PAID_LEAVE_LIMIT - leaveDays) * perDaySalary;
+
+  console.log("Payment")
+  console.log(leaveDeduction);
+  console.log(staff.salary);
+  console.log(fixedLatePenalties);
+  console.log(totalExtaPenalties);
+  console.log(totalOvertimePay);
+  console.log(extraPay);
 
   const netPay =
     staff.salary -
     fixedLatePenalties -
     totalExtaPenalties -
-    leaveDeduction +
-    totalOvertimePay+extraPay;
+    // leaveDeduction +
+    totalOvertimePay +
+    extraPay;
 
   return {
     staffId,
@@ -247,7 +256,7 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
       fixedLatePenalties,
       totalExtaPenalties,
       totalOvertimePay,
-      extraPay
+      extraPay,
     },
     netPay: Math.max(0, Math.floor(netPay)),
   };
