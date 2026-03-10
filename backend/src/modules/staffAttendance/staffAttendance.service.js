@@ -232,7 +232,7 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
   const netPay =
     staff.salary -
     fixedLatePenalties -
-    totalExtaPenalties -
+    totalExtaPenalties +
     // leaveDeduction +
     totalOvertimePay +
     extraPay;
