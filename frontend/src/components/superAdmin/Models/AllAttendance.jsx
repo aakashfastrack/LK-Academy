@@ -83,9 +83,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
 
         // 🔥 latest first
         .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime))
-
-        // 🔥 last 5 records
-        .slice(0, 5)
     );
   };
 

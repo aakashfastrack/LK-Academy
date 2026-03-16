@@ -68,6 +68,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
             },
           },
         );
+        console.log(data.data);
         setChartData(data.data);
       } else if (facultyRole === "FACULTY") {
         if (user?.facultyType === "LECTURE_BASED") {

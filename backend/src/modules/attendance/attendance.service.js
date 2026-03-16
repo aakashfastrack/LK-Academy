@@ -272,7 +272,7 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     year,
     facultyType: faculty.facultyType,
 
-    PlannedLectures,
+    PlannedLectures:conducted,
     conducted,
     cancelled,
     missed,
