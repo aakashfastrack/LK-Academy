@@ -61,7 +61,6 @@ const FacultyModal = ({ open, setOpen }) => {
   };
 
   useEffect(() => {
-    console.log(facultyId);
     setFacLec(facultyId.lectures);
   }, [facultyId]);
 
@@ -74,6 +73,7 @@ const FacultyModal = ({ open, setOpen }) => {
       const user = await fetchUser();
       const filteruser = user
         .filter((user) => user.role === "FACULTY")
+        .filter((user) => user.branchId === id)
         .filter((user) => user.isActive === true);
       setUser(filteruser);
     };

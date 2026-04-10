@@ -135,18 +135,18 @@ const FacultyModal = ({ open, setOpen }) => {
     loadData();
   }, [selectedBranch]);
 
-  // useEffect(() => {
-  //   if (!selectedBranch) {
-  //     setFilteredFaculty(users);
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!selectedBranch) {
+      setFilteredFaculty(users);
+      return;
+    }
 
-  //   const branchWiseFaculty = users.filter(
-  //     (user) => user.branchId === Number(selectedBranch),
-  //   );
+    const branchWiseFaculty = users.filter(
+      (user) => user.branchId === Number(selectedBranch),
+    );
 
-  //   setFilteredFaculty(branchWiseFaculty);
-  // }, [selectedBranch, users]);
+    setFilteredFaculty(branchWiseFaculty);
+  }, [selectedBranch, users]);
 
   useEffect(() => {
     if (!selectFaculty) {
