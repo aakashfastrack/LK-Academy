@@ -90,6 +90,9 @@ const getLectureByIdAndType = async (id, type, month, year) => {
               lte: end,
             },
           },
+          orderBy: {
+            date: "asc",
+          },
         },
         subject: true,
       },
@@ -105,6 +108,9 @@ const getLectureByIdAndType = async (id, type, month, year) => {
       },
       include: {
         faculty: true,
+      },
+      orderBy: {
+        date: "asc", // 🔥 add this
       },
     });
   }
