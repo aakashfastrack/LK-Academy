@@ -54,6 +54,18 @@ function calculatePenalty({
   return penalty;
 }
 
+function mergeDateAndTime(date, time) {
+  const d = new Date(date); 
+  const t = new Date(time); 
+
+  d.setHours(t.getHours());
+  d.setMinutes(t.getMinutes());
+  d.setSeconds(t.getSeconds());
+  d.setMilliseconds(0);
+
+  return d;
+}
+
 function calculateLectureBasedFacultyBackend({
   plannedStart,
   plannedEnd,
@@ -61,9 +73,10 @@ function calculateLectureBasedFacultyBackend({
   actualEnd,
   lectureRate,
   status, // CONDUCTED | CANCELLED | MISSED
+  lectureDate
 }) {
-  const plannedStartTime = new Date(plannedStart);
-  const plannedEndTime = new Date(plannedEnd);
+  const plannedStartTime = mergeDateAndTime(lectureDate,plannedStart);
+  const plannedEndTime = mergeDateAndTime(lectureDate,plannedEnd);
   const actualStartTime = new Date(actualStart);
   const actualEndTime = new Date(actualEnd);
 
@@ -78,9 +91,9 @@ function calculateLectureBasedFacultyBackend({
     (plannedEndTime - actualEndTime) / (1000 * 60),
   );
 
-  let isLate = actualStart - plannedStart > FIFTEEN_MIN;
+  let isLate = lateMinutes > FIFTEEN_MIN;
   let LateMin = (actualStart - plannedStart) / (60 * 1000);
-  let isEarly = plannedEnd - actualEnd > FIFTEEN_MIN;
+  let isEarly = earlyMinutes > FIFTEEN_MIN;
   let EarlyMin = (plannedEnd - actualEnd) / (60 * 1000);
 
   let penalty = "NONE";
@@ -94,7 +107,7 @@ function calculateLectureBasedFacultyBackend({
     workedMinutes = Math.floor((actualEndTime - actualStartTime) / (1000 * 60));
   }
 
-  let totalPenaltyMin = LateMin + EarlyMin;
+  let totalPenaltyMin = lateMinutes + earlyMinutes  ;
 
   // ---------- PAYOUT ----------
   let lectureEquivalent = workedMinutes / LECTURE_MINUTES;
@@ -170,6 +183,7 @@ const markLectureAttendance = async ({
       actualEnd: actualEndTime,
       lectureRate: Number(lecture.faculty.lectureRate),
       status,
+      lectureDate:date
     });
 
     if (lecture.faculty.facultyType === "LECTURE_BASED") {
@@ -272,7 +286,7 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     year,
     facultyType: faculty.facultyType,
 
-    PlannedLectures:conducted,
+    PlannedLectures: conducted,
     conducted,
     cancelled,
     missed,
@@ -301,7 +315,7 @@ async function getLecturesForFacultyOnDate(facultyId, date) {
 async function autoMarkLectureAttendanceForSalaryFaculty({
   facultyId,
   attendanceDate,
-  lecture
+  lecture,
 }) {
   // const lectures = await getLecturesForFacultyOnDate(facultyId, attendanceDate);
 
@@ -338,9 +352,9 @@ const markSalaryBasedFacultyAttendance = async ({
   inTime,
   outTime,
   isLeave,
-  lecture
+  lecture,
 }) => {
-  console.log(lecture)
+  console.log(lecture);
   const faculty = await prisma.user.findUnique({
     where: {
       id: facultyId,
@@ -419,7 +433,7 @@ const markSalaryBasedFacultyAttendance = async ({
     await autoMarkLectureAttendanceForSalaryFaculty({
       facultyId,
       attendanceDate,
-      lecture
+      lecture,
     });
   }
 
