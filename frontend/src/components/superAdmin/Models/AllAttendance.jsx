@@ -18,7 +18,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   function formatTime(isoIst) {
     if (!isoIst) return "";
 
-    // 🔥 remove Z so JS treats it as local time
     const safeIso = isoIst;
 
     const date = new Date(safeIso);
@@ -75,14 +74,14 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                   : "-",
               status,
               penalty: att.penalty || "NONE",
-              sortTime: att.actualStartTime || att.date,
+              sortTime: att.date,
               penaltyMin: att.penaltyMin,
             };
           }),
         )
 
         // 🔥 latest first
-        .sort((a, b) => new Date(b.sortTime) - new Date(a.sortTime))
+        .sort((a, b) => new Date(a.sortTime) - new Date(b.sortTime))
     );
   };
 
@@ -132,6 +131,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               },
             },
           );
+          console.log(data);
           setServerData(data.data);
         } else if (role === "STAFF") {
           const { data } = await axios.get(
@@ -167,6 +167,10 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   }, [serverData]);
 
   function convertMinToHours(time) {
+    if (!time || time < 0) return "0 mins";
+
+    if (time > 600) return `${Math.floor(time / 60)} hr`; // debug marker
+
     if (time >= 60) {
       return `${Math.floor(time / 60)} hr ${time % 60} mins`;
     } else {
@@ -185,9 +189,9 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                 onClick={() => {
                   setOpen(false);
                   // setUser({});
-                  setLecData([])
-                  setMyLecturesData([])
-                  setServerData([])
+                  setLecData([]);
+                  setMyLecturesData([]);
+                  setServerData([]);
                 }}
               >
                 x
@@ -244,7 +248,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
 
               {lecData.length > 0 &&
                 lecData.map((item, i) => {
-                  console.log(item)
+                  console.log(item);
                   return (
                     <ul
                       key={i}
@@ -277,14 +281,20 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                             : "-"}
                         </li>
                       )}
-                      {
-                        userdata.role === "STAFF" && (
-                          <>
-                            <li className={`${item?.totalPenalty>0 ? "text-red-600" :"text-black"}`}>₹{item?.totalPenalty || 0}</li>
-                            <li className={`${item?.overtimePay>0 ? "text-green-600" :"text-black"}`}>₹{item?.overtimePay || 0}</li>
-                          </>
-                        )
-                      }
+                      {userdata.role === "STAFF" && (
+                        <>
+                          <li
+                            className={`${item?.totalPenalty > 0 ? "text-red-600" : "text-black"}`}
+                          >
+                            ₹{item?.totalPenalty || 0}
+                          </li>
+                          <li
+                            className={`${item?.overtimePay > 0 ? "text-green-600" : "text-black"}`}
+                          >
+                            ₹{item?.overtimePay || 0}
+                          </li>
+                        </>
+                      )}
                       {userdata.role === "STAFF" ? (
                         <li
                           className={
