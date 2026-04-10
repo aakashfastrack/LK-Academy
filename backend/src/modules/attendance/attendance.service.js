@@ -55,8 +55,8 @@ function calculatePenalty({
 }
 
 function mergeDateAndTime(date, time) {
-  const d = new Date(date); 
-  const t = new Date(time); 
+  const d = new Date(date);
+  const t = new Date(time);
 
   d.setHours(t.getHours());
   d.setMinutes(t.getMinutes());
@@ -73,10 +73,12 @@ function calculateLectureBasedFacultyBackend({
   actualEnd,
   lectureRate,
   status, // CONDUCTED | CANCELLED | MISSED
-  lectureDate
+  lectureDate,
 }) {
-  const plannedStartTime = mergeDateAndTime(lectureDate,plannedStart);
-  const plannedEndTime = mergeDateAndTime(lectureDate,plannedEnd);
+  console.log(lectureDate);
+
+  const plannedStartTime = mergeDateAndTime(lectureDate, plannedStart);
+  const plannedEndTime = mergeDateAndTime(lectureDate, plannedEnd);
   const actualStartTime = new Date(actualStart);
   const actualEndTime = new Date(actualEnd);
 
@@ -91,10 +93,10 @@ function calculateLectureBasedFacultyBackend({
     (plannedEndTime - actualEndTime) / (1000 * 60),
   );
 
+  console.log(lateMinutes + earlyMinutes);
+
   let isLate = lateMinutes > FIFTEEN_MIN;
-  let LateMin = (actualStart - plannedStart) / (60 * 1000);
   let isEarly = earlyMinutes > FIFTEEN_MIN;
-  let EarlyMin = (plannedEnd - actualEnd) / (60 * 1000);
 
   let penalty = "NONE";
   if (isLate && isEarly) penalty = "BOTH";
@@ -107,7 +109,8 @@ function calculateLectureBasedFacultyBackend({
     workedMinutes = Math.floor((actualEndTime - actualStartTime) / (1000 * 60));
   }
 
-  let totalPenaltyMin = lateMinutes + earlyMinutes  ;
+  let totalPenaltyMin =
+    lateMinutes + earlyMinutes > FIFTEEN_MIN ? lateMinutes + earlyMinutes : 0;
 
   // ---------- PAYOUT ----------
   let lectureEquivalent = workedMinutes / LECTURE_MINUTES;
@@ -183,7 +186,7 @@ const markLectureAttendance = async ({
       actualEnd: actualEndTime,
       lectureRate: Number(lecture.faculty.lectureRate),
       status,
-      lectureDate:date
+      lectureDate: date,
     });
 
     if (lecture.faculty.facultyType === "LECTURE_BASED") {
