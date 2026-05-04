@@ -189,9 +189,9 @@ const FacultyModal = ({ open, setOpen }) => {
     }
   };
 
-  useEffect(() => {
-    // settingpayout();
-  }, [status]);
+  // useEffect(() => {
+  //   // settingpayout();
+  // }, [status]);
 
   useEffect(() => {
     setSelectedLecture(lecture.id);
@@ -286,8 +286,13 @@ const FacultyModal = ({ open, setOpen }) => {
       lectureRate: selectFaculty.lectureRate,
     });
 
-    const finalPayout = applyStatusOnPayout(result.calculatedPayout, status);
-
+    console.log(result.calculatedPayout);
+    const paying =
+      result.calculatedPayout > 0
+        ? result.calculatedPayout
+        : selectFaculty.lectureRate;
+    const finalPayout = applyStatusOnPayout(paying, status);
+    console.log(finalPayout);
     setPenaltyPreview(result);
     setPayout(Math.floor(finalPayout));
   }, [lecture, status, inTime, outTime]);

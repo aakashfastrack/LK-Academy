@@ -42,6 +42,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   };
 
   const mapLecturesToUI = (lectures) => {
+    console.log(lectures);
     return (
       lectures
         .filter(
@@ -53,12 +54,15 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
           lec.attendance.map((att) => {
             const now = new Date();
 
-            let status = "Planned";
-            if (att.actualStartTime && att.actualEndTime) {
-              status = "Conducted";
-            } else if (new Date(lec.endTime) < now) {
-              status = "Missed";
-            }
+            let status = att?.status;
+            // if (att.actualStartTime && att.actualEndTime) {
+            //   status = "Conducted";
+            // } else if (new Date(lec.endTime) < now) {
+            //   status = "Missed";
+            // }
+            if (status === "CONDUCTED") status = "Conducted";
+            else if (status === "MISSED") status = "Missed";
+            else status = "Cancelled";
 
             return {
               date: formatDate(att.date || lec.StartDate),
