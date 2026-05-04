@@ -234,7 +234,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                     <li>{item.date}</li>
                     {typ === "LECTURE_BASED" && <li>{item.subject}</li>}
                     <li>{item.plannedTime}</li>
-                    <li>{item.actualTime}</li>
+                    <li>{item.status != "Conducted" ? "-" :item.actualTime}</li>
                     <li
                       className={
                         item.status === "Conducted"
