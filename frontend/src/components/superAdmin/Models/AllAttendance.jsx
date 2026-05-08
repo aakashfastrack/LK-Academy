@@ -41,8 +41,65 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     return "Planned";
   };
 
+  function mergeDateAndTime(date, time) {
+    const d = new Date(date);
+    const t = new Date(time);
+
+    d.setHours(t.getHours());
+    d.setMinutes(t.getMinutes());
+    d.setSeconds(t.getSeconds());
+    d.setMilliseconds(0);
+
+    return d;
+  }
+
+  function calculatePenaltyMinutes(
+    actualStart,
+    actualEnd,
+    plannedStart,
+    plannedEnd,
+    date,
+  ) {
+    if (!actualStart || !actualEnd || !plannedStart || !plannedEnd) {
+      return 0;
+    }
+
+    const actualStartTime = mergeDateAndTime(date, actualStart);
+    const actualEndTime = mergeDateAndTime(date, actualEnd);
+
+    // const plannedStartTime = new Date(plannedStart);
+    // const plannedEndTime = new Date(plannedEnd);
+    const plannedStartTime = mergeDateAndTime(date, plannedStart);
+    const plannedEndTime = mergeDateAndTime(date, plannedEnd);
+
+
+    // Late start
+    let lateMinutes = (actualStartTime - plannedStartTime) / (1000 * 60);
+
+    let earlyMinutes = (plannedEndTime - actualEndTime) / (1000 * 60);
+
+    // Handle AM/PM or timezone bug
+    if (lateMinutes > 720) {
+      lateMinutes -= 720; // remove 12 hr
+    }
+
+    if (earlyMinutes > 720) {
+      earlyMinutes -= 720;
+    }
+
+    lateMinutes = Math.max(0, lateMinutes);
+    earlyMinutes = Math.max(0, earlyMinutes);
+
+    console.log("LateMin", lateMinutes);
+    console.log("earlyMinutes", earlyMinutes);
+
+    const totalPenaltyMin = lateMinutes + earlyMinutes;
+
+    // Apply penalty only if >= 15 min
+    return totalPenaltyMin >= 15 ? Math.floor(totalPenaltyMin) : 0;
+  }
+
   const mapLecturesToUI = (lectures) => {
-    console.log(lectures);
     return (
       lectures
         .filter(
@@ -64,6 +121,14 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
             else if (status === "MISSED") status = "Missed";
             else status = "Cancelled";
 
+            let penaltyMin = calculatePenaltyMinutes(
+              att.actualStartTime,
+              att.actualEndTime,
+              lec.startTime,
+              lec.endTime,
+              att.date,
+            );
+
             return {
               date: formatDate(att.date || lec.StartDate),
               subject: lec.subject?.name || "-",
@@ -79,7 +144,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               status,
               penalty: att.penalty || "NONE",
               sortTime: att.date,
-              penaltyMin: att.penaltyMin,
+              penaltyMin,
             };
           }),
         )
@@ -171,15 +236,20 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   }, [serverData]);
 
   function convertMinToHours(time) {
-    if (!time || time < 0) return "0 mins";
+    if (!time || time <= 0) return "0 mins";
 
-    if (time > 600) return `${Math.floor(time / 60)} hr`; // debug marker
+    const hrs = Math.floor(time / 60);
+    const mins = time % 60;
 
-    if (time >= 60) {
-      return `${Math.floor(time / 60)} hr ${time % 60} mins`;
-    } else {
-      return `${time} mins`;
+    if (hrs > 0 && mins > 0) {
+      return `${hrs} hr ${mins} mins`;
     }
+
+    if (hrs > 0) {
+      return `${hrs} hr`;
+    }
+
+    return `${mins} mins`;
   }
 
   return (
@@ -234,7 +304,9 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                     <li>{item.date}</li>
                     {typ === "LECTURE_BASED" && <li>{item.subject}</li>}
                     <li>{item.plannedTime}</li>
-                    <li>{item.status != "Conducted" ? "-" :item.actualTime}</li>
+                    <li>
+                      {item.status != "Conducted" ? "-" : item.actualTime}
+                    </li>
                     <li
                       className={
                         item.status === "Conducted"
@@ -252,7 +324,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
 
               {lecData.length > 0 &&
                 lecData.map((item, i) => {
-                  console.log(item);
                   return (
                     <ul
                       key={i}

@@ -75,8 +75,6 @@ function calculateLectureBasedFacultyBackend({
   status, // CONDUCTED | CANCELLED | MISSED
   lectureDate,
 }) {
-  console.log(lectureDate);
-
   const plannedStartTime = mergeDateAndTime(lectureDate, plannedStart);
   const plannedEndTime = mergeDateAndTime(lectureDate, plannedEnd);
   const actualStartTime = new Date(actualStart);
@@ -93,15 +91,15 @@ function calculateLectureBasedFacultyBackend({
     (plannedEndTime - actualEndTime) / (1000 * 60),
   );
 
-  console.log(lateMinutes + earlyMinutes);
-
-  let isLate = lateMinutes > FIFTEEN_MIN;
-  let isEarly = earlyMinutes > FIFTEEN_MIN;
+  let isLate = lateMinutes * (1000 * 60) > FIFTEEN_MIN;
+  let isEarly = earlyMinutes * (1000 * 60) > FIFTEEN_MIN;
 
   let penalty = "NONE";
   if (isLate && isEarly) penalty = "BOTH";
   else if (isLate) penalty = "LATE_START";
   else if (isEarly) penalty = "EARLY_END";
+  else if ((lateMinutes + earlyMinutes) * (1000 * 60) >= FIFTEEN_MIN)
+    penalty = "BOTH";
 
   // ---------- WORKED MINUTES ----------
   let workedMinutes = 0;
@@ -110,7 +108,9 @@ function calculateLectureBasedFacultyBackend({
   }
 
   let totalPenaltyMin =
-    lateMinutes + earlyMinutes > FIFTEEN_MIN ? lateMinutes + earlyMinutes : 0;
+    (lateMinutes + earlyMinutes) * (1000 * 600) >= FIFTEEN_MIN
+      ? lateMinutes + earlyMinutes
+      : 0;
 
   // ---------- PAYOUT ----------
   let lectureEquivalent = workedMinutes / LECTURE_MINUTES;
@@ -179,7 +179,7 @@ const markLectureAttendance = async ({
     payout = 0;
     penalty = "NONE";
   } else {
-    penalty = calculateLectureBasedFacultyBackend({
+    penalties = calculateLectureBasedFacultyBackend({
       plannedStart: lecture.startTime,
       plannedEnd: lecture.endTime,
       actualStart: actualStartTime,
@@ -196,8 +196,8 @@ const markLectureAttendance = async ({
       const lectureHour = durationMinutes / 60;
       const baseHours = 2;
 
-      payout = penalty.payout;
-      penaltyMin = penalty.totalPenaltyMin;
+      payout = penalties.payout;
+      penaltyMin = penalties.totalPenaltyMin;
     }
   }
 
