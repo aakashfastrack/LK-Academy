@@ -245,6 +245,9 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
         lte: end,
       },
     },
+    include: {
+      lecture: true,
+    },
   });
 
   let conducted = 0;
@@ -262,9 +265,42 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     if (l.status === "CANCELLED") cancelled++;
     if (l.status === "MISSED") missed++;
 
-    if (l.penalty === "LATE_START") lateCount++;
-    if (l.penalty === "EARLY_END") earlyCount++;
-    if (l.penalty === "BOTH") bothCount++;
+    let isLate = false;
+    let isEarly = false;
+
+    const plannedStart = l.lecture.startTime;
+    const plannedEnd = l.lecture.endTime;
+
+    const actualStart = l.actualStartTime;
+    const actualEnd = l.actualEndTime;
+
+    if (plannedStart && actualStart) {
+      const lateMinutes =
+        (new Date(actualStart).getTime() - new Date(plannedStart).getTime()) /
+        (1000 * 60);
+
+      if (lateMinutes > 0) {
+        isLate = true;
+      }
+    }
+
+    if (plannedEnd && actualEnd) {
+      const earlyMinutes =
+        (new Date(plannedEnd).getTime() - new Date(actualEnd).getTime()) /
+        (1000 * 60);
+
+      if (earlyMinutes > 0) {
+        isEarly = true;
+      }
+    }
+
+    if (isLate && isEarly) {
+      bothCount++;
+    } else if (isLate) {
+      lateCount++;
+    } else if (isEarly) {
+      earlyCount++;
+    }
 
     totalPayout += l.payout || 0;
   });

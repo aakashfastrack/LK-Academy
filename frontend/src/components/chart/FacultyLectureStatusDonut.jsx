@@ -10,6 +10,7 @@ const COLORS = {
 };
 
 const FacultyLectureStatusDonut = ({ data }) => {
+  console.log(data)
   const chartData = [
     { name: "Conducted", value: data.conducted, color: COLORS.conducted },
     { name: "Missed", value: data.missed, color: COLORS.missed },
