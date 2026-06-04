@@ -72,7 +72,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     const plannedStartTime = mergeDateAndTime(date, plannedStart);
     const plannedEndTime = mergeDateAndTime(date, plannedEnd);
 
-
     // Late start
     let lateMinutes = (actualStartTime - plannedStartTime) / (1000 * 60);
 
@@ -200,7 +199,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               },
             },
           );
-          console.log(data);
           setServerData(data.data);
         } else if (role === "STAFF") {
           const { data } = await axios.get(
@@ -215,8 +213,10 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
             },
           );
 
-          console.log(data.data);
-          setServerData(data.data);
+          const staffData = data.data.sort(
+            (a, b) => new Date(a.date) - new Date(b.date),
+          );
+          setServerData(staffData);
         }
       } catch (err) {
         console.log(err);
