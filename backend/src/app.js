@@ -14,15 +14,19 @@ const batchRoutes = require("./modules/batch/batch.route");
 const coursesRoute = require("./modules/courses/courses.route");
 const uploadRoute = require("./modules/upload/upload.route");
 const uploadStaffRoute = require("./modules/staffUpload/staffUpload.route");
+const generateReportRoute = require("./modules/report/report.route");
+const auditRoute = require("./modules/audit/audit.route");
+const morgan = require("morgan");
 
-app.use(cors({
-  origin:[
-    "http://localhost:3000",
-    "https://lk-academy.vercel.app"
-  ],
-  methods:["GET","POST","PUT","DELETE"],
-  credentials:true
-}));
+app.use(morgan("dev"));
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://lk-academy.vercel.app"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  }),
+);
 
 // app.use(cors());
 app.use(express.json());
@@ -39,6 +43,8 @@ app.use("/api/batch", batchRoutes);
 app.use("/api/courses", coursesRoute);
 app.use("/api/upload", uploadRoute);
 app.use("/api/uploadStaff", uploadStaffRoute);
+app.use("/api/report", generateReportRoute);
+app.use("/api/audit",auditRoute);
 
 app.get("/", (req, res) => {
   res.json({

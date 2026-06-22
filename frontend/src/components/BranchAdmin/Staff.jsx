@@ -79,7 +79,7 @@ const Staff = () => {
       const userDate = await fetchUser();
 
       const filterData = userDate
-        .filter((user) => user.role === "STAFF")
+        .filter((user) => user.role === "STAFF" && user.isActive)
         .filter((user) => user.branchId === branchId);
       console.log(filterData);
       setStaffData(filterData);

@@ -35,11 +35,9 @@ const UserManagement = () => {
       },
     });
 
-    console.log(data.data);
-    console.log();
-
-    const filterdata = data.data.filter((user) => user.id !== tok.data.user.id);
-    console.log(filterdata);
+    const filterdata = data.data.filter(
+      (user) => user.id !== tok.data.user.id && user.isActive,
+    );
     setUser(filterdata);
   };
 
@@ -55,41 +53,46 @@ const UserManagement = () => {
       .join(" ");
   };
 
-
   const ActivateUser = async (Id) => {
     let tok = JSON.parse(localStorage.getItem("user"));
     let token = tok.data.token;
-    const { data } = await axios.put(`${mainRoute}/api/users/activate/${Id}`,{
-      id:Id
-    } , {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const { data } = await axios.put(
+      `${mainRoute}/api/users/activate/${Id}`,
+      {
+        id: Id,
       },
-    });
-    await fetchUser()
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    await fetchUser();
   };
 
   return (
     <>
-      <div className="h-[91%]  bg-white m-2 rounded flex flex-col gap-5 p-4 py-6 overflow-y-auto overflow-x-auto ">
-        <div className="w-full flex items-center justify-end">
-          <Button
-            variant="secondary"
-            className={`bg-green-600 text-gray-200 hover:bg-green-700 `}
-            onClick={() => {
-              setOpen(true);
-              setType("add");
-            }}
-          >
-            Add New User
-          </Button>
+      <div className="h-[93.25%] relative bg-white m-2 rounded flex flex-col gap-5 p-4 pt-0 py-6 overflow-y-auto overflow-x-auto ">
+        <div className="sticky top-0 bg-white z-10 pt-6">
+          <div className="w-full flex items-center justify-end">
+            <Button
+              variant="secondary"
+              className={`bg-green-600 text-gray-200 hover:bg-green-700 `}
+              onClick={() => {
+                setOpen(true);
+                setType("add");
+              }}
+            >
+              Add New User
+            </Button>
+          </div>
+          <ul className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-8 w-full px-4 pt-3 xl:border-b xl:border-gray-500 font-bold text-center">
+            {lists.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
         </div>
-        <ul className="grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] px-4 pt-3 xl:border-b xl:border-gray-500 font-bold text-center">
-          {lists.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
         <div className="w-full pb-10">
           {users.length > 0 ? (
             users.map((user, index) => {
@@ -99,10 +102,11 @@ const UserManagement = () => {
               )
                 return;
 
+              console.log(user)
               return (
                 <ul
                   key={index}
-                  className={`grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50 ${user.isActive ? "bg-white" : "bg-gray-100"}`}
+                  className={`grid grid-cols-[60px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-8 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50 ${user.isActive ? "bg-white" : "bg-gray-100"}`}
                 >
                   <li className="font-semibold">{index + 1}</li>
                   <li className="flex items-center justify-center gap-2">
@@ -113,7 +117,22 @@ const UserManagement = () => {
                   </li>
                   <li>{user.phoneNumber}</li>
                   <li>{formatRole(user.role)}</li>
-                  <li>{user.branch?.name || "-"}</li>
+                  {/* <li>{user.branch?.name || "-"}</li> */}
+                  <li className=" min-w-0 wrap-break-word whitespace-normal">
+                    {user.role === "FACULTY" ? user.branchId == null ? (
+                      <>
+                        {user.facultyBranches
+                          .map((item) => item.branch.name)
+                          .join(", ")}
+                      </>
+                    ): (
+                      <>
+                        {user?.branch?.name}
+                      </>
+                    ) : (
+                      <>{user.branch?.name || "-"}</>
+                    )}
+                  </li>
                   <li>
                     {user.facultyType === "LECTURE_BASED"
                       ? user.lectureRate
@@ -134,7 +153,9 @@ const UserManagement = () => {
                     ) : (
                       <>
                         <Button
-                          onClick={()=>{ActivateUser(user.id)}}
+                          onClick={() => {
+                            ActivateUser(user.id);
+                          }}
                           className={`cursor-pointer`}
                         >
                           Activate

@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
+const LectureModal = ({ open, setOpen, type, lec, refetch, reset }) => {
   const router = useRouter();
   const isoTo24Hour = (isoString) => {
     if (!isoString) return "";
@@ -135,8 +135,13 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
     const loadData = async () => {
       const userdata = await fetchUser();
 
-      const filteruser = userdata.filter((user) => user.role === "FACULTY");
-      // const filtersubject = subjectdata.filter((sub) => sub.batch.branchId === Branc);
+      let filteruser = userdata.filter((user) => user.role === "FACULTY");
+
+      if (Branc) {
+        filteruser = filteruser.filter((user) =>
+          user.facultyBranches?.some((item) => item.branchId === Number(Branc)),
+        );
+      }
 
       let tok = JSON.parse(localStorage.getItem("user"));
       let token = tok.data.token;
@@ -160,7 +165,7 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
       setUsers(filteruser);
     };
     loadData();
-  }, [courseId]);
+  }, [courseId, Branc]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -175,9 +180,9 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
 
   const combineDateTimeToISO = (dateStr, timeStr) => {
     if (!dateStr || !timeStr) return null;
-    let data =  new Date(`${dateStr}T${timeStr}`).toISOString();
-    console.log(data)
-    return data
+    let data = new Date(`${dateStr}T${timeStr}`).toISOString();
+    console.log(data);
+    return data;
   };
 
   const handleCreateLecture = async () => {
@@ -193,8 +198,8 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
           batchId: bat,
           StartDate: startDate,
           EndDate: endDate,
-          startTime: combineDateTimeToISO(startDate,intime),
-          endTime: combineDateTimeToISO(startDate,outtime),
+          startTime: combineDateTimeToISO(startDate, intime),
+          endTime: combineDateTimeToISO(startDate, outtime),
           TotalScheduled: totalLecture,
         },
         {
@@ -232,8 +237,8 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
           branchId: Branc,
           StartDate: startDate,
           EndDate: endDate,
-          startTime: combineDateTimeToISO(startDate,intime),
-          endTime: combineDateTimeToISO(startDate,outtime),
+          startTime: combineDateTimeToISO(startDate, intime),
+          endTime: combineDateTimeToISO(startDate, outtime),
           TotalScheduled: totalLecture,
         },
         {
@@ -277,6 +282,38 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
       toast.error("Error in deleting lecture");
       setOpen(false);
       // router.refresh();
+      await refetch();
+    }
+  };
+
+  const handleReset = async () => {
+    try {
+      let tok = JSON.parse(localStorage.getItem("user"));
+      let token = tok.data.token;
+      let id = lec.id;
+
+      const { data } = await axios.post(
+        `${mainRoute}/api/lecture/reset-cycle/${id}`,
+        {
+          startDate: startDate,
+          endDate: endDate,
+          startTime: intime,
+          endTime: outtime,
+          totalScheduled: totalLecture,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      toast.success("Lecture Reset successfully");
+      setOpen(false);
+      await refetch();
+    } catch (err) {
+      toast.error("Error in reseting lecture");
+      setOpen(false);
       await refetch();
     }
   };
@@ -570,7 +607,11 @@ const LectureModal = ({ open, setOpen, type, lec, refetch }) => {
                 </div>
 
                 <div className="">
-                  <Button onClick={handleEdit}>Edit Lecture</Button>
+                  {reset ? (
+                    <Button onClick={handleReset}>Reset Lecture</Button>
+                  ) : (
+                    <Button onClick={handleEdit}>Edit Lecture</Button>
+                  )}
                 </div>
               </div>
             )}

@@ -177,7 +177,8 @@ const update = async (req, res) => {
       salary,
       shiftStartTime,
       shiftEndTime,
-      facultyType
+      facultyType,
+      branchIds
     } = req.body;
 
     console.log("user update ke liye aaya hai ")
@@ -190,7 +191,8 @@ const update = async (req, res) => {
       salary,
       shiftStartTime,
       shiftEndTime,
-      facultyType
+      facultyType,
+      branchIds
     );
     console.log("user updated")
 

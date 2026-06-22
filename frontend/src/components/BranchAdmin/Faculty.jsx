@@ -37,7 +37,7 @@ const Faculty = () => {
     "Lectures Done",
     "Remaining",
     "Penalty Count",
-    "Details "
+    "Details ",
   ];
 
   const [users, setUsers] = useState([]);
@@ -89,14 +89,12 @@ const Faculty = () => {
     const loaddata = async () => {
       const user = JSON.parse(localStorage.getItem("user"));
       const branchId = user.data.user.branchId;
-      console.log(branchId);
 
       const userDate = await fetchUser();
 
       const filterData = userDate
-        .filter((user) => user.role === "FACULTY")
-        .filter((user) => user.branchId === branchId);
-      console.log(filterData);
+        .filter((user) => user.role === "FACULTY" && user.isActive)
+        .filter((user) => user.facultyBranches.includes(branchId));
 
       setUsers(filterData);
     };

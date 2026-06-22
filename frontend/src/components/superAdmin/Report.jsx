@@ -10,6 +10,7 @@ import {
 import { Button } from "../ui/button";
 import { useManagement } from "@/context/ManagementContext";
 import ReportModels from "./Models/ReportModels";
+import RepModal from "./Models/RepModal";
 
 const Report = () => {
   const [user, setUser] = useState({});
@@ -17,6 +18,7 @@ const Report = () => {
   const [role, setRole] = useState("FACULTY");
   const [branch, setBranch] = useState([]);
   const [bran, setBran] = useState(null);
+  const [repMo, setRepMo] = useState(false);
 
   const facultyReportHeaders = [
     "id",
@@ -99,7 +101,11 @@ const Report = () => {
         const data = await fetchUser();
         let filterData = data.filter((user) => user.role === "FACULTY");
         if (bran) {
-          const fdata = filterData.filter((user) => user.branchId === bran);
+          const fdata = filterData.filter((user) =>
+            user.facultyBranches?.some(
+              (item) => item.branchId === Number(bran),
+            ),
+          );
           console.log(fdata);
           setFacultyReportData(fdata);
         } else {
@@ -206,14 +212,20 @@ const Report = () => {
               <SelectItem value={null}>None</SelectItem>
             </SelectContent>
           </Select>
+
+          <Button
+            onClick={()=>setRepMo(true)}
+          >Generate report</Button>
         </div>
         {role === "STAFF" && (
           <div className="h-[92%] w-full overflow-auto xl:overflow-x-hidden">
-            <ul className="grid grid-cols-[60px_180px_260px_220px_140px_140px_140px_140px] xl:grid-cols-8  px-4 py-3 xl:border-b border-gray-500 font-bold text-center">
-              {staffReportHeaders.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
+            <div className="sticky top-0 bg-white">
+              <ul className="grid grid-cols-[60px_180px_260px_220px_140px_140px_140px_140px] xl:grid-cols-8  px-4 py-3 xl:border-b border-gray-500 font-bold text-center">
+                {staffReportHeaders.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
 
             {staffReportData.map((staff, index) => {
               const stats = getStaffStats(staff.staffAttendances);
@@ -251,14 +263,16 @@ const Report = () => {
         )}
         {role === "FACULTY" && (
           <div className=" h-[94%] w-full overflow-auto">
-            <ul
-              className="grid grid-cols-[60px_180px_140px_140px_140px]
-                    xl:grid-cols-5 px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center"
-            >
-              {facultyReportHeaders.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
+            <div className="sticky top-0 bg-white">
+              <ul
+                className="grid grid-cols-[60px_180px_140px_140px_140px]
+              xl:grid-cols-5 px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center"
+              >
+                {facultyReportHeaders.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
 
             {facultyReportData.map((staff, index) => {
               const stats = getLectureAttendanceStats(staff.lectures);
@@ -337,6 +351,7 @@ const Report = () => {
         user={user}
         setUser={setUser}
       />
+      <RepModal open={repMo} setOpen={setRepMo} />
     </>
   );
 };

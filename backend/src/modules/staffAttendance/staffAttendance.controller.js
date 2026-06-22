@@ -9,8 +9,19 @@ const mark = async (req, res) => {
       shiftEndTime: new Date(req.body.shiftEndTime),
       actualInTime: new Date(req.body.actualInTime),
       actualOutTime: new Date(req.body.actualOutTime),
-      date:new Date(req.body.date),
-      status:req.body.status
+      date: new Date(req.body.date),
+      status: req.body.status,
+    });
+
+    await createAuditLog({
+      userId: req.user.id,
+      action: "MARK_STAFF_ATTENDANCE",
+      entity: "STAFF_ATTENDANCE",
+      entityId: record.id,
+
+      newData: record,
+
+      description: `Staff attendance marked for staff ${record.staffId}`,
     });
 
     res.json({
@@ -31,7 +42,7 @@ const monthlyReport = async (req, res) => {
   const data = await service.getStaffMonthlyReport(
     Number(staffId),
     Number(month),
-    Number(year)
+    Number(year),
   );
 
   res.json({ success: true, data });
@@ -45,7 +56,7 @@ const staffSalarySummaryController = async (req, res) => {
     const summary = await service.getStaffMonthlySalarySummary(
       Number(staffId),
       Number(month),
-      Number(year)
+      Number(year),
     );
 
     res.json({
@@ -61,8 +72,53 @@ const staffSalarySummaryController = async (req, res) => {
   }
 };
 
+const updateAttendanceController = async (req, res) => {
+  try {
+    const { attendanceId } = req.params;
+
+    const result = await service.updateAttendanceService({
+      attendanceId: Number(attendanceId),
+      actualInTime: req.body.actualInTime,
+      actualOutTime: req.body.actualOutTime,
+      status: req.body.status,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Attendance Updated Successfully",
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message,
+      success: false,
+    });
+  }
+};
+
+const fetchstaffAttendanceById = async (req, res) => {
+  try {
+    const { attendanceId } = req.params;
+
+    const result = await service.fetchAttendance(Number(attendanceId));
+
+    res.status(200).json({
+      success: true,
+      message: "Attendance fetched successfully",
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message,
+      success: false,
+    });
+  }
+};
+
 module.exports = {
   mark,
   monthlyReport,
   staffSalarySummaryController,
+  updateAttendanceController,
+  fetchstaffAttendanceById,
 };

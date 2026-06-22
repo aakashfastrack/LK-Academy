@@ -34,7 +34,7 @@ router.get(
 
 router.get("/role/dash",protect,userController.userDashboardData)
 
-router.put(
+router.patch(
   "/:id",
   protect,
   requireRole("SUPER_ADMIN"),

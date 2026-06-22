@@ -3,204 +3,163 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Branch {
-  id   Int    @id @default(autoincrement())
-  name String
-
-  userId Int?
-  users  User[]
-
-  courses Course[]
-
-  staffAttendances StaffAttendance[]
-
+  id                     Int                     @id @default(autoincrement())
+  name                   String
+  userId                 Int?
   createdAt              DateTime                @default(now())
-  // lectureSchedules LectureSchedule[]
+  courses                Course[]
   historicalFacultyDatas HistoricalFacultyData[]
+  staffAttendances       StaffAttendance[]
+  users                  User[]
   facultyBranches        facultyBranch[]
 }
 
 model User {
-  id           Int    @id @default(autoincrement())
-  name         String
-  phoneNumber  String @unique
-  password     String
-  role         Role
-  previousRole Role?
-
-  salary               Int?
-  workingMinutesPerDay Int?
-
-  facultyType FACULTY_TYPE?
-  lectureRate Int?
-
-  shiftStartTime DateTime?
-  shiftEndTime   DateTime?
-
-  branchId Int?
-  branch   Branch? @relation(fields: [branchId], references: [id])
-
-  isActive Boolean @default(true)
-
-  facultySubjects    FacultySubject[]
-  lectures           LectureSchedule[]
-  staffAttendances   StaffAttendance[]
-  facultyAttendances FacultyAttendance[]
-
+  id                     Int                     @id @default(dbgenerated("nextval((pg_get_serial_sequence('\"User\"'::text, 'id'::text))::regclass)"))
+  name                   String
+  phoneNumber            String                  @unique
+  password               String
+  role                   Role
+  previousRole           Role?
+  salary                 Int?
+  workingMinutesPerDay   Int?
+  facultyType            FACULTY_TYPE?
+  lectureRate            Int?
+  shiftStartTime         DateTime?
+  shiftEndTime           DateTime?
+  branchId               Int?
   createdAt              DateTime                @default(now())
+  isActive               Boolean                 @default(true)
+  facultyAttendances     FacultyAttendance[]
+  facultySubjects        FacultySubject[]
   historicalFacultyDatas HistoricalFacultyData[]
+  lectures               LectureSchedule[]
+  staffAttendances       StaffAttendance[]
+  branch                 Branch?                 @relation(fields: [branchId], references: [id])
   facultyBranches        facultyBranch[]
+  auditLogs              AuditLog[]
 }
 
 model Subject {
-  id      Int    @id @default(autoincrement())
-  name    String
-  batchId Int
-  batch   Batch  @relation(fields: [batchId], references: [id])
-
+  id               Int               @id @default(autoincrement())
+  name             String
+  batchId          Int
   facultySubjects  FacultySubject[]
   lectureSchedules LectureSchedule[]
+  batch            Batch             @relation(fields: [batchId], references: [id])
 
   @@unique([name, batchId])
 }
 
 model FacultySubject {
-  id Int @id @default(autoincrement())
-
+  id        Int     @id @default(autoincrement())
   facultyId Int
   subjectId Int
-
-  faculty User    @relation(fields: [facultyId], references: [id])
-  subject Subject @relation(fields: [subjectId], references: [id])
+  faculty   User    @relation(fields: [facultyId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id])
 
   @@unique([facultyId, subjectId])
 }
 
 model LectureSchedule {
-  id Int @id @default(autoincrement())
-
-  facultyId Int
-  subjectId Int
-  batchId   Int
-
+  id             Int                 @id @default(autoincrement())
+  facultyId      Int
+  subjectId      Int
+  batchId        Int
   TotalScheduled Int?
-
-  StartDate DateTime
-  EndDate   DateTime
-  startTime DateTime
-  endTime   DateTime
-
-  faculty User    @relation(fields: [facultyId], references: [id])
-  subject Subject @relation(fields: [subjectId], references: [id])
-  batch   Batch   @relation(fields: [batchId], references: [id])
-
-  attendance LectureAttendance[]
-
-  createdAt DateTime @default(now())
+  StartDate      DateTime            @db.Timestamp(6)
+  EndDate        DateTime            @db.Timestamp(6)
+  startTime      DateTime            @db.Timestamp(6)
+  endTime        DateTime            @db.Timestamp(6)
+  createdAt      DateTime            @default(now()) @db.Timestamp(6)
+  attendance     LectureAttendance[]
+  batch          Batch               @relation(fields: [batchId], references: [id])
+  faculty        User                @relation(fields: [facultyId], references: [id])
+  subject        Subject             @relation(fields: [subjectId], references: [id])
 }
 
 model LectureAttendance {
-  id Int @id @default(autoincrement())
-
+  id              Int             @id @default(autoincrement())
   lectureId       Int
-  date            DateTime    @default(now())
+  date            DateTime        @default(now())
   actualStartTime DateTime?
   actualEndTime   DateTime?
-  status          StatusType  @default(CONDUCTED)
-  payout          Int         @default(0)
-  penalty         PenaltyType @default(NONE)
-  penaltyMin      Int @default(0)
-
-  lecture LectureSchedule @relation(fields: [lectureId], references: [id])
-
-  createdAt DateTime @default(now())
+  status          StatusType      @default(CONDUCTED)
+  payout          Int             @default(0)
+  penalty         PenaltyType     @default(NONE)
+  createdAt       DateTime        @default(now())
+  penaltyMin      Int             @default(0)
+  lecture         LectureSchedule @relation(fields: [lectureId], references: [id])
 
   @@unique([lectureId, date])
+  @@index([lectureId], map: "idx_lectureattendance_lecture")
+  @@index([lectureId, date], map: "idx_lectureattendance_lecture_date")
 }
 
 model StaffAttendance {
-  id Int @id @default(autoincrement())
-
-  staffId Int
-  staff   User @relation(fields: [staffId], references: [id])
-
-  branchId Int
-  branch   Branch @relation(fields: [branchId], references: [id])
-
-  status         STAFF_ATTENDANCE_STATUS  @default(PRESENT)
-  date           DateTime
-  shiftStartTime DateTime
-  shiftEndTime   DateTime
-
-  actualInTime  DateTime
-  actualOutTime DateTime?
-
-  lateMinutes  Int @default(0)
-  extraPenalty Int @default(0)
-  totalPenalty Int @default(0)
-
-  isLate Boolean @default(false)
-
-  overtimeMinutes Int @default(0)
-  overtimePay     Int @default(0)
-
-  createdAt DateTime @default(now())
+  id              Int                     @id @default(autoincrement())
+  staffId         Int
+  branchId        Int
+  date            DateTime
+  shiftStartTime  DateTime
+  shiftEndTime    DateTime
+  actualInTime    DateTime
+  actualOutTime   DateTime?
+  lateMinutes     Int                     @default(0)
+  extraPenalty    Int                     @default(0)
+  totalPenalty    Int                     @default(0)
+  isLate          Boolean                 @default(false)
+  overtimeMinutes Int                     @default(0)
+  overtimePay     Int                     @default(0)
+  createdAt       DateTime                @default(now())
+  status          STAFF_ATTENDANCE_STATUS @default(PRESENT)
+  branch          Branch                  @relation(fields: [branchId], references: [id])
+  staff           User                    @relation(fields: [staffId], references: [id])
 
   @@unique([staffId, date])
 }
 
 model FacultyAttendance {
-  id Int @id @default(autoincrement())
-
-  facultyId Int
-  faculty   User @relation(fields: [facultyId], references: [id])
-
+  id             Int       @id @default(autoincrement())
+  facultyId      Int
   date           DateTime  @default(now())
-  inTime         DateTime?
-  outTime        DateTime?
+  inTime         DateTime? @db.Timestamp(6)
+  outTime        DateTime? @db.Timestamp(6)
   workingMinutes Int       @default(0)
   isLeave        Boolean   @default(false)
   createdAt      DateTime  @default(now())
+  faculty        User      @relation(fields: [facultyId], references: [id])
 
   @@unique([facultyId, date])
 }
 
 model Batch {
-  id   Int     @id @default(autoincrement())
-  name String
-  code String?
-
-  // branchId Int
-  // branch   Branch    @relation(fields: [branchId], references: [id])
-
-  courseId Int
-  course   Course @relation(fields: [courseId], references: [id])
-
-  subjects         Subject[]
-  lectureSchedules LectureSchedule[]
+  id               Int                     @id @default(autoincrement())
+  name             String
+  code             String?
+  courseId         Int
+  createdAt        DateTime                @default(now())
+  course           Course                  @relation(fields: [courseId], references: [id])
   historicalData   HistoricalFacultyData[]
-
-  createdAt DateTime @default(now())
+  lectureSchedules LectureSchedule[]
+  subjects         Subject[]
 
   @@unique([name, courseId])
 }
 
 model Course {
-  id   Int     @id @default(autoincrement())
-  name String
-  code String?
-
-  branchId Int
-  branch   Branch @relation(fields: [branchId], references: [id])
-
-  batches Batch[]
-
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String?
+  branchId  Int
   createdAt DateTime @default(now())
+  batches   Batch[]
+  branch    Branch   @relation(fields: [branchId], references: [id])
 
   @@unique([name, branchId])
 }
@@ -210,7 +169,6 @@ model HistoricalFacultyData {
   userId       Int?
   branchId     Int?
   batchId      Int?
-  // branchName   String
   facultyName  String?
   date         DateTime?
   Intime       DateTime?
@@ -219,10 +177,9 @@ model HistoricalFacultyData {
   totalPenalty Int?
   totalMinutes Int?
   session      String?
-
-  user   User?   @relation(fields: [userId], references: [id])
-  branch Branch? @relation(fields: [branchId], references: [id])
-  batch  Batch?  @relation(fields: [batchId], references: [id])
+  batch        Batch?    @relation(fields: [batchId], references: [id])
+  branch       Branch?   @relation(fields: [branchId], references: [id])
+  user         User?     @relation(fields: [userId], references: [id])
 
   @@unique([userId, batchId, date, session])
 }
@@ -244,10 +201,29 @@ model facultyBranch {
   id        Int    @id @default(autoincrement())
   facultyId Int
   branchId  Int
-  faculty   User   @relation(fields: [facultyId], references: [id])
   branch    Branch @relation(fields: [branchId], references: [id])
+  faculty   User   @relation(fields: [facultyId], references: [id])
 
   @@unique([facultyId, branchId])
+}
+
+model AuditLog {
+  id Int @id @default(autoincrement())
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  action String
+  entity String
+
+  entityId Int?
+
+  oldData Json?
+  newData Json?
+
+  description String?
+
+  createdAt DateTime @default(now())
 }
 
 enum PenaltyType {

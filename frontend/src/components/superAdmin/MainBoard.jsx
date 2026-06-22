@@ -2,38 +2,34 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { mainRoute } from "../apiroute";
+import Audit from "./Models/Audit";
 
 export const MainBoard = () => {
   const [faculty, setFaculty] = useState([]);
   const [staff, setStaff] = useState([]);
   const [branch, setBranch] = useState([]);
   const [lecture, setLecture] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     let tokn = JSON.parse(localStorage.getItem("user"));
     let token = tokn.data.token;
     const loadData = async () => {
-      const { data } = await axios.get(
-        `${mainRoute}/api/users/dashboard`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(data.data);
+      const { data } = await axios.get(`${mainRoute}/api/users/dashboard`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const facultyData = data.data.faculty.filter(
-        (user) => user.role === "FACULTY"
+        (user) => user.role === "FACULTY",
       );
       const staffData = data.data.faculty.filter(
-        (user) => user.role === "STAFF"
+        (user) => user.role === "STAFF",
       );
       const branchData = data.data.branch;
       const lectur = data.data.lectures;
-
-      console.log(branchData);
-      console.log(lectur);
 
       // console.log(facultyData)
       setFaculty(facultyData);
@@ -42,7 +38,21 @@ export const MainBoard = () => {
       setLecture(lectur);
     };
 
+    const fetchAuditLogs = async () => {
+      let tok = JSON.parse(localStorage.getItem("user"));
+      let token = tok.data.token;
+
+      const { data } = await axios.get(`${mainRoute}/api/audit`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setLogs(data.data);
+    };
+
     loadData();
+    fetchAuditLogs();
   }, []);
 
   return (
@@ -72,11 +82,13 @@ export const MainBoard = () => {
           <div className="rounded bg-gray-200 shadow-lg border flex flex-col justify-center items-center min-h-35">
             <h1 className="text-xl font-semibold uppercase">Total Lectures</h1>
             <p className="text-lg text-gray-600">
-              {lecture?.reduce((sum, lec) => sum + (lec.TotalScheduled || 0), 0) || 0}
+              {lecture?.reduce(
+                (sum, lec) => sum + (lec.TotalScheduled || 0),
+                0,
+              ) || 0}
             </p>
           </div>
 
-          
           <div className="rounded bg-gray-200 shadow-lg border flex flex-col justify-center items-center min-h-35">
             <h1 className="text-xl font-semibold uppercase">
               Lectures Conducted
@@ -89,7 +101,7 @@ export const MainBoard = () => {
                   lec.attendance.filter((att) => att.status === "CONDUCTED")
                     .length
                 );
-              }, 0)||0}
+              }, 0) || 0}
             </p>
           </div>
 
@@ -116,15 +128,22 @@ export const MainBoard = () => {
                 return (
                   count +
                   lec.attendance.filter(
-                    (att) => att.penalty && att.penalty !== "NONE"
+                    (att) => att.penalty && att.penalty !== "NONE",
                   ).length
                 );
               }, 0) || 0}
             </p>
           </div>
+          <div onClick={()=>setOpen(true)} className="rounded bg-gray-200 shadow-lg border flex flex-col justify-around py-30 items-center min-h-35">
+            <h1 className="text-xl font-semibold uppercase">Activity Logs</h1>
+            <p className="px-10">
+              {logs.length > 0 && `${logs[0].user.name}-${logs[0].description}`}
+            </p>
+          </div>
         </div>
       </div>
       {/* </div> */}
+      {open && <Audit open={open} setOpen={setOpen} logs={logs} />}
     </>
   );
 };

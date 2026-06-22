@@ -77,6 +77,11 @@ const getAllUser = async () => {
           subject: true,
         },
       },
+      facultyBranches: {
+        include: {
+          branch: true,
+        },
+      },
 
       shiftStartTime: true,
       shiftEndTime: true,
@@ -186,8 +191,14 @@ const updateUser = async (
   shiftStartTime,
   shiftEndTime,
   facultyType,
+  branchIds,
 ) => {
-  console.log("user updating ");
+  console.log({
+    id,
+    role,
+    branchId,
+    branchIds,
+  });
   if (role === "STAFF") {
     const today = new Date().toISOString().split("T")[0];
 
@@ -212,44 +223,71 @@ const updateUser = async (
       },
     });
   } else {
-    console.log("faculty");
     if (facultyType === "SALARY_BASED") {
-      console.log("Salary");
       const today = new Date().toISOString().split("T")[0];
 
       const shiftStart = new Date(`${today}T${shiftStartTime}`);
       const shiftEnd = new Date(`${today}T${shiftEndTime}`);
-      console.log(shiftStart);
-      console.log(shiftEnd);
 
       const workingMinutesPerDay = Math.floor(
         (shiftEnd - shiftStart) / (1000 * 60),
       );
 
-      return await prisma.user.update({
+      const user = await prisma.user.update({
         where: { id },
         data: {
           name,
           phoneNumber,
           role,
-          branchId: Number(branchId),
+          branchId: null,
           salary: Number(salary),
           shiftEndTime: shiftEnd,
           shiftStartTime: shiftStart,
           workingMinutesPerDay: workingMinutesPerDay,
         },
       });
+      await prisma.facultyBranch.deleteMany({
+        where: {
+          facultyId: id,
+        },
+      });
+
+      await prisma.facultyBranch.createMany({
+        data: branchIds.map((branchId) => ({
+          facultyId: id,
+          branchId: Number(branchId),
+        })),
+        skipDuplicates: true,
+      });
+
+      return user;
     } else {
-      return await prisma.user.update({
+      const user = await prisma.user.update({
         where: { id },
         data: {
           name,
           phoneNumber,
           role,
-          branchId: Number(branchId),
+          branchId: null,
           lectureRate: Number(salary),
         },
       });
+
+      await prisma.facultyBranch.deleteMany({
+        where: {
+          facultyId: id,
+        },
+      });
+
+      await prisma.facultyBranch.createMany({
+        data: branchIds.map((branchId) => ({
+          facultyId: id,
+          branchId: Number(branchId),
+        })),
+        skipDuplicates: true,
+      });
+
+      return user;
     }
   }
 };

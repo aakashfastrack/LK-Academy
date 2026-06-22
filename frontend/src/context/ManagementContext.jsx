@@ -73,7 +73,7 @@ export const ManagementProvider = ({ children }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     return data.data;
@@ -93,6 +93,26 @@ export const ManagementProvider = ({ children }) => {
     return data.data;
   };
 
+  const fetchReport = async (branchIds, month, year) => {
+    let tok = JSON.parse(localStorage.getItem("user"));
+    let token = tok.data.token;
+
+    const { data } = await axios.post(
+      `${mainRoute}/api/report/generate?month=${month}&year=${year}`,
+      {
+        branchIds,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return data.data;
+  };
+
   return (
     <ManagementContext
       value={{
@@ -101,7 +121,8 @@ export const ManagementProvider = ({ children }) => {
         fetchSubject,
         fetchLecture,
         changePassword,
-        fetchCourse
+        fetchCourse,
+        fetchReport,
       }}
     >
       {children}

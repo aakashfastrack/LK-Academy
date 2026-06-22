@@ -254,8 +254,99 @@ const getStaffMonthlySalarySummary = async (staffId, month, year) => {
   };
 };
 
+const updateAttendanceService = async ({
+  attendanceId,
+  actualInTime,
+  actualOutTime,
+  status,
+}) => {
+  const attendance = await prisma.staffAttendance.findUnique({
+    where: {
+      id: attendanceId,
+    },
+    include: {
+      staff: true,
+    },
+  });
+
+  if (!attendance) throw new Error("Attendance not found");
+
+  const dateString = attendance.date.toISOString().split("T")[0];
+  const actualIn = new Date(`${dateString}T${actualInTime}:00`);
+
+  const actualOut = new Date(`${dateString}T${actualOutTime}:00`);
+
+  const staff = attendance.staff;
+
+  console.log(staff);
+
+  if (!staff.salary || !staff.workingMinutesPerDay)
+    throw new Error("Staff salary or working time not configured");
+
+  const calc = calculateStaffAttendance({
+    shiftStartTime: attendance.shiftStartTime,
+    shiftEndTime: attendance.shiftEndTime,
+    actualInTime: actualIn,
+    actualOutTime: actualOut,
+    monthlySalary: staff.salary,
+    workingMinutesPerDay: staff.workingMinutesPerDay,
+    status,
+  });
+
+  return await prisma.staffAttendance.update({
+    where: {
+      id: attendanceId,
+    },
+    data: {
+      actualInTime: actualIn,
+      actualOutTime: actualOut,
+
+      isLate: calc.isLate,
+      lateMinutes: Math.floor(calc.lateMinutes),
+      status: status,
+
+      extraPenalty: Math.floor(calc.extraPenalty),
+      totalPenalty: Math.floor(calc.totalPenalty),
+
+      overtimeMinutes: Math.floor(calc.overtimeMinutes),
+      overtimePay: Math.floor(calc.overtimePay),
+    },
+  });
+};
+
+const fetchAttendance = async (attendanceId) => {
+  const attendance = await prisma.staffAttendance.findUnique({
+    where: {
+      id: attendanceId,
+    },
+    include: {
+      staff: {
+        select: {
+          name: true,
+          id: true,
+          role: true,
+          salary: true,
+          workingMinutesPerDay: true,
+        },
+      },
+      branch: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  if (!attendance) throw new Error("Attendance not found");
+
+  return attendance;
+};
+
 module.exports = {
   markStaffAttendance,
   getStaffMonthlyReport,
   getStaffMonthlySalarySummary,
+  updateAttendanceService,
+  fetchAttendance,
 };

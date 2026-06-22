@@ -95,6 +95,7 @@ const getLectureByIdAndType = async (id, type, month, year) => {
           },
         },
         subject: true,
+        batch: true,
       },
     });
   } else {
@@ -108,6 +109,7 @@ const getLectureByIdAndType = async (id, type, month, year) => {
       },
       include: {
         faculty: true,
+        batch: true,
       },
       orderBy: {
         date: "asc", // 🔥 add this
@@ -206,6 +208,60 @@ const updateLecture = async (
   });
 };
 
+function mergeDateAndTime(date, time) {
+  const d = new Date(date);
+
+  const [hours, minutes] = time.split(":").map(Number);
+
+  d.setHours(hours, minutes, 0, 0);
+
+  return d;
+}
+
+const resetLectureCycleService = async ({
+  lectureId,
+  startDate,
+  endDate,
+  startTime,
+  endTime,
+  totalScheduled,
+}) => {
+  const oldLecture = await prisma.lectureSchedule.findUnique({
+    where: {
+      id: lectureId,
+    },
+  });
+
+  if (!oldLecture) {
+    throw new Error("Lecture schedule not found");
+  }
+
+  const startTimeDate = mergeDateAndTime(startDate, startTime);
+  const endTimeDate = mergeDateAndTime(startDate, endTime);
+
+  if (startTimeDate >= endTimeDate) {
+    throw new Error("End time must be after start time");
+  }
+
+  const newLecture = await prisma.lectureSchedule.create({
+    data: {
+      facultyId: oldLecture.facultyId,
+      subjectId: oldLecture.subjectId,
+      batchId: oldLecture.batchId,
+
+      StartDate: new Date(startDate),
+      EndDate: new Date(endDate),
+
+      startTime: startTimeDate,
+      endTime: endTimeDate,
+
+      TotalScheduled: Number(totalScheduled),
+    },
+  });
+
+  return newLecture;
+};
+
 module.exports = {
   createlectureSchedule,
   getLectureByBranchAndDate,
@@ -214,4 +270,5 @@ module.exports = {
   updateLecture,
   getLectureByIdAndType,
   getLecture,
+  resetLectureCycleService
 };

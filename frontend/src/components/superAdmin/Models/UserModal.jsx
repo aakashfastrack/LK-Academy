@@ -88,6 +88,12 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
     if (user?.facultyType) {
       setFacultyType(user.facultyType);
     }
+
+    if (user?.role === "FACULTY") {
+      setBranches(user?.facultyBranches?.map((item) => item.branchId) || []);
+    } else if (user?.branch) {
+      setBranches(user.branch.id);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -125,6 +131,7 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
           shiftStartTime: shiftInTime,
           shiftEndTime: shiftOutTime,
           facultyType: facultyType,
+          branchIds: branches,
           salary: salary,
         },
         {
@@ -152,16 +159,19 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
       let tokn = JSON.parse(localStorage.getItem("user"));
       let token = tokn.data.token;
 
-      const { data } = await axios.put(
+      const { data } = await axios.patch(
         `${mainRoute}/api/users/${user.id}`,
         {
           name,
           phoneNumber,
           role: roles,
-          branchId: Number(branches),
+          // branchId: Number(branches),
           shiftStartTime: shiftInTime,
           shiftEndTime: shiftOutTime,
           salary: salary,
+          branchId: roles === "FACULTY" ? null : Number(branches),
+
+          branchIds: roles === "FACULTY" ? branches : [],
           facultyType: facultyType,
         },
         {
@@ -207,10 +217,21 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
       // router.refresh();
     }
   };
+
+  const handleBranchSelection = (branchId) => {
+    setBranches((prev) => {
+      if (prev.includes(branchId)) {
+        return prev.filter((id) => id !== branchId);
+      }
+
+      return [...prev, branchId];
+    });
+  };
+
   return (
     <>
       {open && (
-        <div className="h-screen w-full bg-[#d8d3d382] absolute top-0 left-0 flex justify-center items-center">
+        <div className="h-screen z-20 w-full bg-[#d8d3d382] absolute top-0 left-0 flex justify-center items-center">
           <div className="h-auto p-5 w-[80%] xl:w-[40vw]  bg-white shadow-2xl rounded-2xl  ">
             <div className="flex justify-end px-5">
               <span
@@ -242,7 +263,9 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
                   />
                 </div>
 
-                <div className="flex flex-row! justify-around [&>div]:w-[50%] [&>div]:flex [&>div]:flex-col [&>div]:gap-2 ">
+                <div
+                  className={`flex  justify-around ${roles === "SUPER_ADMIN" ? "[&>div]:w-full [&>div]:flex [&>div]:flex-col [&>div]:gap-2" : roles === "STAFF" ? "[&>div]:w-[50%] [&>div]:flex [&>div]:flex-col [&>div]:gap-2 flex-row!" : "[&>div]:w-full [&>div]:flex [&>div]:flex-col [&>div]:gap-2"}`}
+                >
                   <div className="">
                     <Label>Role:</Label>
                     <Select onValueChange={(v) => setRole(v)}>
@@ -258,24 +281,46 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="">
-                    <Label>Branch:</Label>
-                    <Select
-                      onValueChange={(v) => setBranches(v)}
-                      className={`w-full`}
-                    >
-                      <SelectTrigger className={`w-full`}>
-                        <SelectValue placeholder={`Branch`} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {branch.map((item, i) => (
-                          <SelectItem key={i} value={item.id}>
+
+                  {roles === "FACULTY" ? (
+                    <div className="">
+                      <Label>Branches</Label>
+                      <div className="border rounded p-3 max-h-40 overflow-y-auto flex flex-col gap-2">
+                        {branch.map((item) => (
+                          <label
+                            key={item.id}
+                            className="flex items-center gap-2"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={branches.includes(item.id)}
+                              onChange={() => handleBranchSelection(item.id)}
+                            />
                             {item.name}
-                          </SelectItem>
+                          </label>
                         ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      </div>
+                    </div>
+                  ) : roles !== "SUPER_ADMIN" ? (
+                    <div className="">
+                      <Label>Branch:</Label>
+                      <Select
+                        onValueChange={(v) => setBranches(v)}
+                        className={`w-full`}
+                      >
+                        <SelectTrigger className={`w-full`}>
+                          <SelectValue placeholder={`Branch`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {branch.map((item, i) => (
+                            <SelectItem key={i} value={item.id}>
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : null}
                 </div>
 
                 {roles === "FACULTY" && (
@@ -367,10 +412,7 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
                 <div className="flex flex-row! justify-around [&>div]:w-[50%] [&>div]:flex [&>div]:flex-col [&>div]:gap-2 ">
                   <div className="">
                     <Label>Role:</Label>
-                    <Select
-                      value={user?.role}
-                      onValueChange={(v) => setRole(v)}
-                    >
+                    <Select value={roles} onValueChange={(v) => setRole(v)}>
                       <SelectTrigger className={`w-full`}>
                         <SelectValue
                           value={roles}
@@ -386,7 +428,7 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="">
+                  {/* <div className="">
                     <Label>Branch:</Label>
                     <Select
                       onValueChange={(v) => setBranches(v)}
@@ -404,7 +446,54 @@ const UserModal = ({ open, setOpen, type, user, refetch }) => {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
+
+                  {roles === "FACULTY" ? (
+                    <div>
+                      <Label>Branches</Label>
+
+                      <div className="border rounded p-3 max-h-40 overflow-y-auto flex flex-col gap-2">
+                        {branch.map((item) => (
+                          <label
+                            key={item.id}
+                            className="flex items-center gap-2"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={branches.includes(item.id)}
+                              onChange={() => handleBranchSelection(item.id)}
+                            />
+
+                            {item.name}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <Label>Branch</Label>
+
+                      <Select
+                        value={branches?.toString()}
+                        onValueChange={(v) => setBranches(Number(v))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Branch" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {branch.map((item) => (
+                            <SelectItem
+                              key={item.id}
+                              value={item.id.toString()}
+                            >
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </div>
 
                 <div className="">

@@ -10,6 +10,7 @@ import { mainRoute } from "../apiroute";
 const LectureManagement = () => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
+  const [reset, setReset] = useState(false);
 
   const [lectureData, setLectureData] = useState([]);
 
@@ -25,7 +26,7 @@ const LectureManagement = () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    
+
     setLectureData(data.data);
   };
 
@@ -47,7 +48,7 @@ const LectureManagement = () => {
   ];
 
   function formatTime(isoIst) {
-    console.log(isoIst)
+    console.log(isoIst);
     if (!isoIst) return "";
 
     // 🔥 remove Z so JS treats it as local time
@@ -119,6 +120,8 @@ const LectureManagement = () => {
                       setOp={setOpen}
                       setUs={setLectures}
                       setType={setType}
+                      need={true}
+                      setReset={setReset}
                     />
                   </li>
                 </ul>
@@ -135,6 +138,7 @@ const LectureManagement = () => {
         setOpen={setOpen}
         type={type}
         lec={lec}
+        reset={reset}
       />
     </>
   );

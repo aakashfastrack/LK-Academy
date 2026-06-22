@@ -1,9 +1,18 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, TimerReset } from "lucide-react";
 
-const ActionButton = ({ user, edit = true,  setOp, setUs, setType, needed }) => {
+const ActionButton = ({
+  user,
+  edit = true,
+  setOp,
+  setUs,
+  setType,
+  needed,
+  need,
+  setReset,
+}) => {
   const [open, setOpen] = useState(false);
   const handleEdit = (user) => {
     // alert(user.id)
@@ -12,8 +21,8 @@ const ActionButton = ({ user, edit = true,  setOp, setUs, setType, needed }) => 
   const handleDelete = (user) => {
     setOp(true);
     setType("delete");
-    setOpen(false)
-    setUs(user)
+    setOpen(false);
+    setUs(user);
   };
   return (
     <div className="relative">
@@ -33,7 +42,6 @@ const ActionButton = ({ user, edit = true,  setOp, setUs, setType, needed }) => 
                 setUs(user);
                 setType("assign");
                 setOp(true);
-                
               }}
               className="flex w-full px-3 py-2 text-sm hover:bg-gray-100"
             >
@@ -41,18 +49,37 @@ const ActionButton = ({ user, edit = true,  setOp, setUs, setType, needed }) => 
             </button>
           )}
 
-          { edit && <button
-            onClick={() => {
-              setOpen(false);
-              handleEdit(user);
-              setUs(user);
-              setType("edit");
-              setOp(true);
-            }}
-            className="flex w-full px-3 py-2 text-sm hover:bg-gray-100"
-          >
-            ✏️ Edit
-          </button>}
+          {edit && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                handleEdit(user);
+                setUs(user);
+                setType("edit");
+                setOp(true);
+              }}
+              className="flex w-full px-3 py-2 text-sm hover:bg-gray-100"
+            >
+              ✏️ Edit
+            </button>
+          )}
+
+          {need && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                handleEdit(user);
+                setUs(user);
+                setType("edit");
+                setOp(true);
+                setReset(true);
+              }}
+              className="flex w-full px-3 py-2 text-sm hover:bg-gray-100"
+            >
+              <TimerReset size={20} />
+              Reset
+            </button>
+          )}
 
           <button
             onClick={() => {

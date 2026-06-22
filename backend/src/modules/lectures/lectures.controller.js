@@ -39,7 +39,7 @@ const create = async (req, res) => {
         endTime,
         TotalScheduled,
       },
-      req.user
+      req.user,
     );
 
     res.status(201).json({
@@ -67,7 +67,7 @@ const getByBranchAndDate = async (req, res) => {
 
     const lectures = await lectureService.getLectureByBranchAndDate(
       batchId,
-      date
+      date,
     );
 
     res.json({
@@ -81,46 +81,47 @@ const getByBranchAndDate = async (req, res) => {
   }
 };
 
-const getLecturesbyId = async(req,res) =>{
-  try{
+const getLecturesbyId = async (req, res) => {
+  try {
+    const { id, type, month, year } = req.query;
 
-    const {id,type,month,year} = req.query;
-
-    const data = await lectureService.getLectureByIdAndType(id,type,month,year)
+    const data = await lectureService.getLectureByIdAndType(
+      id,
+      type,
+      month,
+      year,
+    );
 
     res.json({
-      message:"Data of lecture by id and type",
-      success:false,
-      data
-    })
-
-  }catch(err){
+      message: "Data of lecture by id and type",
+      success: false,
+      data,
+    });
+  } catch (err) {
     res.status(400).json({
-      message:err.message,
-    })
+      message: err.message,
+    });
   }
-}
+};
 
-const getlecture = async(req,res) =>{
-  try{
-
-    const {id} = req.query;
+const getlecture = async (req, res) => {
+  try {
+    const { id } = req.query;
 
     const data = await lectureService.getLecture(id);
 
     res.json({
-      message:"All data",
-      success:true,
-      data
-    })
-
-  }catch(err) {
+      message: "All data",
+      success: true,
+      data,
+    });
+  } catch (err) {
     res.status(400).json({
-      message:err.message,
-      success:true
-    })
+      message: err.message,
+      success: true,
+    });
   }
-}
+};
 
 const getAlllectures = async (req, res) => {
   try {
@@ -177,7 +178,7 @@ const update = async (req, res) => {
       EndDate,
       startTime,
       endTime,
-      TotalScheduled
+      TotalScheduled,
     );
 
     res.json({
@@ -192,6 +193,28 @@ const update = async (req, res) => {
   }
 };
 
+const resetLectureCycleController = async (req, res) => {
+  try {
+    const lectureId = Number(req.params.lectureId);
+
+    const data = await lectureService.resetLectureCycleService({
+      lectureId,
+      ...req.body,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "New cycle created successfully",
+      data,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   create,
   getByBranchAndDate,
@@ -199,5 +222,6 @@ module.exports = {
   remove,
   update,
   getLecturesbyId,
-  getlecture
+  getlecture,
+  resetLectureCycleController,
 };

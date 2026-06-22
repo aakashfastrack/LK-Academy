@@ -9,7 +9,7 @@ router.post(
   "/",
   protect,
   requireRole("SUPER_ADMIN", "BRANCH_ADMIN"),
-  lectureController.create
+  lectureController.create,
 );
 
 router.get("/", protect, lectureController.getAlllectures);
@@ -23,5 +23,12 @@ router.get("/branch/:batchId", protect, lectureController.getByBranchAndDate);
 router.delete("/:id", protect, lectureController.remove);
 
 router.put("/:id", protect, lectureController.update);
+
+router.post(
+  "/reset-cycle/:lectureId",
+  protect,
+  requireRole("SUPER_ADMIN", "BRANCH_ADMIN"),
+  lectureController.resetLectureCycleController,
+);
 
 module.exports = router;

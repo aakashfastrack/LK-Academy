@@ -547,9 +547,121 @@ const getSalaryBasedFacultyMonthlySummary = async (facultyId, month, year) => {
   };
 };
 
+const updateLectureAttendanceService = async ({
+  attendanceId,
+  actualStartTime,
+  actualEndTime,
+  status,
+}) => {
+  const attendance = await prisma.lectureAttendance.findUnique({
+    where: {
+      id: attendanceId,
+    },
+    include: {
+      lecture: {
+        include: {
+          faculty: true,
+        },
+      },
+    },
+  });
+
+  if (!attendance) {
+    throw new Error("Attendance not found");
+  }
+
+  const lecture = attendance.lecture;
+
+  const lectureDate = attendance.date;
+
+  const start = new Date(lectureDate);
+  const [sh, sm] = actualStartTime.split(":").map(Number);
+  start.setHours(sh, sm, 0, 0);
+
+  const end = new Date(lectureDate);
+  const [eh, em] = actualEndTime.split(":").map(Number);
+  end.setHours(eh, em, 0, 0);
+
+  let payout = 0;
+  let penalty = "NONE";
+  let penaltyMin = 0;
+
+  if (status === "CANCELLED") {
+    payout = Math.floor((lecture.faculty.lectureRate || 0) / 2);
+  } else if (status === "MISSED") {
+    payout = 0;
+  } else {
+    const calc = calculateLectureBasedFacultyBackend({
+      plannedStart: lecture.startTime,
+      plannedEnd: lecture.endTime,
+      actualStart: start,
+      actualEnd: end,
+      lectureRate: lecture.faculty.lectureRate,
+      status,
+      lectureDate,
+    });
+
+    payout = calc.payout;
+    penalty = calc.penalty;
+    penaltyMin = calc.totalPenaltyMin;
+  }
+
+  return await prisma.lectureAttendance.update({
+    where: {
+      id: attendanceId,
+    },
+    data: {
+      actualStartTime: start,
+      actualEndTime: end,
+      status,
+      payout,
+      penalty,
+      penaltyMin,
+    },
+  });
+};
+
+const fetchAttendanceService = async (attendanceId) => {
+  const attendance = await prisma.lectureAttendance.findUnique({
+    where: {
+      id: attendanceId,
+    },
+    include: {
+      lecture: {
+        include: {
+          faculty: {
+            select: {
+              id: true,
+              name: true,
+              lectureRate: true,
+              facultyType: true,
+            },
+          },
+          subject: true,
+          batch: {
+            include: {
+              course: {
+                include:{
+                  branch:true
+                }
+              }
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!attendance) throw new Error("Attendance not found!!!");
+
+  return attendance;
+};
+
 module.exports = {
   markLectureAttendance,
   getFacultyMonthlySummary,
   markSalaryBasedFacultyAttendance,
   getSalaryBasedFacultyMonthlySummary,
+  updateLectureAttendanceService,
+  fetchAttendanceService,
 };

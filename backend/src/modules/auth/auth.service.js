@@ -5,7 +5,11 @@ const { prisma } = require("../../config/db");
 const loginUser = async (phoneNumber, password) => {
   const user = await prisma.user.findUnique({
     where: { phoneNumber },
-    include: { branch: true },
+    include: { branch: true,facultyBranches:{
+      include:{
+        branch:true
+      }
+    } },
   });
 
   if (!user) {
@@ -103,6 +107,7 @@ const registerUser = async (data) => {
     password,
     role,
     branchId,
+    branchIds,
     shiftStartTime,
     shiftEndTime,
     salary,
@@ -187,13 +192,23 @@ const registerUser = async (data) => {
           phoneNumber,
           password: hashedPassword,
           role,
-          branchId: branchId || null,
+          branchId: null,
           facultyType,
           shiftStartTime: new Date(shiftStart.toISOString()),
           shiftEndTime: new Date(shiftEnd.toISOString()),
           salary: Number(salary),
         },
       });
+
+      if(branchIds.length > 0){
+        await prisma.facultyBranch.createMany({
+          data: branchIds.map((id)=> ({
+            facultyId: user.id,
+            branchId: Number(id)
+          })),
+          skipDuplicates: true,
+        })
+      }
 
       return {
         id: user.id,
@@ -211,11 +226,21 @@ const registerUser = async (data) => {
           phoneNumber,
           password: hashedPassword,
           role,
-          branchId: branchId || null,
+          branchId: null,
           facultyType,
           lectureRate: salary ? Number(salary) : null,
         },
       });
+
+      if(branchIds.length > 0) {
+        await prisma.facultyBranch.createMany({
+          data: branchIds.map((id) => ({
+            facultyId: user.id,
+            branchId: Number(id)
+          })),
+          skipDuplicates:true
+        })
+      }
       return {
         id: user.id,
         name: user.name,

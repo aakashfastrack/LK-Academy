@@ -10,7 +10,7 @@ if(!global.prisma){
 prisma = global.prisma
 
 const connectDB = async () =>{ 
-    try{
+    try{ 
 
         await prisma.$connect();
         console.log(`Database Connected Successfully`)

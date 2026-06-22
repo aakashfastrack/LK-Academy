@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 import { useManagement } from "@/context/ManagementContext";
 import { Input } from "../ui/input";
 import ReportModels from "./Modal/ReportModels";
+import RepModal from "../superAdmin/Models/RepModal";
 
 const Report = () => {
   const [user, setUser] = useState({});
@@ -18,6 +19,7 @@ const Report = () => {
   const [role, setRole] = useState("FACULTY");
   // const [branch, setBranch] = useState([]);
   const [bran, setBran] = useState({});
+  const [repMo, setRepMo] = useState(false);
 
   const facultyReportHeaders = [
     "id",
@@ -192,6 +194,8 @@ const Report = () => {
           </Select>
 
           <Input value={bran.name} placeholder={`Branch`} readOnly />
+
+          {/* <Button onClick={() => setRepMo(true)}>Generate report</Button> */}
         </div>
         {role === "STAFF" && (
           <div className="h-[92%] w-full overflow-auto xl:overflow-x-hidden">
@@ -319,6 +323,8 @@ const Report = () => {
         user={user}
         setUser={setUser}
       />
+
+      {/* <RepModal open={repMo} setOpen={setRepMo} branch={bran} /> */}
     </>
   );
 };
