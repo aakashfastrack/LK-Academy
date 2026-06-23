@@ -1,25 +1,26 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, TimerReset } from "lucide-react";
 
-const ActionBtn = ({op,setOp,type,setType,lecu,setlecture}) => {
+const ActionBtn = ({ op, setOp, type, setType, lecu, setlecture,need,setReset }) => {
   const [open, setOpen] = useState(false);
+  
 
+  const handleEdit = () => {
+    setlecture(lecu);
+    setOp(true);
+    setType("edit");
+    setOpen(false);
+    setReset(false)
+  };
 
-  const handleEdit = () =>{
-    setlecture(lecu)
-    setOp(true)
-    setType("edit")
-    setOpen(false)
-  }
-
-  const handleDelete = () =>{
-    setlecture(lecu)
-    setOp(true)
-    setType("delete")
-    setOpen(false)
-  }
+  const handleDelete = () => {
+    setlecture(lecu);
+    setOp(true);
+    setType("delete");
+    setOpen(false);
+  };
   return (
     <>
       <div className="relative">
@@ -34,12 +35,33 @@ const ActionBtn = ({op,setOp,type,setType,lecu,setlecture}) => {
           <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-md z-50 [&>Button]:cursor-pointer ">
             <Button
               className={`flex w-full px-3 py-2 text-sm  rounded-none bg-white hover:text-gray-500 text-gray-700 hover:bg-gray-100`}
-                onClick={handleEdit}
+              onClick={handleEdit}
             >
               ✏️ Edit
             </Button>
 
-            <Button onClick={handleDelete} variant="destructive" className={`flex w-full px-3 py-2 text-sm rounded-none hover:bg-red-700  `}>
+            {need && (
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  handleEdit();
+                  // setUs(user);
+                  setType("edit");
+                  setOp(true);
+                  setReset(true);
+                }}
+                className="flex justify-center items-center w-full px-3 py-2 text-sm hover:bg-gray-100"
+              >
+                <TimerReset size={20} />
+                Reset
+              </button>
+            )}
+
+            <Button
+              onClick={handleDelete}
+              variant="destructive"
+              className={`flex w-full px-3 py-2 text-sm rounded-none hover:bg-red-700  `}
+            >
               🗑️ Delete
             </Button>
           </div>

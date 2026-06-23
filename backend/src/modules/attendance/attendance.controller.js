@@ -39,7 +39,7 @@ const markAttendance = async (req, res) => {
         date,
       },
 
-      description: `Lecture attendance marked for lecture ${lectureId}`,
+      description: `Lecture attendance marked for lecture ${record.lecture.subject.name}-${record.lecture.subject.batch.name}`,
     });
 
     res.json({
@@ -91,7 +91,7 @@ const markFacultyAttendanceController = async (req, res) => {
 
       newData: attendance,
 
-      description: `Faculty attendance marked for faculty ${attendance.facultyId}`,
+      description: `Faculty attendance marked for faculty ${attendance.faculty.name}`,
     });
 
     res.json({

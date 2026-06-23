@@ -140,11 +140,11 @@ const FacultyModal = ({ open, setOpen }) => {
       setFilteredFaculty(users);
       return;
     }
-
-    const branchWiseFaculty = users.filter(
-      (user) => user.branchId === Number(selectedBranch),
+    const branchWiseFaculty = users.filter((user) =>
+      user.facultyBranches.some(
+        (item) => item.branchId === Number(selectedBranch)
+      ),
     );
-
     setFilteredFaculty(branchWiseFaculty);
   }, [selectedBranch, users]);
 
@@ -286,7 +286,6 @@ const FacultyModal = ({ open, setOpen }) => {
       lectureRate: selectFaculty.lectureRate,
     });
 
-    console.log(result.calculatedPayout);
     const paying =
       result.calculatedPayout > 0
         ? result.calculatedPayout

@@ -57,6 +57,7 @@ const ActionButton = ({
                 setUs(user);
                 setType("edit");
                 setOp(true);
+                setReset(false)
               }}
               className="flex w-full px-3 py-2 text-sm hover:bg-gray-100"
             >

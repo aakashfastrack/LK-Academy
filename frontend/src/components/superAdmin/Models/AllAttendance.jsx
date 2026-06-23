@@ -3,7 +3,13 @@ import axios from "axios";
 import { Edit } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 const EditAttendanceModal = dynamic(() => import("./EditAttendanceModal"));
@@ -19,6 +25,8 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   const [lecData, setLecData] = useState([]);
   const [openStaffModal, setOpenStaffModal] = useState(false);
   const [openFacultyModal, setOpenFacultyModal] = useState(false);
+  const [selectedBatch, setSelectedBatch] = useState("");
+  const [filteredLectures, setFilteredLectures] = useState([]);
 
   const [attId, setAttId] = useState("");
   const [selectedAttendance, setSelectedAttendance] = useState(null);
@@ -124,7 +132,6 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
         .flatMap((lec) =>
           lec.attendance.map((att) => {
             const now = new Date();
-            console.log(lec)
 
             let status = att?.status;
             if (status === "CONDUCTED") status = "Conducted";
@@ -142,7 +149,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
             return {
               date: formatDate(att.date || lec.StartDate),
               subject: lec.subject?.name || "-",
-              batch:lec.batch?.name || "-",
+              batch: lec.batch?.name || "-",
               plannedTime: `${formatTime(lec.startTime)} – ${formatTime(
                 lec.endTime,
               )}`,
@@ -247,12 +254,26 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   useEffect(() => {
     if (typ === "LECTURE_BASED") {
       const uiData = mapLecturesToUI(serverData);
-      console.log(uiData);
       setMyLecturesData(uiData);
     } else {
       setLecData(serverData);
     }
   }, [serverData]);
+
+  const uniqueBatches = [...new Set(myLecturesData.map((item) => item.batch))];
+
+  useEffect(() => {
+    if (!selectedBatch) {
+      setFilteredLectures(myLecturesData);
+      return;
+    }
+
+    const filtered = myLecturesData.filter(
+      (item) => item.batch === selectedBatch,
+    );
+
+    setFilteredLectures(filtered);
+  }, [selectedBatch, myLecturesData]);
 
   function convertMinToHours(time) {
     if (!time || time <= 0) return "0 mins";
@@ -279,21 +300,21 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
             <div className="flex justify-between px-5">
               <div className="">
                 {userdata.role === "FACULTY" && (
-                <Select>
-                  <SelectTrigger className={`w-full`}>
-                    <SelectValue placeholder={`Subjects`} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {
-                      myLecturesData.map((item,indx)=>(
-                        <SelectItem key={indx} value={item.subject}>
-                          {`${item.subject}-${item.batch}`}
+                  <Select
+                    value={selectedBatch}
+                    onValueChange={(v) => setSelectedBatch(v)}
+                  >
+                    <SelectTrigger className={`w-full`}>
+                      <SelectValue placeholder={`Batches`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {uniqueBatches.map((batch, index) => (
+                        <SelectItem key={index} value={batch}>
+                          {batch}
                         </SelectItem>
-                      ))
-                    }
-
-                  </SelectContent>
-                </Select>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               </div>
               <span
@@ -309,9 +330,9 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               </span>
             </div>
 
-            <div className="w-[98%]  h-full items-center overflow-auto xl:overflow-x-hidden">
+            <div className="w-[98%]  h-[95%] items-center overflow-auto xl:overflow-x-hidden">
               <ul
-                className={`grid grid-cols-[100px_180px_260px_220px_120px_140px_140px_120px] ${
+                className={`grid sticky top-0 bg-white grid-cols-[100px_180px_260px_220px_120px_140px_140px_120px] ${
                   typ === "LECTURE_BASED"
                     ? `xl:grid-cols-8`
                     : typ === "SALARY_BASED"
@@ -326,9 +347,8 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                     : lecHeader.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
 
-              {myLecturesData.length > 0 &&
-                myLecturesData.map((item, i) => {
-                  // console.log(item?.id)
+              {filteredLectures.length > 0 &&
+                filteredLectures.map((item, i) => {
                   let pen =
                     item.status === "Conducted"
                       ? userdata?.lectureRate - item?.payout

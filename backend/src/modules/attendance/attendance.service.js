@@ -217,6 +217,17 @@ const markLectureAttendance = async ({
       date: date,
       penaltyMin: Number(penaltyMin),
     },
+    include: {
+      lecture: {
+        include: {
+          subject: {
+            include: {
+              batch: true,
+            },
+          },
+        },
+      },
+    },
   });
   return data;
 };
@@ -466,6 +477,13 @@ const markSalaryBasedFacultyAttendance = async ({
       isLeave,
       workingMinutes: workingMintues,
     },
+    include: {
+      lecture: {
+        subject: {
+          batch: true,
+        },
+      },
+    },
   });
 
   if (!isLeave) {
@@ -641,10 +659,10 @@ const fetchAttendanceService = async (attendanceId) => {
           batch: {
             include: {
               course: {
-                include:{
-                  branch:true
-                }
-              }
+                include: {
+                  branch: true,
+                },
+              },
             },
           },
         },

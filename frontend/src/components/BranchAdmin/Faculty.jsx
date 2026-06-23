@@ -94,7 +94,11 @@ const Faculty = () => {
 
       const filterData = userDate
         .filter((user) => user.role === "FACULTY" && user.isActive)
-        .filter((user) => user.facultyBranches.includes(branchId));
+        .filter((user) =>
+          user.facultyBranches.some(
+            (item) => item.branchId === Number(branchId),
+          ),
+        );
 
       setUsers(filterData);
     };

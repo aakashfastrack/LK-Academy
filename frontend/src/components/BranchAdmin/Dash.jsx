@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { mainRoute } from "../apiroute";
+import Audit from "../superAdmin/Models/Audit";
 
 const Dash = () => {
   const [faculty, setFaculty] = useState([]);
@@ -10,6 +11,8 @@ const Dash = () => {
   const [lecture, setLecture] = useState([]);
   const [branchData, setBranchData] = useState({});
   const [batches, setBatches] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     let tokn = JSON.parse(localStorage.getItem("user"));
@@ -52,7 +55,21 @@ const Dash = () => {
       setBatches(bat);
     };
 
+    const fetchAuditLogs = async () => {
+      let tok = JSON.parse(localStorage.getItem("user"));
+      let token = tok.data.token;
+
+      const { data } = await axios.get(`${mainRoute}/api/audit`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setLogs(data.data);
+    };
+
     loadData();
+    fetchAuditLogs();
   }, []);
 
   return (
@@ -111,7 +128,7 @@ const Dash = () => {
           </div>
 
           {/* total Faculies */}
-          <div className="rounded bg-gray-200 shadow-lg border flex flex-col justify-center items-center min-h-35">
+          {/* <div className="rounded bg-gray-200 shadow-lg border flex flex-col justify-center items-center min-h-35">
             <h1 className="text-xl font-semibold uppercase">Lectures Missed</h1>
             <p className="text-lg text-gray-600">
               {lecture.reduce((count, lec) => {
@@ -122,7 +139,7 @@ const Dash = () => {
                 );
               }, 0)}
             </p>
-          </div>
+          </div> */}
 
           {/* total Staff */}
           <div className="rounded bg-gray-200 shadow-lg border flex flex-col justify-center items-center min-h-35">
@@ -144,9 +161,20 @@ const Dash = () => {
             <h1 className="text-xl font-semibold uppercase">Total Batches</h1>
             <p className="text-lg text-gray-600">{batches?.length || 0}</p>
           </div>
+
+          <div
+            onClick={() => setOpen(true)}
+            className="rounded bg-gray-200 shadow-lg border flex flex-col justify-around py-30 items-center min-h-35"
+          >
+            <h1 className="text-xl font-semibold uppercase">Activity Logs</h1>
+            <p className="px-10">
+              {logs.length > 0 && `${logs[0].user.name}-${logs[0].description}`}
+            </p>
+          </div>
         </div>
       </div>
       {/* </div> */}
+      {open && <Audit open={open} setOpen={setOpen} logs={logs} />}
     </>
   );
 };

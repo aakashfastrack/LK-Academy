@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
+const LectureCreateModal = ({ open, setOpen, lec, type, refetch, reset }) => {
   const router = useRouter();
   const { fetchSubject, fetchUser } = useManagement();
   const [batch, setbatch] = useState([]);
@@ -131,7 +131,11 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
 
       const filteruserdata = userdata
         .filter((user) => user.role === "FACULTY")
-        .filter((user) => user.branchId === branchdata.data.user.branch.id);
+        .filter((user) =>
+          user.facultyBranches.some(
+            (item) => item.branchId === branchdata.data.user.branch.id,
+          ),
+        );
 
       console.log(filteruserdata);
       // console.log(filtersubject);
@@ -180,6 +184,38 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
       toast.error("Error in Creating Lecture");
       setOpen(false);
       // router.refresh();
+      await refetch();
+    }
+  };
+
+  const handleReset = async () => {
+    try {
+      let tok = JSON.parse(localStorage.getItem("user"));
+      let token = tok.data.token;
+      let id = lec.id;
+
+      const { data } = await axios.post(
+        `${mainRoute}/api/lecture/reset-cycle/${id}`,
+        {
+          startDate: StartDate,
+          endDate: EndDate,
+          startTime: startTime,
+          endTime: endTime,
+          totalScheduled: totalLecture,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      toast.success("Lecture Reset successfully");
+      setOpen(false);
+      await refetch();
+    } catch (err) {
+      toast.error("Error in reseting lecture");
+      setOpen(false);
       await refetch();
     }
   };
@@ -513,9 +549,17 @@ const LectureCreateModal = ({ open, setOpen, lec, type, refetch }) => {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleEdit} className={`w-1/2`}>
-                    Edit
-                  </Button>
+                  <div className="w-1/2">
+                    {reset ? (
+                      <Button className={`w-full`} onClick={handleReset}>
+                        Reset Lecture
+                      </Button>
+                    ) : (
+                      <Button className={`w-full`} onClick={handleEdit}>
+                        Edit Lecture
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
