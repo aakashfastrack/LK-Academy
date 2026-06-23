@@ -5,14 +5,14 @@ const Audit = ({ open, setOpen, logs }) => {
     <>
       {open && (
         <div className="absolute z-10 top-0 left-0 flex items-center justify-center bg-black/50 h-full w-full">
-          <div className="p-2 bg-white rounded-xl shadow-xl w-[60%] min-h-1/2 py-2">
+          <div className="p-2 bg-white rounded-xl shadow-xl w-[90%] lg:w-[60%] min-h-1/2 max-h-[80vh]  py-2 ">
             <div
               className="items-end justify-end flex cursor-pointer px-5 py-3"
               onClick={() => setOpen(false)}
             >
               X
             </div>
-            <table className="w-full">
+            <table className="w-full overflow-auto ">
               <thead>
                 <tr>
                   <th>S.No</th>
