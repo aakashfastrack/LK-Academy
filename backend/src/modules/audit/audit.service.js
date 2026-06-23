@@ -14,6 +14,7 @@ const getAuditLogs = async () => {
     orderBy: {
       createdAt: "desc",
     },
+    take:40
   });
 };
 
