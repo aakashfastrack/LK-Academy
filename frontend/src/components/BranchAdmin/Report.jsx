@@ -146,6 +146,9 @@ const Report = () => {
     const batchMap = {};
 
     lectures.forEach((lec) => {
+      const branchId = lec?.batch?.course?.branchId;
+      if (bran && branchId !== Number(bran)) return;
+
       const subjectName = lec?.subject?.name;
       const batchName = lec?.batch?.name;
       const courseName = lec?.batch?.course?.name;
