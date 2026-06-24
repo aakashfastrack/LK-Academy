@@ -152,6 +152,13 @@ const Report = () => {
     const batchMap = {};
 
     lectures.forEach((lec) => {
+      console.log(lec);
+      const branchId = lec?.batch?.course?.branchId;
+
+      if (bran && branchId !== Number(bran)) {
+        return;
+      }
+
       const subjectName = lec?.subject?.name;
       const batchName = lec?.batch?.name;
       const courseName = lec?.batch?.course?.name;
@@ -213,9 +220,7 @@ const Report = () => {
             </SelectContent>
           </Select>
 
-          <Button
-            onClick={()=>setRepMo(true)}
-          >Generate report</Button>
+          <Button onClick={() => setRepMo(true)}>Generate report</Button>
         </div>
         {role === "STAFF" && (
           <div className="h-[92%] w-full overflow-auto xl:overflow-x-hidden">
@@ -276,6 +281,7 @@ const Report = () => {
 
             {facultyReportData.map((staff, index) => {
               const stats = getLectureAttendanceStats(staff.lectures);
+              console.log(stats);
 
               return (
                 <div key={index}>
