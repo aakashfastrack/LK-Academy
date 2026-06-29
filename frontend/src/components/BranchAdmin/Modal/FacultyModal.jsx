@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useManagement } from "@/context/ManagementContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -39,6 +40,7 @@ const FacultyModal = ({ open, setOpen }) => {
   const [endTime, setEndTime] = useState(null);
   const [faclec, setFacLec] = useState([]);
   const [lectList, setLectList] = useState([]);
+  const [comment, setComment] = useState("");
 
   const getCurrentTime = () => {
     const now = new Date();
@@ -73,7 +75,9 @@ const FacultyModal = ({ open, setOpen }) => {
       const user = await fetchUser();
       const filteruser = user
         .filter((user) => user.role === "FACULTY")
-        .filter((user) => user.facultyBranches.some((item) => item.branchId === Number(id)))
+        .filter((user) =>
+          user.facultyBranches.some((item) => item.branchId === Number(id)),
+        )
         .filter((user) => user.isActive === true);
       setUser(filteruser);
     };
@@ -243,9 +247,6 @@ const FacultyModal = ({ open, setOpen }) => {
 
     const finalPayout = applyStatusOnPayout(result.calculatedPayout, status);
 
-    console.log(finalPayout);
-
-    console.log(result);
     setPenaltyPreview(result);
     setPayout(Math.floor(finalPayout));
   }, [subjectId, actualIn, actualOut, status]);
@@ -284,6 +285,7 @@ const FacultyModal = ({ open, setOpen }) => {
           status: status,
           payout: Math.floor(payout),
           date: date,
+          comment: comment,
         },
         {
           headers: {
@@ -317,6 +319,7 @@ const FacultyModal = ({ open, setOpen }) => {
           outTime: `${today}T${actualOut}`,
           isLeave: status,
           lecture: lectList,
+          comment: comment,
         },
         {
           headers: {
@@ -563,6 +566,17 @@ const FacultyModal = ({ open, setOpen }) => {
                   </div>
                 </>
               )}
+
+              <div>
+                <Label htmlFor="comment">Comment</Label>
+                <Textarea
+                  id="comment"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Enter your comment..."
+                  className="min-h-30 resize-none"
+                />
+              </div>
 
               <div className="flex-row! w-full [&>Button]:cursor-pointer">
                 <Button
