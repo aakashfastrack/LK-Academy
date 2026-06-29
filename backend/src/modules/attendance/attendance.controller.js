@@ -10,8 +10,15 @@ const {
 
 const markAttendance = async (req, res) => {
   try {
-    const { lectureId, actualStartTime, actualEndTime, payout, status, date } =
-      req.body;
+    const {
+      lectureId,
+      actualStartTime,
+      actualEndTime,
+      payout,
+      status,
+      date,
+      comment,
+    } = req.body;
 
     const record = await markLectureAttendance({
       lectureId: Number(lectureId),
@@ -20,6 +27,7 @@ const markAttendance = async (req, res) => {
       status: status,
       payout: Number(payout),
       date: new Date(date),
+      comment: comment,
     });
 
     let d = await createAuditLog({

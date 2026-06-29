@@ -343,10 +343,34 @@ const fetchAttendance = async (attendanceId) => {
   return attendance;
 };
 
+const deleteStaffAttendance = async (attendanceId) => {
+  const attendance = await prisma.staffAttendance.findUnique({
+    where: {
+      id: Number(attendanceId),
+    },
+  });
+
+  if (!attendance) {
+    throw new Error("Staff attendance not found");
+  }
+
+  await prisma.staffAttendance.delete({
+    where: {
+      id: Number(attendanceId),
+    },
+  });
+
+  return {
+    success: true,
+    message: "Staff attendance deleted successfully",
+  };
+};
+
 module.exports = {
   markStaffAttendance,
   getStaffMonthlyReport,
   getStaffMonthlySalarySummary,
   updateAttendanceService,
   fetchAttendance,
+  deleteStaffAttendance
 };

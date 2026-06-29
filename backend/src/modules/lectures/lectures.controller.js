@@ -215,6 +215,24 @@ const resetLectureCycleController = async (req, res) => {
   }
 };
 
+const deleteFacultyAttendanceController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    console.log(id);
+
+    const result = await lectureService.deleteFacultyAttendance(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Faculty attendance deleted successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   create,
   getByBranchAndDate,
@@ -224,4 +242,5 @@ module.exports = {
   getLecturesbyId,
   getlecture,
   resetLectureCycleController,
+  deleteFacultyAttendanceController
 };

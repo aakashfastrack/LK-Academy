@@ -32,6 +32,13 @@ router.get(
   protect,
   requireRole("BRANCH_ADMIN", "SUPER_ADMIN"),
   controller.fetchstaffAttendanceById,
-)
+);
+
+router.delete(
+  "/:id",
+  protect,
+  requireRole("BRANCH_ADMIN", "SUPER_ADMIN"),
+  controller.deleteStaffAttendanceController,
+);
 
 module.exports = router;

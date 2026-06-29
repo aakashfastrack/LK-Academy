@@ -22,6 +22,12 @@ router.get("/branch/:batchId", protect, lectureController.getByBranchAndDate);
 
 router.delete("/:id", protect, lectureController.remove);
 
+router.delete(
+  "/att/:id",
+  protect,
+  lectureController.deleteFacultyAttendanceController,
+);
+
 router.put("/:id", protect, lectureController.update);
 
 router.post(

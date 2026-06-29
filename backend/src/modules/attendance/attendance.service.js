@@ -144,6 +144,7 @@ const markLectureAttendance = async ({
   actualEndTime,
   status,
   date,
+  comment,
 }) => {
   const lecture = await prisma.lectureSchedule.findUnique({
     where: { id: lectureId },
@@ -151,7 +152,6 @@ const markLectureAttendance = async ({
       faculty: true,
     },
   });
-
   const att = await prisma.lectureAttendance.findFirst({
     where: {
       lectureId: Number(lecture.id),
@@ -216,6 +216,7 @@ const markLectureAttendance = async ({
       status,
       date: date,
       penaltyMin: Number(penaltyMin),
+      comment: comment,
     },
     include: {
       lecture: {
@@ -366,6 +367,7 @@ async function autoMarkLectureAttendanceForSalaryFaculty({
   facultyId,
   attendanceDate,
   lecture,
+  comment,
 }) {
   // const lectures = await getLecturesForFacultyOnDate(facultyId, attendanceDate);
 
@@ -390,6 +392,7 @@ async function autoMarkLectureAttendanceForSalaryFaculty({
         status: "CONDUCTED",
         payout: 0,
         penalty: "NONE",
+        comment: comment,
       },
     });
   }
@@ -403,6 +406,7 @@ const markSalaryBasedFacultyAttendance = async ({
   outTime,
   isLeave,
   lecture,
+  comment,
 }) => {
   console.log(lecture);
   const faculty = await prisma.user.findUnique({
@@ -491,6 +495,7 @@ const markSalaryBasedFacultyAttendance = async ({
       facultyId,
       attendanceDate,
       lecture,
+      comment,
     });
   }
 

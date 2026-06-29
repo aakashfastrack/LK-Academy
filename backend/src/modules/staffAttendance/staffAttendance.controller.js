@@ -115,10 +115,27 @@ const fetchstaffAttendanceById = async (req, res) => {
   }
 };
 
+const deleteStaffAttendanceController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const result = await service.deleteStaffAttendance(id);
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   mark,
   monthlyReport,
   staffSalarySummaryController,
   updateAttendanceController,
   fetchstaffAttendanceById,
+  deleteStaffAttendanceController
 };

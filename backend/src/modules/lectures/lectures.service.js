@@ -262,6 +262,29 @@ const resetLectureCycleService = async ({
   return newLecture;
 };
 
+const deleteFacultyAttendance = async (id) => {
+  const attendance = await prisma.lectureAttendance.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (!attendance) {
+    throw new Error("Faculty attendance not found");
+  }
+
+  await prisma.lectureAttendance.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  return {
+    success: true,
+    message: "Faculty attendance deleted successfully",
+  };
+};
+
 module.exports = {
   createlectureSchedule,
   getLectureByBranchAndDate,
@@ -270,5 +293,6 @@ module.exports = {
   updateLecture,
   getLectureByIdAndType,
   getLecture,
-  resetLectureCycleService
+  resetLectureCycleService,
+  deleteFacultyAttendance,
 };

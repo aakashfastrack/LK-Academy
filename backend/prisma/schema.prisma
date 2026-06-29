@@ -95,6 +95,7 @@ model LectureAttendance {
   createdAt       DateTime        @default(now())
   penaltyMin      Int             @default(0)
   lecture         LectureSchedule @relation(fields: [lectureId], references: [id])
+  comment         String?
 
   @@unique([lectureId, date])
   @@index([lectureId], map: "idx_lectureattendance_lecture")

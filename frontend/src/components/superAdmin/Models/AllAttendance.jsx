@@ -1,6 +1,6 @@
 import { mainRoute } from "@/components/apiroute";
 import axios from "axios";
-import { Edit } from "lucide-react";
+import { Delete, Edit, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import {
@@ -11,6 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import DeleteModal from "./DeleteModal";
 
 const EditAttendanceModal = dynamic(() => import("./EditAttendanceModal"));
 
@@ -153,6 +155,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               plannedTime: `${formatTime(lec.startTime)} – ${formatTime(
                 lec.endTime,
               )}`,
+              comment: att.comment,
               actualTime:
                 att.actualStartTime && att.actualEndTime
                   ? `${formatTime(att.actualStartTime)} – ${formatTime(
@@ -180,6 +183,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     "Status",
     "Penalty",
     "Penalty(in Rs.)",
+    "Comment",
     "Edit",
   ];
 
@@ -292,6 +296,35 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
     return `${mins} mins`;
   }
 
+  const [delOpen, setDelOpen] = useState(false);
+  const [lecid, setLecId] = useState(null);
+
+  const handleDelete = async (id) => {
+    const tok = JSON.parse(localStorage.getItem("user"));
+
+    const url =
+      userdata.role === "STAFF"
+        ? `${mainRoute}/api/staffAttendance/${id}`
+        : `${mainRoute}/api/lecture/att/${id}`;
+
+    try {
+      const { data } = await axios.delete(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tok.data.token}`,
+        },
+      });
+
+      if (data.success || data.succuss) {
+        toast.success("Deleted successfully");
+        setUpd(!upd); // table refresh
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
+
+    setDelOpen(false);
+  };
   return (
     <>
       {open && (
@@ -334,9 +367,9 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
               <ul
                 className={`grid sticky top-0 bg-white grid-cols-[100px_180px_260px_220px_120px_140px_140px_120px] ${
                   typ === "LECTURE_BASED"
-                    ? `xl:grid-cols-8`
+                    ? `xl:grid-cols-9`
                     : typ === "SALARY_BASED"
-                      ? `xl:grid-cols-5`
+                      ? `xl:grid-cols-6`
                       : `xl:grid-cols-9`
                 } text-center border-b p-2 font-semibold`}
               >
@@ -353,15 +386,16 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                     item.status === "Conducted"
                       ? userdata?.lectureRate - item?.payout
                       : 0;
+
                   return (
                     <ul
                       key={i}
                       className={`grid grid-cols-[100px_180px_260px_220px_120px_140px_140px_120px] ${
                         typ === "LECTURE_BASED"
-                          ? `xl:grid-cols-8`
+                          ? `xl:grid-cols-9`
                           : typ === "SALARY_BASED"
                             ? `xl:grid-cols-5`
-                            : `xl:grid-cols-9`
+                            : `xl:grid-cols-10`
                       } text-center border-b p-2`}
                     >
                       <li>{item.date}</li>
@@ -387,12 +421,20 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                           : "-"}
                       </li>
                       <li className={`${pen > 0 && "text-red-500"}`}>₹{pen}</li>
-                      <li className="flex justify-center">
+                      <li>{item.comment ? item.comment : "-"}</li>
+                      <li className="flex justify-center gap-5">
                         <Edit
                           className="cursor-pointer"
                           onClick={() => {
                             setOpenFacultyModal(true);
                             setSelectedAttendance(item?.id);
+                          }}
+                        />
+                        <Trash
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setDelOpen(true);
+                            setLecId(item.id);
                           }}
                         />
                       </li>
@@ -474,12 +516,19 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                         </li>
                       )}
                       {userdata.role === "STAFF" ? (
-                        <li className="flex justify-center">
+                        <li className="flex justify-center gap-2">
                           <Edit
                             className="cursor-pointer"
                             onClick={() => {
                               setOpenStaffModal(true);
-                              setAttId(item.id);
+                              setAttId(item.lecid);
+                            }}
+                          />
+                          <Trash
+                            className="cursor-pointer"
+                            onClick={() => {
+                              setDelOpen(true);
+                              setLecId(item.id);
                             }}
                           />
                         </li>
@@ -506,6 +555,13 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
         attId={selectedAttendance}
         setUpd={setSelectedAttendance}
         upd={upd}
+      />
+
+      <DeleteModal
+        open={delOpen}
+        setOpen={setDelOpen}
+        handleDelete={handleDelete}
+        id={lecid}
       />
     </>
   );

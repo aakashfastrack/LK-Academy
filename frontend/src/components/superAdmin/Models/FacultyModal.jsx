@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useManagement } from "@/context/ManagementContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -23,6 +24,7 @@ const FacultyModal = ({ open, setOpen }) => {
   const [lec, setLec] = useState([]);
   const [courses, setCourses] = useState([]);
   const [facultyType, setFacultyType] = useState([]);
+  const [comment, setComment] = useState("");
 
   const [course, setCourse] = useState(null);
 
@@ -142,7 +144,7 @@ const FacultyModal = ({ open, setOpen }) => {
     }
     const branchWiseFaculty = users.filter((user) =>
       user.facultyBranches.some(
-        (item) => item.branchId === Number(selectedBranch)
+        (item) => item.branchId === Number(selectedBranch),
       ),
     );
     setFilteredFaculty(branchWiseFaculty);
@@ -320,6 +322,7 @@ const FacultyModal = ({ open, setOpen }) => {
           status: status,
           payout: payout,
           date,
+          comment
         },
         {
           headers: {
@@ -357,6 +360,7 @@ const FacultyModal = ({ open, setOpen }) => {
           outTime: outTime,
           isLeave: status,
           lecture: lectList,
+          comment: comment,
         },
         {
           headers: {
@@ -618,6 +622,17 @@ const FacultyModal = ({ open, setOpen }) => {
                   </div>
                 </>
               )}
+
+              <div>
+                <Label htmlFor="comment">Comment</Label>
+                <Textarea
+                  id="comment"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Enter your comment..."
+                  className="min-h-30 resize-none"
+                />
+              </div>
 
               <div className="flex-row! w-full [&>Button]:cursor-pointer">
                 <Button
