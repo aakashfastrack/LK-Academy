@@ -634,7 +634,7 @@ const FacultyModal = ({ open, setOpen }) => {
                 />
               </div>
 
-              <div className="flex-row! w-full [&>Button]:cursor-pointer">
+              <div className="flex-row! w-full [&>Button]:cursor-pointer sticky bottom-0 bg-white">
                 <Button
                   onClick={() => {
                     setOpen(false);

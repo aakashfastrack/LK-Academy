@@ -521,7 +521,7 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
                             className="cursor-pointer"
                             onClick={() => {
                               setOpenStaffModal(true);
-                              setAttId(item.lecid);
+                              setAttId(item.id);
                             }}
                           />
                           <Trash

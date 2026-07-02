@@ -76,11 +76,14 @@ const updateAttendanceController = async (req, res) => {
   try {
     const { attendanceId } = req.params;
 
+    console.log(req.body);
+
     const result = await service.updateAttendanceService({
       attendanceId: Number(attendanceId),
       actualInTime: req.body.actualInTime,
       actualOutTime: req.body.actualOutTime,
       status: req.body.status,
+      isLate: req.body.isLate,
     });
 
     res.status(200).json({
@@ -137,5 +140,5 @@ module.exports = {
   staffSalarySummaryController,
   updateAttendanceController,
   fetchstaffAttendanceById,
-  deleteStaffAttendanceController
+  deleteStaffAttendanceController,
 };

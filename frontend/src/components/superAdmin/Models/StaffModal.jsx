@@ -199,7 +199,6 @@ const StaffModal = ({ open, setOpen }) => {
         ? new Date(new Date(`${end}T${actualoutTime}`).toISOString())
         : null,
     });
-    console.log(result);
 
     setStaffPreview(result);
   }, [startTime, endTime, actualinTime, actualoutTime]);
@@ -213,8 +212,6 @@ const StaffModal = ({ open, setOpen }) => {
 
       const start = startTime.split("T")[0];
       const end = endTime.split("T")[0];
-      console.log(start);
-      console.log(end);
 
       if (!actualinTime && !actualoutTime) {
         setActualInTime(startTime.split("T")[1]);
@@ -277,7 +274,7 @@ const StaffModal = ({ open, setOpen }) => {
               <h1 className="text-xl font-semibold mb-2">Staff Attendance</h1>
             </div>
 
-            <div className="flex h-[90%] flex-col gap-5 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 overflow-y-auto overflow-x-hidden">
+            <div className="flex h-full flex-col gap-5 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 overflow-y-auto overflow-x-hidden">
               <div>
                 <Label>Date</Label>
                 <Input
@@ -425,7 +422,7 @@ const StaffModal = ({ open, setOpen }) => {
                 </>
               )}
 
-              <div className="flex-row! w-full [&>Button]:cursor-pointer">
+              <div className="flex-row! w-full [&>Button]:cursor-pointer sticky bottom-0 bg-white">
                 <Button
                   onClick={() => {
                     setOpen(false);

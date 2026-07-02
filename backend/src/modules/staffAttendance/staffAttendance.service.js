@@ -259,6 +259,7 @@ const updateAttendanceService = async ({
   actualInTime,
   actualOutTime,
   status,
+  isLate,
 }) => {
   const attendance = await prisma.staffAttendance.findUnique({
     where: {
@@ -278,8 +279,6 @@ const updateAttendanceService = async ({
 
   const staff = attendance.staff;
 
-  console.log(staff);
-
   if (!staff.salary || !staff.workingMinutesPerDay)
     throw new Error("Staff salary or working time not configured");
 
@@ -293,6 +292,14 @@ const updateAttendanceService = async ({
     status,
   });
 
+  let late = calc.isLate;
+  let totalPenalties = Math.floor(calc.totalPenalty);
+
+  if (!isLate) {
+    late = false;
+    totalPenalties = Math.floor(calc.totalPenalty - 50);
+  }
+
   return await prisma.staffAttendance.update({
     where: {
       id: attendanceId,
@@ -301,12 +308,12 @@ const updateAttendanceService = async ({
       actualInTime: actualIn,
       actualOutTime: actualOut,
 
-      isLate: calc.isLate,
+      isLate: late,
       lateMinutes: Math.floor(calc.lateMinutes),
       status: status,
 
       extraPenalty: Math.floor(calc.extraPenalty),
-      totalPenalty: Math.floor(calc.totalPenalty),
+      totalPenalty: totalPenalties,
 
       overtimeMinutes: Math.floor(calc.overtimeMinutes),
       overtimePay: Math.floor(calc.overtimePay),
@@ -372,5 +379,5 @@ module.exports = {
   getStaffMonthlySalarySummary,
   updateAttendanceService,
   fetchAttendance,
-  deleteStaffAttendance
+  deleteStaffAttendance,
 };

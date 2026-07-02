@@ -26,6 +26,8 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
   const [actualinTime, setActualInTime] = useState();
   const [actualoutTime, setActualOutTime] = useState();
   const [status, setStatus] = useState();
+  const [lateEntry, setLateEntry] = useState(false);
+  const [extraPenalty, setExtraPenalty] = useState();
 
   useEffect(() => {
     const tok = JSON.parse(localStorage.getItem("user"));
@@ -47,6 +49,7 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
     };
 
     loadData();
+    setLateEntry(data.isLate);
   }, [open]);
 
   useEffect(() => {
@@ -69,6 +72,14 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
       hour12: true,
     });
   };
+
+  useEffect(() => {
+    if (lateEntry) {
+      setExtraPenalty(data.totalPenalty - data.extraPenalty);
+    } else {
+      setExtraPenalty(0);
+    }
+  }, [lateEntry]);
 
   function calculateStaffAttendanceUI({
     monthlySalary,
@@ -198,6 +209,7 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
           status: status,
           actualInTime: actualinTime,
           actualOutTime: actualoutTime,
+          isLate: lateEntry
         },
         {
           headers: {
@@ -311,12 +323,22 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
 
                     <div>
                       <Label>Late Entry</Label>
-                      <Input
+                      {/* <Input
                         type={`text`}
                         value={`${staffPreview?.lateEntry}`}
                         placeholder={`Yes/No`}
                         readOnly
-                      />
+                      /> */}
+
+                      <Select value={lateEntry} onValueChange={setLateEntry}>
+                        <SelectTrigger className={`w-full`}>
+                          <SelectValue placeholder={"Late Entry"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={true}>Yes</SelectItem>
+                          <SelectItem value={false}>No</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div>
@@ -326,7 +348,7 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
                           type={`text`}
                           placeholder={`fixed Penalty`}
                           readOnly
-                          value={Math.floor(staffPreview?.fixedPenalty) || 0}
+                          value={extraPenalty}
                         />
                         <Input
                           type={`text`}
@@ -365,7 +387,7 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
                   </>
                 )}
 
-                <div className="flex-row! w-full [&>Button]:cursor-pointer">
+                <div className="flex-row! w-full [&>Button]:cursor-pointer sticky bottom-0">
                   <Button onClick={closeFunc} className={`w-1/2`}>
                     Cancel
                   </Button>
