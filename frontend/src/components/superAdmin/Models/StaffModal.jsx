@@ -261,7 +261,7 @@ const StaffModal = ({ open, setOpen }) => {
     <>
       {open && (
         <div className="h-screen w-full bg-[#d8d3d382] absolute top-0 left-0 flex justify-center items-center overflow-hidden">
-          <div className="h-[80vh] p-5 xl:w-[40vw] w-[90%] bg-white shadow-2xl rounded-2xl overflow-hidden ">
+          <div className="h-[80vh]  p-5 xl:w-[40vw] w-[90%] bg-white shadow-2xl rounded-2xl overflow-hidden ">
             <div className="flex justify-end px-5">
               <span
                 className="cursor-pointer font-bold"
@@ -274,7 +274,7 @@ const StaffModal = ({ open, setOpen }) => {
               <h1 className="text-xl font-semibold mb-2">Staff Attendance</h1>
             </div>
 
-            <div className="flex h-full flex-col gap-5 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 overflow-y-auto overflow-x-hidden">
+            <div className="flex h-[90%] flex-col gap-5 [&>div]:flex [&>div]:flex-col [&>div]:gap-2 overflow-y-auto overflow-x-hidden">
               <div>
                 <Label>Date</Label>
                 <Input

@@ -1,3 +1,4 @@
+const { createAuditLog } = require("../../utils/auditLogger");
 const service = require("./staffAttendance.service");
 
 const mark = async (req, res) => {
