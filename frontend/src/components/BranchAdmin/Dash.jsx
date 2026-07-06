@@ -29,7 +29,13 @@ const Dash = () => {
       console.log(data.data);
       const facultyData = data.data.faculty
         .filter((user) => user.role === "FACULTY")
-        .filter((user) => user.branchId === tokn.data.user.branch.id);
+        .filter((user) =>
+            user.facultyBranches?.some(
+              (item) => item.branchId === Number(tokn.data.user.branch.id),
+            ),
+          );
+        // .filter((user) => user.facultyBranches === tokn.data.user.branch.id);
+
       console.log(facultyData);
       const staffData = data.data.faculty
         .filter((user) => user.role === "STAFF")

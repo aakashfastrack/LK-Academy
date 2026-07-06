@@ -45,7 +45,7 @@ const FacMain = () => {
     let tokn = JSON.parse(localStorage.getItem("user"));
     let token = tokn.data.token;
     let userId = tokn.data.user.id;
-    let branchId = tokn.data.user.branch.id;
+    let branchId = tokn.data.user.branch?.id;
     setBranch(tokn.data.user.branch);
 
     const loadData = async () => {
@@ -59,17 +59,9 @@ const FacMain = () => {
         }
       );
       const facultyData = data.data.faculty;
-      console.log(facultyData);
-      console.log(data.data.lectures);
-
-      // const staffData = data.data.faculty.filter(
-      //   (user) => user.role === "STAFF"
-      // ).filter((user)=>user.branchId === tokn.data.user.branch.id);
-      //   const branchData = data.data.branch;
 
       const lectur = data.data.lectures;
 
-      // console.log(branchData);
       setFaculty(facultyData[0]);
       setLecture(lectur);
     };
@@ -88,7 +80,6 @@ const FacMain = () => {
           new Date(a.attendance[0].actualStartTime)
       )
       .slice(0, 5);
-    // console.log(last5AttendedLectures)
 
     const penaltyCount = lecture.reduce(
       (acc, lec) => {
@@ -144,42 +135,6 @@ const FacMain = () => {
     "November",
     "December",
   ];
-
-  //   const handleSendWhatsappMsg = () => {
-  //     const message = `
-  // *Faculty Monthly Summary*
-
-  // *Name*: ${faculty.name}
-  // *Branch*: ${faculty.branch.name}
-  // *Month*: ${monlist[new Date().getMonth()]}
-
-  // *Total Lectures*: ${lecture.reduce(
-  //       (count, lec) => count + lec.TotalScheduled,
-  //       0
-  //     )}
-  // *Lectures Conducted*: ${lecture.reduce(
-  //       (count, lec) => count + (lec.attendance ? 1 : 0),
-  //       0
-  //     )}
-  // *Remaining*: ${
-  //       lecture.reduce((count, lec) => count + lec.TotalScheduled, 0) -
-  //       lecture.reduce((count, lec) => count + (lec.attendance ? 1 : 0), 0)
-  //     }
-
-  // *Penalties*:
-  // • *Late Start*: ${penalty.LATE_START}
-  // • *Early End*: ${penalty.EARLY_END}
-  // • *Both*: ${penalty.BOTH}
-
-  //   `.trim();
-
-  //     // 918160250887
-
-  //     const whatsappURL = `https://wa.me/918160250887/?text=${encodeURIComponent(
-  //       message
-  //     )}`;
-  //     window.open(whatsappURL, "_blank");
-  //   };
 
   return (
     <>
@@ -252,7 +207,7 @@ const FacMain = () => {
 
           <div className="flex xl:flex-wrap flex-col xl:flex-row gap-3 [&>div]:border ">
             <div className="xl:w-[30vw] h-[50vh] bg-gray-100 rounded m-1 shadow-lg overflow-hidden p-2">
-              <h1 className="text-xl font-semibold">Today's Lecture</h1>
+              <h1 className="text-xl font-semibold">Today&apos;s Lecture</h1>
               <div className="w-full h-full  [&>ul]:grid [&>ul]:grid-cols-3 flex flex-col [&>ul]:gap-10  mt-5 [&>ul]:text-center ">
                 <ul className="font-bold mb-5">
                   <li>Subject</li>

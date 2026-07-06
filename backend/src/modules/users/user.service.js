@@ -352,6 +352,7 @@ const branchDashboard = async () => {
       },
       branch: true,
       staffAttendances: true,
+      facultyBranches: true,
     },
   });
 
@@ -385,36 +386,39 @@ const branchDashboard = async () => {
 };
 
 const userDashboard = async ({ branchId, userId }) => {
-  const branch = await prisma.branch.findMany({
-    where: {
-      id: branchId,
-    },
-    include: {
-      courses: {
-        include: {
-          batches: {
-            include: {
-              lectureSchedules: {
-                include: {
-                  subject: true,
+  let branch
+  if (branchId) {
+     branch = await prisma.branch.findMany({
+      where: {
+        id: branchId,
+      },
+      include: {
+        courses: {
+          include: {
+            batches: {
+              include: {
+                lectureSchedules: {
+                  include: {
+                    subject: true,
+                  },
                 },
               },
             },
           },
         },
-      },
-      users: {
-        select: {
-          id: true,
-          name: true,
-          phoneNumber: true,
-          role: true,
-          branchId: true,
+        users: {
+          select: {
+            id: true,
+            name: true,
+            phoneNumber: true,
+            role: true,
+            branchId: true,
+          },
         },
+        staffAttendances: true,
       },
-      staffAttendances: true,
-    },
-  });
+    });
+  }
 
   const faculty = await prisma.user.findMany({
     where: {
@@ -429,8 +433,11 @@ const userDashboard = async ({ branchId, userId }) => {
       },
       branch: true,
       staffAttendances: true,
+      facultyBranches:true
     },
   });
+
+  if(!branchId) branch = faculty.facultyBranches
 
   const lectures = await prisma.lectureSchedule.findMany({
     where: {
