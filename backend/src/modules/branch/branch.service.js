@@ -22,8 +22,10 @@ const getAllBranch = async () => {
           name: true,
           phoneNumber: true,
           role: true,
+          facultyBranches:true
         },
       },
+      facultyBranches:true,
       courses: {
         include: {
           batches: {

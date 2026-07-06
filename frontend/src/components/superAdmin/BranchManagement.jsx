@@ -22,7 +22,6 @@ const BranchManagement = () => {
     "Delete",
   ];
 
-
   const [branches, setBranches] = useState([]);
 
   const fetchBranches = async () => {
@@ -67,8 +66,10 @@ const BranchManagement = () => {
           {branches.length > 0 ? (
             branches.map((branche, index) => {
               const branchAdmin = branche?.users?.find(
-                (user) => user.role === "BRANCH_ADMIN"
+                (user) => user.role === "BRANCH_ADMIN",
               );
+
+              // console.log(branche);
 
               return (
                 <ul
@@ -79,7 +80,7 @@ const BranchManagement = () => {
                   <li>{branche.name}</li>
 
                   <li>
-                    {branche.users.filter((u) => u.role === "FACULTY").length}
+                    {branche?.facultyBranches?.length}
                   </li>
 
                   <li>
