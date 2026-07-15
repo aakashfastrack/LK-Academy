@@ -46,6 +46,7 @@ const Faculty = () => {
   const [penalty, setPenalty] = useState(null);
 
   const getLectureAttendanceStats = (lectures) => {
+    console.log(lectures)
     let totalScheduled = 0;
     let conducted = 0;
 
@@ -99,6 +100,7 @@ const Faculty = () => {
             (item) => item.branchId === Number(branchId),
           ),
         );
+        console.log(filterData)
 
       setUsers(filterData);
     };
@@ -117,7 +119,6 @@ const Faculty = () => {
 
         {users.map((user, index) => {
           const penalty = getPenaltyCount(user);
-          console.log(user);
           const stats = getLectureAttendanceStats(user.lectures);
           return (
             <div key={index} className="">
