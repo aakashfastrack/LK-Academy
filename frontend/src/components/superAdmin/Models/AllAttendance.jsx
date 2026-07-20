@@ -20,7 +20,15 @@ const EditFacultyAttendanceModal = dynamic(
   () => import("./EditFacultyAttendanceModal"),
 );
 
-const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
+const AllAttendance = ({
+  open,
+  setOpen,
+  userdata,
+  mon,
+  yea,
+  whoe,
+  branchid,
+}) => {
   const [serverData, setServerData] = useState([]);
   const [typ, setTyp] = useState();
   const [myLecturesData, setMyLecturesData] = useState([]);
@@ -124,13 +132,60 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
   }
 
   const mapLecturesToUI = (lectures) => {
-    return (
-      lectures
+    console.log(lectures);
+    if (whoe === "branchadmin") {
+      return lectures
         .filter(
           (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0,
         )
+        .filter((lec) => lec?.batch.course.branchId === Number(branchid))
+        .flatMap((lec) =>
+          lec.attendance.map((att) => {
+            const now = new Date();
+            console.log(lec.batch.course.branchId === branchid)
 
-        // 🔥 flatten lectures → attendance rows
+            let status = att?.status;
+            if (status === "CONDUCTED") status = "Conducted";
+            else if (status === "MISSED") status = "Missed";
+            else status = "Cancelled";
+
+            let penaltyMin = calculatePenaltyMinutes(
+              att.actualStartTime,
+              att.actualEndTime,
+              lec.startTime,
+              lec.endTime,
+              att.date,
+            );
+
+            return {
+              date: formatDate(att.date || lec.StartDate),
+              subject: lec.subject?.name || "-",
+              batch: lec.batch?.name || "-",
+              plannedTime: `${formatTime(lec.startTime)} – ${formatTime(
+                lec.endTime,
+              )}`,
+              comment: att.comment,
+              actualTime:
+                att.actualStartTime && att.actualEndTime
+                  ? `${formatTime(att.actualStartTime)} – ${formatTime(
+                      att.actualEndTime,
+                    )}`
+                  : "-",
+              status,
+              penalty: att.penalty || "NONE",
+              sortTime: att.date,
+              penaltyMin,
+              payout: att.payout || 0,
+              id: att.id,
+            };
+          }),
+        )
+        .sort((a, b) => new Date(a.sortTime) - new Date(b.sortTime));
+    } else {
+      return lectures
+        .filter(
+          (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0,
+        )
         .flatMap((lec) =>
           lec.attendance.map((att) => {
             const now = new Date();
@@ -171,8 +226,8 @@ const AllAttendance = ({ open, setOpen, userdata, mon, yea }) => {
             };
           }),
         )
-        .sort((a, b) => new Date(a.sortTime) - new Date(b.sortTime))
-    );
+        .sort((a, b) => new Date(a.sortTime) - new Date(b.sortTime));
+    }
   };
 
   const myLectureHeaders = [

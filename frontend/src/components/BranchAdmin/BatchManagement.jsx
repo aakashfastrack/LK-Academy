@@ -23,23 +23,21 @@ const BatchManagement = () => {
 
   const [branches, setBranches] = useState([]);
 
-  useEffect(() => {
+  const fetchBranches = async () => {
     const tok = JSON.parse(localStorage.getItem("user"));
     const token = tok.data.token;
+    const { data } = await axios.get(`${mainRoute}/api/batch`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    const fetchBranches = async () => {
-      const { data } = await axios.get(`${mainRoute}/api/batch`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log(data.data);
-      const filterdata = data.data.filter((dat) => dat.course.branchId === tok.data.user.branchId)
-      setBranches(filterdata);
-    };
-
+    console.log(data.data);
+    const filterdata = data.data.filter((dat) => dat.course.branchId === tok.data.user.branchId)
+    setBranches(filterdata);
+  };
+  useEffect(() => {
     fetchBranches();
   }, []);
 
@@ -159,6 +157,7 @@ const BatchManagement = () => {
         type={type}
         branch={bran}
         badmin={badmin}
+        refetch={fetchBranches}
       />
     </>
   );

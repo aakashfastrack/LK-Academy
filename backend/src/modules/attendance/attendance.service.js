@@ -108,7 +108,7 @@ function calculateLectureBasedFacultyBackend({
   }
 
   let totalPenaltyMin =
-    (lateMinutes + earlyMinutes) * (1000 * 600) >= FIFTEEN_MIN
+    (lateMinutes + earlyMinutes) * (1000 * 60) >= FIFTEEN_MIN
       ? lateMinutes + earlyMinutes
       : 0;
 
@@ -179,11 +179,14 @@ const markLectureAttendance = async ({
     payout = 0;
     penalty = "NONE";
   } else {
-    penalties = calculateLectureBasedFacultyBackend({
+    const actualStart = mergeDateAndTime(date, actualStartTime);
+    const actualEnd = mergeDateAndTime(date, actualEndTime);
+
+    const penalties = calculateLectureBasedFacultyBackend({
       plannedStart: lecture.startTime,
       plannedEnd: lecture.endTime,
-      actualStart: actualStartTime,
-      actualEnd: actualEndTime,
+      actualStart,
+      actualEnd,
       lectureRate: Number(lecture.faculty.lectureRate),
       status,
       lectureDate: date,
@@ -211,7 +214,7 @@ const markLectureAttendance = async ({
       },
       actualStartTime,
       actualEndTime,
-      penalty: penalty.penalty,
+      penalty: penalties.penalty,
       payout: payout !== NaN ? payout : 0,
       status,
       date: date,

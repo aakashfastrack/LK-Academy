@@ -98,6 +98,15 @@ const generateReport = async ({ branchIds = [], month, year }) => {
     },
   });
 
+  console.table(
+    lectureAttendance.slice(0, 20).map((x) => ({
+      id: x.id,
+      date: x.date,
+      penaltyMin: x.penaltyMin,
+      payout: x.payout,
+    })),
+  );
+
   const salaryBasedFaculties = await prisma.user.findMany({
     where: {
       role: "FACULTY",
@@ -286,8 +295,6 @@ const generateReport = async ({ branchIds = [], month, year }) => {
   return {
     month,
     year,
-
-    //   branches,
 
     summary: {
       totalFaculty,

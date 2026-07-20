@@ -5,9 +5,6 @@ const generateReportController = async (req, res) => {
     const { branchIds } = req.body;
     const { month, year } = req.query;
 
-    console.log(month, year);
-    console.log(branchIds);
-
     const data = await service.generateReport({
       branchIds,
       month,

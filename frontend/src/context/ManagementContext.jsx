@@ -110,6 +110,8 @@ export const ManagementProvider = ({ children }) => {
       },
     );
 
+    console.log(data.data)
+
     return data.data;
   };
 

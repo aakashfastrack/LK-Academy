@@ -43,11 +43,6 @@ const getAllSubjects = async () => {
               branch:true
             }
           },
-          lectureSchedules: {
-            include: {
-              attendance: true,
-            },
-          },
         },
       },
       lectureSchedules:{

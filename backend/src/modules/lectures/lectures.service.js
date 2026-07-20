@@ -95,7 +95,11 @@ const getLectureByIdAndType = async (id, type, month, year) => {
           },
         },
         subject: true,
-        batch: true,
+        batch: {
+          include:{
+            course:true,
+          }
+        },
       },
     });
   } else {
@@ -243,6 +247,17 @@ const resetLectureCycleService = async ({
     throw new Error("End time must be after start time");
   }
 
+  const subject = await prisma.subject.update({
+    where:{
+      id: oldLecture.subjectId
+    },
+    data:{
+      cycleCount:{
+        increment:1
+      }
+    }
+  })
+
   const newLecture = await prisma.lectureSchedule.create({
     data: {
       facultyId: oldLecture.facultyId,
@@ -254,7 +269,7 @@ const resetLectureCycleService = async ({
 
       startTime: startTimeDate,
       endTime: endTimeDate,
-
+      cycleCount: subject.cycleCount,
       TotalScheduled: Number(totalScheduled),
     },
   });

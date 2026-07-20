@@ -35,6 +35,7 @@ model User {
   branchId               Int?
   createdAt              DateTime                @default(now())
   isActive               Boolean                 @default(true)
+  auditLogs              AuditLog[]
   facultyAttendances     FacultyAttendance[]
   facultySubjects        FacultySubject[]
   historicalFacultyDatas HistoricalFacultyData[]
@@ -42,13 +43,13 @@ model User {
   staffAttendances       StaffAttendance[]
   branch                 Branch?                 @relation(fields: [branchId], references: [id])
   facultyBranches        facultyBranch[]
-  auditLogs              AuditLog[]
 }
 
 model Subject {
   id               Int               @id @default(autoincrement())
   name             String
   batchId          Int
+  cycleCount       Int               @default(1)
   facultySubjects  FacultySubject[]
   lectureSchedules LectureSchedule[]
   batch            Batch             @relation(fields: [batchId], references: [id])
@@ -77,6 +78,7 @@ model LectureSchedule {
   startTime      DateTime            @db.Timestamp(6)
   endTime        DateTime            @db.Timestamp(6)
   createdAt      DateTime            @default(now()) @db.Timestamp(6)
+  cycleCount     Int                 @default(1)
   attendance     LectureAttendance[]
   batch          Batch               @relation(fields: [batchId], references: [id])
   faculty        User                @relation(fields: [facultyId], references: [id])
@@ -94,8 +96,8 @@ model LectureAttendance {
   penalty         PenaltyType     @default(NONE)
   createdAt       DateTime        @default(now())
   penaltyMin      Int             @default(0)
-  lecture         LectureSchedule @relation(fields: [lectureId], references: [id])
   comment         String?
+  lecture         LectureSchedule @relation(fields: [lectureId], references: [id])
 
   @@unique([lectureId, date])
   @@index([lectureId], map: "idx_lectureattendance_lecture")
@@ -209,22 +211,16 @@ model facultyBranch {
 }
 
 model AuditLog {
-  id Int @id @default(autoincrement())
-
-  userId Int?
-  user   User? @relation(fields: [userId], references: [id])
-
-  action String
-  entity String
-
-  entityId Int?
-
-  oldData Json?
-  newData Json?
-
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  action      String
+  entity      String
+  entityId    Int?
+  oldData     Json?
+  newData     Json?
   description String?
-
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id])
 }
 
 enum PenaltyType {

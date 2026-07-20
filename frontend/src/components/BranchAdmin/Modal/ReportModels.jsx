@@ -52,7 +52,6 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
-    console.log(user);
     if (!user?.id) return;
     let tok = JSON.parse(localStorage.getItem("user")).data.token;
     let facultyRole = user?.role;
@@ -172,7 +171,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
     <>
       {open && (
         <div className="h-screen w-full bg-[#d8d3d382] absolute top-0 left-0 flex justify-center items-center">
-          <div className="h-auto p-5 w-[40vw] bg-white shadow-2xl rounded-2xl  ">
+          <div className="h-auto p-5 md:w-[60vw] lg:w-[40vw] bg-white shadow-2xl rounded-2xl  ">
             <div className="flex justify-end px-5">
               <span
                 className="cursor-pointer font-bold"
@@ -298,7 +297,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
         setOpen={setOping}
       />
 
-      <AllAttendance mon={currentMon} yea={currentYear} open={opn} setOpen={setOpn} userdata={user} />
+      <AllAttendance mon={currentMon} yea={currentYear} open={opn} setOpen={setOpn} userdata={user} whoe={"branchadmin"} branchid={JSON.parse(localStorage.getItem("user")).data?.user?.branchId}  />
     </>
   );
 };

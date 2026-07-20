@@ -93,7 +93,7 @@ const Report = () => {
       const loadData = async () => {
         const data = await fetchUser();
         let filterData = data.filter((user) => user.role === "FACULTY");
-        console.log(filterData)
+        console.log(filterData);
         if (bran) {
           const fdata = filterData.filter((user) =>
             user.facultyBranches?.some(
@@ -101,7 +101,7 @@ const Report = () => {
             ),
           );
           console.log(fdata.length);
-          console.log(fdata)
+          console.log(fdata);
           setFacultyReportData(fdata);
         } else {
           setFacultyReportData(filterData);
@@ -147,8 +147,9 @@ const Report = () => {
     const batchMap = {};
 
     lectures.forEach((lec) => {
+
       const branchId = lec?.batch?.course?.branchId;
-      if (bran && branchId !== Number(bran)) return;
+      if (bran && branchId !== Number(bran.id)) return;
 
       const subjectName = lec?.subject?.name;
       const batchName = lec?.batch?.name;
@@ -252,7 +253,7 @@ const Report = () => {
 
             {facultyReportData.map((staff, index) => {
               const stats = getLectureAttendanceStats(staff.lectures);
-
+              console.log(stats)
               return (
                 <div key={index}>
                   {/* Main Faculty Row */}
