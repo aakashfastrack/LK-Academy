@@ -20,6 +20,7 @@ const SubjectManagement = () => {
     "Course",
     "Branch",
     "Assigned Faculty",
+    "Cycle Count",
     "No of Lectures",
     "Total Lectures",
     "Actions",
@@ -79,6 +80,7 @@ const SubjectManagement = () => {
                   {sub.facultySubjects.map((fs) => fs.faculty.name).join(",") ||
                     "-"}
                 </li>
+                <li>{sub?.cycleCount}</li>
                 <li>
                   {sub?.lectureSchedules.reduce(
                     (count, lec) =>
