@@ -167,6 +167,18 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
     window.open(whatsappURL, "_blank");
   };
 
+  const [branchId, setBranchId] = useState(null);
+
+useEffect(() => {
+  if (typeof window === "undefined") return;
+
+  const user = localStorage.getItem("user");
+
+  if (user) {
+    setBranchId(JSON.parse(user)?.data?.user?.branchId);
+  }
+}, []);
+
   return (
     <>
       {open && (
@@ -297,7 +309,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
         setOpen={setOping}
       />
 
-      <AllAttendance mon={currentMon} yea={currentYear} open={opn} setOpen={setOpn} userdata={user} whoe={"branchadmin"} branchid={JSON.parse(localStorage.getItem("user")).data?.user?.branchId}  />
+      <AllAttendance mon={currentMon} yea={currentYear} open={opn} setOpen={setOpn} userdata={user} whoe={"branchadmin"} branchid={branchId}  />
     </>
   );
 };
