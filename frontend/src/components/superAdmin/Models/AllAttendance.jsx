@@ -142,7 +142,7 @@ const AllAttendance = ({
         .flatMap((lec) =>
           lec.attendance.map((att) => {
             const now = new Date();
-            console.log(lec.batch.course.branchId === branchid)
+            console.log(lec.batch.course.branchId === branchid);
 
             let status = att?.status;
             if (status === "CONDUCTED") status = "Conducted";
@@ -603,6 +603,7 @@ const AllAttendance = ({
         attId={attId}
         setUpd={setUpd}
         upd={upd}
+        wheo={whoe}
       />
       <EditFacultyAttendanceModal
         open={openFacultyModal}

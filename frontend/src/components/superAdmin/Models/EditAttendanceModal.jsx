@@ -13,7 +13,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
+const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd, wheo }) => {
   const format = (iso) => {
     return new Date(iso).toLocaleTimeString("en-GB", {
       hour: "2-digit",
@@ -209,7 +209,7 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
           status: status,
           actualInTime: actualinTime,
           actualOutTime: actualoutTime,
-          isLate: lateEntry
+          isLate: lateEntry,
         },
         {
           headers: {
@@ -323,22 +323,25 @@ const EditAttendanceModal = ({ open, setOpen, attId, setUpd, upd }) => {
 
                     <div>
                       <Label>Late Entry</Label>
-                      {/* <Input
-                        type={`text`}
-                        value={`${staffPreview?.lateEntry}`}
-                        placeholder={`Yes/No`}
-                        readOnly
-                      /> */}
 
-                      <Select value={lateEntry} onValueChange={setLateEntry}>
-                        <SelectTrigger className={`w-full`}>
-                          <SelectValue placeholder={"Late Entry"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={true}>Yes</SelectItem>
-                          <SelectItem value={false}>No</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      {wheo === "branchadmin" ? (
+                        <Input
+                          type={`text`}
+                          value={`${staffPreview?.lateEntry}`}
+                          placeholder={`Yes/No`}
+                          readOnly
+                        />
+                      ) : (
+                        <Select value={lateEntry} onValueChange={setLateEntry}>
+                          <SelectTrigger className={`w-full`}>
+                            <SelectValue placeholder={"Late Entry"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={true}>Yes</SelectItem>
+                            <SelectItem value={false}>No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
 
                     <div>
