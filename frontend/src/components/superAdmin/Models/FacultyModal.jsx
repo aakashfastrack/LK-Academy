@@ -211,6 +211,21 @@ const FacultyModal = ({ open, setOpen }) => {
 
   const LECTURE_MINUTES = 120;
 
+  function mergeTimeWithDate(baseDate, timeDate) {
+    const merged = new Date(baseDate);
+
+    const time = new Date(timeDate);
+
+    merged.setHours(
+      time.getHours(),
+      time.getMinutes(),
+      time.getSeconds(),
+      time.getMilliseconds(),
+    );
+
+    return merged;
+  }
+
   function calculateLectureBasedFaculty({
     plannedStart,
     plannedEnd,
@@ -237,6 +252,21 @@ const FacultyModal = ({ open, setOpen }) => {
     const workedMinutes = Math.max(
       0,
       Math.floor((actualEnd - actualStart) / (1000 * 60)),
+    );
+
+    console.log({
+      plannedStart,
+      plannedEnd,
+      actualStart,
+      actualEnd,
+    });
+
+    console.log("plannedStart:", plannedStart.toISOString());
+    console.log("actualStart:", actualStart.toISOString());
+
+    console.log(
+      "Difference in mins:",
+      (actualStart - plannedStart) / (1000 * 60),
     );
 
     const lectureEquivalent = workedMinutes / LECTURE_MINUTES;
@@ -280,9 +310,14 @@ const FacultyModal = ({ open, setOpen }) => {
 
     const date = lecture.startTime.split("T")[0];
 
+    const baseDate = new Date(`${date}T00:00:00`);
+
+    const plannedStart = mergeTimeWithDate(baseDate, lecture.startTime);
+    const plannedEnd = mergeTimeWithDate(baseDate, lecture.endTime);
+
     const result = calculateLectureBasedFaculty({
-      plannedStart: new Date(lecture.startTime),
-      plannedEnd: new Date(lecture.endTime),
+      plannedStart,
+      plannedEnd,
       actualStart: new Date(`${date}T${inTime}`),
       actualEnd: new Date(`${date}T${outTime}`),
       lectureRate: selectFaculty.lectureRate,
@@ -322,7 +357,7 @@ const FacultyModal = ({ open, setOpen }) => {
           status: status,
           payout: payout,
           date,
-          comment
+          comment,
         },
         {
           headers: {

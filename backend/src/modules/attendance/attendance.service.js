@@ -168,6 +168,7 @@ const markLectureAttendance = async ({
   let penalty = "NONE";
   let payout = 0;
   let penaltyMin = 0;
+  
 
   if (status === "CANCELLED") {
     if (lecture.faculty.facultyType === "LECTURE_BASED") {
@@ -201,6 +202,7 @@ const markLectureAttendance = async ({
 
       payout = penalties.payout;
       penaltyMin = penalties.totalPenaltyMin;
+      penalty = penalties.penalty
     }
   }
 
@@ -214,7 +216,7 @@ const markLectureAttendance = async ({
       },
       actualStartTime,
       actualEndTime,
-      penalty: penalties.penalty,
+      penalty: penalty,
       payout: payout !== NaN ? payout : 0,
       status,
       date: date,
