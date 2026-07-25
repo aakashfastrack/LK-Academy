@@ -58,7 +58,7 @@ const SubjectManagement = () => {
         </div>
         <div className="w-full h-[91%]  overflow-auto">
           <div className="sticky top-0 bg-white z-10">
-            <ul className="grid grid-cols-[30px_120px_180px_260px_220px_140px_140px_120px_100px_100px] xl:grid-cols-9 px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
+            <ul className="grid grid-cols-[30px_120px_180px_260px_220px_140px_140px_120px_100px_100px] xl:grid-cols-10 px-4 py-3 xl:border-b xl:border-gray-500 font-bold text-center">
               {lists.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
@@ -69,7 +69,7 @@ const SubjectManagement = () => {
             subjectData.map((sub, index) => (
               <ul
                 key={index}
-                className="grid grid-cols-[30px_120px_180px_260px_220px_140px_140px_120px_100px] xl:grid-cols-9 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
+                className="grid grid-cols-[30px_120px_180px_260px_220px_140px_140px_120px_100px_100px] xl:grid-cols-10 px-4 py-3 xl:border-b xl:border-gray-500 text-center items-center hover:bg-gray-50"
               >
                 <li className="font-semibold">{index + 1}</li>
                 <li>{sub.name}</li>
