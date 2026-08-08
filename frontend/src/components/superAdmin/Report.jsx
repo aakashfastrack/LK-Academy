@@ -118,7 +118,8 @@ const Report = () => {
     if (role === "STAFF") {
       const loadData = async () => {
         const data = await fetchUser();
-        const filterData = data.filter((user) => user.role === "STAFF");
+        const filterData = data.filter((user) => user.role === "STAFF").filter((user) => user.isActive);
+        console.log(filterData)
         if (bran) {
           const fdata = filterData.filter((user) => user.branchId === bran);
           setStaffReportData(fdata);
@@ -148,7 +149,6 @@ const Report = () => {
     let totalScheduled = 0;
     let conducted = 0;
 
-    // ✅ Batch wise grouping
     const batchMap = {};
 
     lectures.forEach((lec) => {
@@ -246,9 +246,9 @@ const Report = () => {
                   <li className="font-semibold">{index + 1}</li>
                   <li className="flex items-center justify-center gap-2">
                     {staff.name}
-                    <div
+                    {/* <div
                       className={`${staff.isActive ? "" : "bg-red-500  h-2 w-2 rounded-full "}`}
-                    ></div>
+                    ></div> */}
                   </li>
                   <li>{stats.daysPresent}</li>
                   <li>{stats.lateDays}</li>
