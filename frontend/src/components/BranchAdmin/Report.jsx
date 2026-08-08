@@ -113,7 +113,7 @@ const Report = () => {
     if (role === "STAFF") {
       const loadData = async () => {
         const data = await fetchUser();
-        const filterData = data.filter((user) => user.role === "STAFF");
+        const filterData = data.filter((user) => user.role === "STAFF").filter((user) => user.isActive);
         if (bran) {
           const fdata = filterData.filter((user) => user.branchId === bran.id);
           setStaffReportData(fdata);

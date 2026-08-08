@@ -106,7 +106,6 @@ const Report = () => {
               (item) => item.branchId === Number(bran),
             ),
           );
-          console.log(fdata);
           setFacultyReportData(fdata);
         } else {
           setFacultyReportData(filterData);
@@ -119,12 +118,10 @@ const Report = () => {
       const loadData = async () => {
         const data = await fetchUser();
         const filterData = data.filter((user) => user.role === "STAFF").filter((user) => user.isActive);
-        console.log(filterData)
         if (bran) {
           const fdata = filterData.filter((user) => user.branchId === bran);
           setStaffReportData(fdata);
         } else {
-          console.log(filterData);
           setStaffReportData(filterData);
         }
       };
