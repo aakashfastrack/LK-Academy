@@ -143,7 +143,6 @@ const Report = () => {
     let totalScheduled = 0;
     let conducted = 0;
 
-    // ✅ Batch wise grouping
     const batchMap = {};
 
     lectures.forEach((lec) => {
@@ -327,6 +326,7 @@ const Report = () => {
         setOpen={setOpen}
         user={user}
         setUser={setUser}
+        branch={bran}
       />
 
       {/* <RepModal open={repMo} setOpen={setRepMo} branch={bran} /> */}

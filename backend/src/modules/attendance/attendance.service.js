@@ -243,6 +243,9 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     where: {
       id: facultyId,
     },
+    include:{
+      facultyBranches:true
+    }
   });
 
   if (!faculty || faculty.role !== "FACULTY") {
@@ -341,6 +344,7 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     month,
     year,
     facultyType: faculty.facultyType,
+    branch: faculty.facultyBranches,
 
     PlannedLectures: conducted,
     conducted,

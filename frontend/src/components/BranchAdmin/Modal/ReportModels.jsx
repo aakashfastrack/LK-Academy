@@ -21,7 +21,7 @@ import React, { useEffect, useState } from "react";
 const ReportModels = ({ open, setOpen, user, setUser }) => {
   const [oping, setOping] = useState(false);
 
-  const [opn,setOpn] = useState(false)
+  const [opn, setOpn] = useState(false);
 
   const list = [
     "Jan",
@@ -44,7 +44,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
     {
       length: cYear - 2024 + 1,
     },
-    (_, i) => 2024 + i
+    (_, i) => 2024 + i,
   );
 
   const [chartData, setChartData] = useState({});
@@ -56,6 +56,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
     let tok = JSON.parse(localStorage.getItem("user")).data.token;
     let facultyRole = user?.role;
     const fetchMonthlyStaff = async () => {
+      let res;
       if (facultyRole === "STAFF") {
         const { data } = await axios.get(
           `${mainRoute}/api/staffAttendance/report/salary-summary/${
@@ -66,9 +67,9 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${tok}`,
             },
-          }
+          },
         );
-        setChartData(data.data);
+        res = data.data;
       } else if (facultyRole === "FACULTY") {
         if (user?.facultyType === "LECTURE_BASED") {
           const { data } = await axios.get(
@@ -80,10 +81,9 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${tok}`,
               },
-            }
+            },
           );
-          console.log("Lecture based banda:=>", data.data);
-          setChartData(data.data);
+          res = data.data;
         } else {
           const { data } = await axios.get(
             `${mainRoute}/api/attendance/faculty/salary-summary/${
@@ -94,12 +94,19 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${tok}`,
               },
-            }
+            },
           );
-          console.log("Salary based banda:=>", data.data);
-          setChartData(data.data);
+          res = data.data;
         }
       }
+
+      const filterdata = res?.branch?.some(
+        (itemBranch) => Number(itemBranch.branchId) === Number(branchId),
+      )
+        ? res
+        : null;
+
+      setChartData(filterdata);
     };
     fetchMonthlyStaff();
   }, [user, currentMon, currentYear]);
@@ -134,13 +141,13 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
     const totalScheduled =
       faculty?.lectures?.reduce(
         (sum, lec) => sum + (lec?.TotalScheduled || 0),
-        0
+        0,
       ) || 0;
 
     const conductedLectures =
       faculty?.lectures?.reduce(
         (sum, lec) => sum + (lec?.attendance?.length || 0),
-        0
+        0,
       ) || 0;
 
     const remainingLectures = totalScheduled - conductedLectures;
@@ -169,15 +176,15 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
 
   const [branchId, setBranchId] = useState(null);
 
-useEffect(() => {
-  if (typeof window === "undefined") return;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-  const user = localStorage.getItem("user");
+    const user = localStorage.getItem("user");
 
-  if (user) {
-    setBranchId(JSON.parse(user)?.data?.user?.branchId);
-  }
-}, []);
+    if (user) {
+      setBranchId(JSON.parse(user)?.data?.user?.branchId);
+    }
+  }, []);
 
   return (
     <>
@@ -309,7 +316,15 @@ useEffect(() => {
         setOpen={setOping}
       />
 
-      <AllAttendance mon={currentMon} yea={currentYear} open={opn} setOpen={setOpn} userdata={user} whoe={"branchadmin"} branchid={branchId}  />
+      <AllAttendance
+        mon={currentMon}
+        yea={currentYear}
+        open={opn}
+        setOpen={setOpn}
+        userdata={user}
+        whoe={"branchadmin"}
+        branchid={branchId}
+      />
     </>
   );
 };
