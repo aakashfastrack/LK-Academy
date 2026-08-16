@@ -5,11 +5,14 @@ const { prisma } = require("../../config/db");
 const loginUser = async (phoneNumber, password) => {
   const user = await prisma.user.findUnique({
     where: { phoneNumber },
-    include: { branch: true,facultyBranches:{
-      include:{
-        branch:true
-      }
-    } },
+    include: {
+      branch: true,
+      facultyBranches: {
+        include: {
+          branch: true,
+        },
+      },
+    },
   });
 
   if (!user) {
@@ -200,14 +203,14 @@ const registerUser = async (data) => {
         },
       });
 
-      if(branchIds.length > 0){
+      if (branchIds.length > 0) {
         await prisma.facultyBranch.createMany({
-          data: branchIds.map((id)=> ({
+          data: branchIds.map((id) => ({
             facultyId: user.id,
-            branchId: Number(id)
+            branchId: Number(id),
           })),
           skipDuplicates: true,
-        })
+        });
       }
 
       return {
@@ -232,14 +235,14 @@ const registerUser = async (data) => {
         },
       });
 
-      if(branchIds.length > 0) {
+      if (branchIds.length > 0) {
         await prisma.facultyBranch.createMany({
           data: branchIds.map((id) => ({
             facultyId: user.id,
-            branchId: Number(id)
+            branchId: Number(id),
           })),
-          skipDuplicates:true
-        })
+          skipDuplicates: true,
+        });
       }
       return {
         id: user.id,
@@ -332,10 +335,36 @@ const bulkRegisterUser = async (users, CurrentUser) => {
   return { createdUser, errors };
 };
 
+const updatepasswordService = async (userId, password) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(userId),
+    },
+  });
+
+  if (!user) {
+    throw new Error("User Not found");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: Number(userId),
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  return updatedUser;
+};
+
 module.exports = {
   loginUser,
   registerUser,
   bulkRegisterUser,
   registerSuperAdmin,
   changePassword,
+  updatepasswordService
 };

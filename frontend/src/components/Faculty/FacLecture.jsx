@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -14,57 +14,23 @@ import axios from "axios";
 import { mainRoute } from "../apiroute";
 
 const FacLecture = () => {
-  // const subject = ["Maths", "Physics", "Chemistry"];
-
   const myLectureHeaders = [
     "Sno.",
     "Subject",
+    "Batch",
+    "Course",
+    "Branch",
     "Planned Time",
     "Actual Time",
     "Start Date",
     "End Date",
   ];
 
-//   const myLecturesData = [
-//   {
-//     date: "06-Jan-2025",
-//     subject: "Mathematics",
-//     plannedTime: "10:00 – 11:00",
-//     actualTime: "10:05 – 11:00",
-//     status: "Conducted",
-//     penalty: "None",
-//   },
-//   {
-//     date: "05-Jan-2025",
-//     subject: "Physics",
-//     plannedTime: "11:00 – 12:00",
-//     actualTime: "11:25 – 12:00",
-//     status: "Conducted",
-//     penalty: "Late Start",
-//   },
-//   {
-//     date: "04-Jan-2025",
-//     subject: "Chemistry",
-//     plannedTime: "09:30 – 10:30",
-//     actualTime: "-",
-//     status: "Missed",
-//     penalty: "Both",
-//   },
-//   {
-//     date: "07-Jan-2025",
-//     subject: "Computer Science",
-//     plannedTime: "02:00 – 03:00",
-//     actualTime: "-",
-//     status: "Upcoming",
-//     penalty: "-",
-//   },
-// ];
+  const { fetchLecture, fetchSubject } = useManagement();
 
-const {fetchLecture,fetchSubject} = useManagement()
-
- const formatTime = (isoTime) => {
-  if(!isoTime) return "";
-  const date = new Date(isoTime)
+  const formatTime = (isoTime) => {
+    if (!isoTime) return "";
+    const date = new Date(isoTime);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -78,28 +44,28 @@ const {fetchLecture,fetchSubject} = useManagement()
       month: "short",
       year: "numeric",
     });
-const [myLecturesData,setLectureData] = useState([])
+  const [myLecturesData, setLectureData] = useState([]);
 
+  useEffect(() => {
+    const tok = JSON.parse(localStorage.getItem("user"));
+    const id = tok.data.user.id;
+    const loadData = async () => {
+      const { data } = await axios.get(
+        `${mainRoute}/api/lecture/lec?id=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tok.data.token}`,
+          },
+        },
+      );
 
-  useEffect(()=>{
-    const tok = JSON.parse(localStorage.getItem("user"))
-    const id = tok.data.user.id
-    console.log(tok.data.user)
-    const loadData = async() =>{
-      const {data} = await axios.get(`${mainRoute}/api/lecture/lec?id=${id}`,{
-        headers:{
-          "Content-Type":"application/json",
-          "Authorization":`Bearer ${tok.data.token}`
-        }
-      })
-
-      const filterData = data.data
-      console.log(filterData)
-      setLectureData(filterData)
-
-    }
+      const filterData = data.data;
+      console.log(filterData);
+      setLectureData(filterData);
+    };
     loadData();
-  },[])
+  }, []);
 
   return (
     <>
@@ -126,28 +92,28 @@ const [myLecturesData,setLectureData] = useState([])
 
         {/* Lecture List */}
         <div className="w-[98%] h-full overflow-y-auto xl:overflow-x-hidden">
-          <ul className="grid grid-cols-[100px_180px_260px_220px_140px_140px] xl:grid-cols-6 text-center border-b p-2 font-semibold">
-            {
-                myLectureHeaders.map((item,i)=>(
-                    <li key={i}>{item}</li>
-                ))
-            }
+          <ul className="grid grid-cols-[100px_180px_260px_220px_140px_140px_140px_140px_140px] xl:grid-cols-9 text-center border-b p-2 font-semibold">
+            {myLectureHeaders.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
           </ul>
 
-          {
-            myLecturesData.map((item,i)=>(
-                <ul key={i} className="grid grid-cols-[100px_180px_260px_220px_140px_140px] xl:grid-cols-6 text-center border-b p-2" >
-                    <li>{i + 1}</li>
-                    <li>{item.subject?.name}</li>
-                    <li>{formatTime(item.startTime)}</li>
-                    <li>{formatTime(item.endTime)}</li>
-                    <li>{formatDate(item.StartDate)}</li>
-                    <li>{formatDate(item.EndDate)}</li>
-                </ul>
-            ))
-          }
-
-          
+          {myLecturesData.map((item, i) => (
+            <ul
+              key={i}
+              className="grid grid-cols-[100px_180px_260px_220px_140px_140px_140px_140px_140px] xl:grid-cols-9 text-center border-b p-2"
+            >
+              <li>{i + 1}</li>
+              <li>{item.subject?.name}</li>
+              <li>{item.batch?.name}</li>
+              <li>{item.batch?.course?.name}</li>
+              <li>{item.batch?.course?.branch?.name}</li>
+              <li>{formatTime(item.startTime)}</li>
+              <li>{formatTime(item.endTime)}</li>
+              <li>{formatDate(item.StartDate)}</li>
+              <li>{formatDate(item.EndDate)}</li>
+            </ul>
+          ))}
         </div>
       </div>
     </>

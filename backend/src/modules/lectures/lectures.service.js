@@ -96,9 +96,9 @@ const getLectureByIdAndType = async (id, type, month, year) => {
         },
         subject: true,
         batch: {
-          include:{
-            course:true,
-          }
+          include: {
+            course: true,
+          },
         },
       },
     });
@@ -129,7 +129,24 @@ const getLecture = async (id) => {
     },
     include: {
       subject: true,
-      batch: true,
+
+      batch: {
+        select: {
+          name: true,
+
+          course: {
+            select: {
+              name: true,
+
+              branch: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 };
@@ -164,7 +181,6 @@ const getAllLecture = async () => {
     include: {
       subject: true,
       faculty: true,
-      // branch: true,
       batch: {
         include: {
           course: {
@@ -248,15 +264,15 @@ const resetLectureCycleService = async ({
   }
 
   const subject = await prisma.subject.update({
-    where:{
-      id: oldLecture.subjectId
+    where: {
+      id: oldLecture.subjectId,
     },
-    data:{
-      cycleCount:{
-        increment:1
-      }
-    }
-  })
+    data: {
+      cycleCount: {
+        increment: 1,
+      },
+    },
+  });
 
   const newLecture = await prisma.lectureSchedule.create({
     data: {

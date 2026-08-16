@@ -33,7 +33,7 @@ const StaffSalary = () => {
     {
       length: cYear - 2024 + 1,
     },
-    (_, i) => 2024 + i
+    (_, i) => 2024 + i,
   );
 
   const salaryTableHeaders = [
@@ -47,17 +47,17 @@ const StaffSalary = () => {
     "Penalty",
   ];
 
-  const formatTime = (iso) =>{
-    if(!iso) return "";
+  const formatTime = (iso) => {
+    if (!iso) return "";
 
-    const date = new Date(iso)
+    const date = new Date(iso);
 
     return date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
-  }
+  };
 
   const formatDate = (iso) =>
     new Date(iso).toLocaleDateString("en-IN", {
@@ -86,7 +86,7 @@ const StaffSalary = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const facultyData = data.data.faculty;
       console.log(facultyData);
@@ -119,7 +119,7 @@ const StaffSalary = () => {
     console.log(salaryTableData);
 
     setSalaryTableData(salaryTableData);
-  }, [selectedMonth, staffData,selectYear]);
+  }, [selectedMonth, staffData, selectYear]);
 
   return (
     <>
@@ -144,10 +144,7 @@ const StaffSalary = () => {
               ))}
             </SelectContent>
           </Select>
-          <Select
-            value={selectYear}
-            onValueChange={(v) => setSelectedYear(v)}
-          >
+          <Select value={selectYear} onValueChange={(v) => setSelectedYear(v)}>
             <SelectTrigger id={`Sort`}>
               <SelectValue placeholder={`SortBy`} />
             </SelectTrigger>
@@ -170,7 +167,7 @@ const StaffSalary = () => {
               ₹
               {salaryTableData.reduce(
                 (sum, att) => sum + (att.overtimePay || 0),
-                0
+                0,
               )}
             </p>
           </div>
@@ -182,20 +179,22 @@ const StaffSalary = () => {
               ₹
               {salaryTableData.reduce(
                 (sum, att) => sum + (att.totalPenalty || 0),
-                0
+                0,
               )}
             </p>
           </div>
         </div>
         {/* OverTime table */}
 
-        <div className="bg-gray-100 h-[91%]  overflow-auto w-[98%] rounded p-2 py-4 flex flex-col xl:justify-start relative">
-          <h1 className=" font-semibold uppercase">Overtimes</h1>
-          <ul className="grid  grid-cols-[100px_180px_260px_220px_140px_140px_150px_150px] xl:grid-cols-8 text-center border-b p-2 font-semibold">
-            {salaryTableHeaders.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
+        <div className="bg-gray-100 h-[91%]  overflow-auto w-[98%] rounded p-2 pb-4 pt-0 flex flex-col xl:justify-start relative">
+          <div className="sticky top-0 bg-gray-100 pt-2">
+            <h1 className=" font-semibold uppercase">Overtimes</h1>
+            <ul className="grid  grid-cols-[100px_180px_260px_220px_140px_140px_150px_150px] xl:grid-cols-8 text-center border-b p-2 font-semibold">
+              {salaryTableHeaders.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
 
           {salaryTableData.map((item, i) => (
             <ul

@@ -42,15 +42,7 @@ const FacProfile = () => {
       alert("Password Changed");
     }
   };
-
-  // const formatRole = (role) => {
-  //   return role
-  //     .toLowerCase()
-  //     .split("_")
-  //     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-  //     .join(" ");
-  // };
-
+  
   return (
     <div className="h-full p-3 bg-white m-2 rounded flex flex-col  gap-5 [&>div]:p-5 [&>div]:rounded [&>div]:shadow-lg  [&>div]:bg-gray-100 [&>div>h1]:text-3xl [&>div>h1]:font-semibold [&>div>ul]:pl-10 [&>div>ul]:my-5 [&>div>ul>li]:font-bold  [&>div>ul>li>span]:font-normal overflow-auto ">
       <div className="">
@@ -69,10 +61,16 @@ const FacProfile = () => {
         <h1>Academic Information</h1>
         <ul>
           <li>
-            Branch: <span>{users?.branch?.name}</span>
+            Branch:{" "}
+            <span>
+              {users?.facultyBranches
+                ?.map((item) => item.branch?.name)
+                .filter(Boolean)
+                .join(", ")}
+            </span>
           </li>
           <li>
-            Role: <span>{(users?.role)}</span>
+            Role: <span>{users?.role}</span>
           </li>
           <li>
             Branch Admin:{" "}

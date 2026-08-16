@@ -100,13 +100,37 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
         }
       }
 
-      const filterdata = res?.branch?.some(
-        (itemBranch) => Number(itemBranch.branchId) === Number(branchId),
-      )
-        ? res
-        : null;
+      if (!res) return;
 
-      setChartData(filterdata);
+      if (branchId && res.branchLectureSummary) {
+        const branchData = res.branchLectureSummary.find(
+          (itemBranch) => Number(itemBranch.branchId) === Number(branchId),
+        );
+
+        if (!branchData) {
+          setChartData(null);
+          return;
+        }
+
+        const filteredData = {
+          ...res,
+
+          branchLectureSummary: [branchData],
+
+          conducted: branchData.conducted,
+          cancelled: branchData.cancelled,
+          missed: branchData.missed,
+
+          PlannedLectures:
+            branchData.conducted + branchData.cancelled + branchData.missed,
+
+          remainingLectures: 0,
+        };
+
+        setChartData(filteredData);
+      } else {
+        setChartData(res);
+      }
     };
     fetchMonthlyStaff();
   }, [user, currentMon, currentYear]);

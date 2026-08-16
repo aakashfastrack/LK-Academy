@@ -12,6 +12,8 @@ const ActionButton = ({
   needed,
   need,
   setReset,
+  changepass,
+  setChangePass,
 }) => {
   const [open, setOpen] = useState(false);
   const handleEdit = (user) => {
@@ -24,6 +26,9 @@ const ActionButton = ({
     setOpen(false);
     setUs(user);
   };
+
+  const handleChangePassword = () => {};
+
   return (
     <div className="relative">
       <Button
@@ -57,7 +62,7 @@ const ActionButton = ({
                 setUs(user);
                 setType("edit");
                 setOp(true);
-                setReset(false)
+                setReset(false);
               }}
               className="flex w-full px-3 py-2 text-sm hover:bg-gray-100"
             >
@@ -91,6 +96,19 @@ const ActionButton = ({
           >
             🗑️ Delete
           </button>
+
+          {changepass && (
+            <button
+              onClick={() => {
+                setOpen(false);
+                setUs(user);
+                setChangePass(true);
+              }}
+              className="flex w-full px-2 py-2 text-sm hover:bg-gray-100"
+            >
+              Change Password
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -168,7 +168,6 @@ const markLectureAttendance = async ({
   let penalty = "NONE";
   let payout = 0;
   let penaltyMin = 0;
-  
 
   if (status === "CANCELLED") {
     if (lecture.faculty.facultyType === "LECTURE_BASED") {
@@ -202,7 +201,7 @@ const markLectureAttendance = async ({
 
       payout = penalties.payout;
       penaltyMin = penalties.totalPenaltyMin;
-      penalty = penalties.penalty
+      penalty = penalties.penalty;
     }
   }
 
@@ -243,9 +242,9 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     where: {
       id: facultyId,
     },
-    include:{
-      facultyBranches:true
-    }
+    include: {
+      facultyBranches: true,
+    },
   });
 
   if (!faculty || faculty.role !== "FACULTY") {
@@ -254,6 +253,8 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
 
   const start = new Date(year, month - 1, 1);
   const end = new Date(year, month, 0, 23, 59, 59);
+
+  const branchLectureSummary = {};
 
   const lectures = await prisma.lectureAttendance.findMany({
     where: {
@@ -266,7 +267,16 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
       },
     },
     include: {
-      lecture: true,
+      lecture: {
+        include:{
+          batch:{
+            include:{
+              course:true
+            }
+          }
+        }
+      },
+
     },
   });
 
@@ -284,6 +294,31 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     if (l.status === "CONDUCTED") conducted++;
     if (l.status === "CANCELLED") cancelled++;
     if (l.status === "MISSED") missed++;
+
+    const branchId = l.lecture.batch.course.branchId;
+
+    if (branchId) {
+      if (!branchLectureSummary[branchId]) {
+        branchLectureSummary[branchId] = {
+          branchId,
+          conducted: 0,
+          cancelled: 0,
+          missed: 0,
+        };
+      }
+
+      if (l.status === "CONDUCTED") {
+        branchLectureSummary[branchId].conducted++;
+      }
+
+      if (l.status === "CANCELLED") {
+        branchLectureSummary[branchId].cancelled++;
+      }
+
+      if (l.status === "MISSED") {
+        branchLectureSummary[branchId].missed++;
+      }
+    }
 
     let isLate = false;
     let isEarly = false;
@@ -344,7 +379,6 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     month,
     year,
     facultyType: faculty.facultyType,
-    branch: faculty.facultyBranches,
 
     PlannedLectures: conducted,
     conducted,
@@ -359,6 +393,8 @@ const getFacultyMonthlySummary = async (facultyId, month, year) => {
     },
 
     totalPayout: Math.floor(totalPayout),
+    branchLectureSummary: Object.values(branchLectureSummary),
+    // lectures
   };
 };
 

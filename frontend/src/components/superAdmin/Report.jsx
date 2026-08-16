@@ -277,8 +277,6 @@ const Report = () => {
 
             {facultyReportData.map((staff, index) => {
               const stats = getLectureAttendanceStats(staff.lectures);
-              console.log(stats);
-
               return (
                 <div key={index}>
                   {/* Main Faculty Row */}

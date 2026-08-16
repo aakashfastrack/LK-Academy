@@ -93,15 +93,12 @@ const Report = () => {
       const loadData = async () => {
         const data = await fetchUser();
         let filterData = data.filter((user) => user.role === "FACULTY");
-        console.log(filterData);
         if (bran) {
           const fdata = filterData.filter((user) =>
             user.facultyBranches?.some(
               (item) => item.branchId === Number(bran.id),
             ),
           );
-          console.log(fdata.length);
-          console.log(fdata);
           setFacultyReportData(fdata);
         } else {
           setFacultyReportData(filterData);
@@ -118,7 +115,6 @@ const Report = () => {
           const fdata = filterData.filter((user) => user.branchId === bran.id);
           setStaffReportData(fdata);
         } else {
-          console.log(filterData);
           setStaffReportData(filterData);
         }
       };
@@ -252,7 +248,6 @@ const Report = () => {
 
             {facultyReportData.map((staff, index) => {
               const stats = getLectureAttendanceStats(staff.lectures);
-              console.log(stats)
               return (
                 <div key={index}>
                   {/* Main Faculty Row */}

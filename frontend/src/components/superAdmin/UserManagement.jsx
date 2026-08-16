@@ -6,6 +6,7 @@ import ActionButton from "./ActionButton";
 import UserModal from "./Models/UserModal";
 import axios from "axios";
 import { mainRoute } from "../apiroute";
+import ChangePass from "./Models/ChangePass";
 
 const UserManagement = () => {
   const [open, setOpen] = useState(false);
@@ -13,6 +14,7 @@ const UserManagement = () => {
   const [us, setUs] = useState({});
 
   const [users, setUser] = useState([]);
+  const [changepass,setChangePass] = useState(false)
 
   const lists = [
     "S.no",
@@ -102,7 +104,6 @@ const UserManagement = () => {
               )
                 return;
 
-              console.log(user)
               return (
                 <ul
                   key={index}
@@ -148,6 +149,8 @@ const UserManagement = () => {
                           setOp={setOpen}
                           type={type}
                           setType={setType}
+                          changepass={true}
+                          setChangePass={setChangePass}
                         />
                       </>
                     ) : (
@@ -177,6 +180,12 @@ const UserManagement = () => {
         open={open}
         setOpen={setOpen}
         type={type}
+        user={us}
+        refetch={fetchUser}
+      />
+      <ChangePass 
+        changepass={changepass}
+        setChangePass={setChangePass}
         user={us}
         refetch={fetchUser}
       />

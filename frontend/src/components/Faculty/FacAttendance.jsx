@@ -22,7 +22,7 @@ const FacAttendance = () => {
 
   const formatTime = (iso) => {
     if (!iso) return;
-    const date = new Date(iso)
+    const date = new Date(iso);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -84,7 +84,7 @@ const FacAttendance = () => {
     return (
       lectures
         .filter(
-          (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0
+          (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0,
         )
 
         // 🔥 flatten lectures → attendance rows
@@ -103,19 +103,19 @@ const FacAttendance = () => {
               date: formatDate(att.date || lec.StartDate),
               subject: lec.subject?.name || "-",
               plannedTime: `${formatTime(lec.startTime)} – ${formatTime(
-                lec.endTime
+                lec.endTime,
               )}`,
               actualTime:
                 att.actualStartTime && att.actualEndTime
                   ? `${formatTime(att.actualStartTime)} – ${formatTime(
-                      att.actualEndTime
+                      att.actualEndTime,
                     )}`
                   : "-",
               status,
               penalty: att.penalty || "NONE",
               sortTime: att.actualStartTime || att.date, // for sorting
             };
-          })
+          }),
         )
 
         // 🔥 latest first
@@ -185,19 +185,16 @@ const FacAttendance = () => {
     const id = tok.data.user.id;
     const type = tok.data.user.type;
     setType(type);
-    console.log(tok.data.user);
     const loadData = async () => {
       const { data } = await axios.get(
-        `${mainRoute}/api/lecture/lectureatt?id=${id}&type=${type}&month=${currentmon+1}&year=${currentyea}`,
+        `${mainRoute}/api/lecture/lectureatt?id=${id}&type=${type}&month=${currentmon + 1}&year=${currentyea}`,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${tok.data.token}`,
           },
-        }
+        },
       );
-
-      console.log(data.data);
 
       setServerdata(data.data);
     };
@@ -207,7 +204,6 @@ const FacAttendance = () => {
   useEffect(() => {
     if (typ === "LECTURE_BASED") {
       const uiData = mapLecturesToUI(serverdata);
-      console.log(uiData);
       setMyLecturesData(uiData);
     } else {
       setLecData(serverdata);
@@ -235,7 +231,7 @@ const FacAttendance = () => {
     {
       length: cYear - 2024 + 1,
     },
-    (_, i) => 2024 + i
+    (_, i) => 2024 + i,
   );
 
   return (
@@ -275,7 +271,7 @@ const FacAttendance = () => {
         </div>
 
         {/* data */}
-        <div className="w-[98%]  h-full items-center overflow-auto xl:overflow-x-hidden">
+        <div className="w-[98%] h-full items-center overflow-auto xl:overflow-x-hidden">
           <ul
             className={`grid grid-cols-[100px_180px_260px_220px_140px_140px] ${
               typ === "LECTURE_BASED" ? `xl:grid-cols-6` : `xl:grid-cols-5`
@@ -286,18 +282,7 @@ const FacAttendance = () => {
               : lecHeader.map((item, i) => <li key={i}>{item}</li>)}
           </ul>
 
-          {/* {myLecturesData.map((item, i) => (
-            <ul key={i} className="grid grid-cols-6 text-center border-b p-2">
-              <li>{item.date}</li>
-              <li>{item.subject}</li>
-              <li>{item.plannedTime}</li>
-              <li>{item.actualTime}</li>
-              <li>{item.status}</li>
-              <li>{item.penalty}</li>
-            </ul>
-          ))} */}
-
-          {myLecturesData.length > 0 &&
+          {myLecturesData.length > 0 ? (
             myLecturesData.map((item, i) => (
               <ul
                 key={i}
@@ -314,17 +299,24 @@ const FacAttendance = () => {
                     item.status === "Conducted"
                       ? "text-green-600"
                       : item.status === "Missed"
-                      ? "text-red-600"
-                      : "text-yellow-600"
+                        ? "text-red-600"
+                        : "text-yellow-600"
                   }
                 >
                   {item.status}
                 </li>
                 <li>{item.penalty}</li>
               </ul>
-            ))}
+            ))
+          ) : (
+            <>
+              <div className="font-semibold text-3xl items-center justify-center text-center py-10 ">
+                No Attendance Marked
+              </div>
+            </>
+          )}
 
-          {lecData.length > 0 &&
+          {lecData.length > 0 && (
             lecData.map((item, i) => (
               <ul
                 key={i}
@@ -334,7 +326,7 @@ const FacAttendance = () => {
               >
                 <li>{formatDate(item.date)}</li>
                 <li>{`${formatTime(item.faculty.shiftStartTime)}-${formatTime(
-                  item.faculty.shiftEndTime
+                  item.faculty.shiftEndTime,
                 )}`}</li>
                 <li>{formatTime(item.inTime || "") || "-"}</li>
                 <li>{formatTime(item.outTime || "") || "-"}</li>
@@ -345,7 +337,8 @@ const FacAttendance = () => {
                 </li>
                 <li>{item.penalty}</li>
               </ul>
-            ))}
+            ))
+          )}
         </div>
       </div>
     </>
