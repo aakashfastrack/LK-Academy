@@ -278,7 +278,7 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
                     <FacultyPenaltyDonut data={chartData} />
                   </div>
                   <h3 className="text-xl font-semibold mt-4 text-green-600">
-                    Total Payout: ₹{chartData.totalPayout}
+                    Total Payout: ₹{chartData?.totalPayout}
                   </h3>
                 </>
               ) : (
