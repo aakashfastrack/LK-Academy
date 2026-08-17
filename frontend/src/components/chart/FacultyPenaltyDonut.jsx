@@ -10,9 +10,9 @@ const COLORS = {
 
 const FacultyPenaltyDonut = ({ data }) => {
   const chartData = [
-    { name: "Late", value: data.penalties?.late, color: COLORS.late },
-    { name: "Early", value: data.penalties?.early, color: COLORS.early },
-    { name: "Both", value: data.penalties?.both, color: COLORS.both },
+    { name: "Late", value: data?.penalties?.late, color: COLORS.late },
+    { name: "Early", value: data?.penalties?.early, color: COLORS.early },
+    { name: "Both", value: data?.penalties?.both, color: COLORS.both },
   ].filter((d) => d.value > 0);
 
   if (chartData.length === 0) {

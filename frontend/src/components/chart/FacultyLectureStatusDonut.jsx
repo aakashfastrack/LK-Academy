@@ -10,18 +10,19 @@ const COLORS = {
 };
 
 const FacultyLectureStatusDonut = ({ data }) => {
+  console.log(data)
   const chartData = [
-    { name: "Conducted", value: data.conducted, color: COLORS.conducted },
-    { name: "Missed", value: data.missed, color: COLORS.missed },
-    { name: "Cancelled", value: data.cancelled, color: COLORS.cancelled },
+    { name: "Conducted", value: data?.conducted, color: COLORS.conducted },
+    { name: "Missed", value: data?.missed, color: COLORS.missed },
+    { name: "Cancelled", value: data?.cancelled, color: COLORS.cancelled },
     {
       name: "Remaining",
-      value: data.remainingLectures,
+      value: data?.remainingLectures,
       color: COLORS.remaining,
     },
   ].filter((d) => d.value > 0);
 
-  const monthName = new Date(data.year, data.month - 1).toLocaleString(
+  const monthName = new Date(data?.year, data?.month - 1).toLocaleString(
     "en-IN",
     { month: "long" }
   );
@@ -29,7 +30,7 @@ const FacultyLectureStatusDonut = ({ data }) => {
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-lg font-semibold mb-2">
-        Lecture Status – {monthName} {data.year}
+        Lecture Status – {monthName} {data?.year}
       </h2>
 
       <PieChart width={300} height={300}>
@@ -52,7 +53,7 @@ const FacultyLectureStatusDonut = ({ data }) => {
       </PieChart>
 
       <p className="mt-2 text-sm text-gray-600">
-        Conducted Lectures: <b>{data.conducted}</b>
+        Conducted Lectures: <b>{data?.conducted}</b>
       </p>
     </div>
   );

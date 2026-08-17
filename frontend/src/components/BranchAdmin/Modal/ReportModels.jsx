@@ -102,7 +102,9 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
 
       if (!res) return;
 
-      if (branchId && res.branchLectureSummary) {
+      
+
+      if (branchId && res.branchLectureSummary?.length > 0) {
         const branchData = res.branchLectureSummary.find(
           (itemBranch) => Number(itemBranch.branchId) === Number(branchId),
         );
@@ -126,9 +128,11 @@ const ReportModels = ({ open, setOpen, user, setUser }) => {
 
           remainingLectures: 0,
         };
+        console.log(filteredData)
 
         setChartData(filteredData);
       } else {
+        console.log(res)
         setChartData(res);
       }
     };
