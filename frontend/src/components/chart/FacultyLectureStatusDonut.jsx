@@ -52,7 +52,7 @@ const FacultyLectureStatusDonut = ({ data }) => {
       </PieChart>
 
       <p className="mt-2 text-sm text-gray-600">
-        Conducted Lectures: <b>{data.PlannedLectures}</b>
+        Conducted Lectures: <b>{data.conducted}</b>
       </p>
     </div>
   );
