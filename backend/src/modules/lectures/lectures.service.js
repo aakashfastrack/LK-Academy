@@ -129,6 +129,7 @@ const getLecture = async (id) => {
     },
     include: {
       subject: true,
+      attendance: true,
 
       batch: {
         select: {

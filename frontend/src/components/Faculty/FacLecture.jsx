@@ -20,10 +20,10 @@ const FacLecture = () => {
     "Batch",
     "Course",
     "Branch",
-    "Planned Time",
-    "Actual Time",
-    "Start Date",
-    "End Date",
+    "Target Lectures",
+    "Completed",
+    "Remaining",
+    "Progress",
   ];
 
   const { fetchLecture, fetchSubject } = useManagement();
@@ -67,6 +67,43 @@ const FacLecture = () => {
     loadData();
   }, []);
 
+  const totalConducted = myLecturesData.reduce((count, lec) => {
+    if (!Array.isArray(lec.attendance)) return count;
+
+    return (
+      count + lec.attendance.filter((att) => att.status === "CONDUCTED").length
+    );
+  }, 0);
+
+  const totalScheduled = myLecturesData.reduce(
+    (count, lec) => count + (lec.TotalScheduled || 0),
+    0,
+  );
+
+  const remainingLectures = Math.max(totalScheduled - totalConducted, 0);
+
+  const getCompletedLectures = (item) => {
+    if (!Array.isArray(item.attendance)) return 0;
+
+    return item.attendance.filter((att) => att.status === "CONDUCTED").length;
+  };
+
+  const getRemainingLectures = (item) => {
+    const completed = getCompletedLectures(item);
+    const total = item.TotalScheduled || 0;
+
+    return Math.max(total - completed, 0);
+  };
+
+  const getProgress = (item) => {
+    const total = item.TotalScheduled || 0;
+    const completed = getCompletedLectures(item);
+
+    if (total === 0) return 0;
+
+    return Math.min(Math.round((completed / total) * 100), 100);
+  };
+
   return (
     <>
       <div className="h-full bg-white m-2 rounded flex flex-col overflow-auto items-center">
@@ -101,17 +138,38 @@ const FacLecture = () => {
           {myLecturesData.map((item, i) => (
             <ul
               key={i}
-              className="grid grid-cols-[100px_180px_260px_220px_140px_140px_140px_140px_140px] xl:grid-cols-9 text-center border-b p-2"
+              className="grid grid-cols-[80px_180px_180px_180px_180px_140px_140px_140px_180px] xl:grid-cols-9 text-center border-b p-3 items-center"
             >
               <li>{i + 1}</li>
+
               <li>{item.subject?.name}</li>
+
               <li>{item.batch?.name}</li>
+
               <li>{item.batch?.course?.name}</li>
+
               <li>{item.batch?.course?.branch?.name}</li>
-              <li>{formatTime(item.startTime)}</li>
-              <li>{formatTime(item.endTime)}</li>
-              <li>{formatDate(item.StartDate)}</li>
-              <li>{formatDate(item.EndDate)}</li>
+
+              <li>{item.TotalScheduled || 0}</li>
+
+              <li>{getCompletedLectures(item)}</li>
+
+              <li>{getRemainingLectures(item)}</li>
+
+              <li className="flex items-center gap-2 justify-center">
+                <div className="w-25 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-green-500 rounded-full"
+                    style={{
+                      width: `${getProgress(item)}%`,
+                    }}
+                  />
+                </div>
+
+                <span className="text-sm font-medium">
+                  {getProgress(item)}%
+                </span>
+              </li>
             </ul>
           ))}
         </div>

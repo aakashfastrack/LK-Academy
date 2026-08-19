@@ -9,6 +9,8 @@ const FacMain = () => {
   const lecturehistory = [
     "Date",
     "Subject",
+    "Batch",
+    "Branch",
     "Planned Time",
     "Actual Time",
     "Status",
@@ -56,7 +58,7 @@ const FacMain = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const facultyData = data.data.faculty;
 
@@ -72,12 +74,12 @@ const FacMain = () => {
   useEffect(() => {
     const last5AttendedLectures = lecture
       .filter(
-        (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0
+        (lec) => Array.isArray(lec.attendance) && lec.attendance.length > 0,
       )
       .sort(
         (a, b) =>
           new Date(b.attendance[0].actualStartTime) -
-          new Date(a.attendance[0].actualStartTime)
+          new Date(a.attendance[0].actualStartTime),
       )
       .slice(0, 5);
 
@@ -97,16 +99,82 @@ const FacMain = () => {
         EARLY_END: 0,
         BOTH: 0,
         total: 0,
-      }
+      },
     );
 
     setPenalty(penaltyCount);
+    console.log(last5AttendedLectures);
     setAttendance(last5AttendedLectures);
   }, [lecture]);
 
+  const now = new Date();
+
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const totalScheduledThisMonth = lecture.reduce(
+    (count, lec) => count + (lec.TotalScheduled || 0),
+    0,
+  );
+
+  const totalConductedThisMonth = lecture.reduce((count, lec) => {
+    if (!Array.isArray(lec.attendance)) {
+      return count;
+    }
+
+    const conductedThisMonth = lec.attendance.filter((att) => {
+      if (att.status !== "CONDUCTED") {
+        return false;
+      }
+
+      if (!att.date) {
+        return false;
+      }
+
+      const attendanceDate = new Date(att.date);
+
+      return (
+        attendanceDate.getMonth() === currentMonth &&
+        attendanceDate.getFullYear() === currentYear
+      );
+    }).length;
+
+    return count + conductedThisMonth;
+  }, 0);
+
+  const remainingThisMonth = Math.max(
+    totalScheduledThisMonth - totalConductedThisMonth,
+    0,
+  );
+
+  const penaltiesThisMonth = lecture.reduce((count, lec) => {
+    if (!Array.isArray(lec.attendance)) {
+      return count;
+    }
+
+    const monthlyPenalties = lec.attendance.filter((att) => {
+      if (!att.penalty || att.penalty === "NONE") {
+        return false;
+      }
+
+      if (!att.date) {
+        return false;
+      }
+
+      const attendanceDate = new Date(att.date);
+
+      return (
+        attendanceDate.getMonth() === currentMonth &&
+        attendanceDate.getFullYear() === currentYear
+      );
+    }).length;
+
+    return count + monthlyPenalties;
+  }, 0);
+
   const formatTime = (isoTime) => {
-    if(!isoTime) return "";
-    const date = new Date(isoTime) 
+    if (!isoTime) return "";
+    const date = new Date(isoTime);
     return date.toLocaleTimeString("en-IN", {
       hour: "numeric",
       minute: "2-digit",
@@ -143,50 +211,36 @@ const FacMain = () => {
           <h1 className="font-bold text-2xl">Welcome 👋</h1>
         </div>
 
-        <div className="w-[98%] xl:h-[92%]  mx-auto flex flex-col gap-4 overflow-auto xl:overflow-hidden ">
-          <div className="flex flex-wrap justify-center xl:grid xl:grid-cols-4 gap-3 xl:w-full [&>div]:rounded [&>div]:shadow-lg xl:grid-rows-1 xl:h-[20vh] [&>div]:flex [&>div]:flex-col [&>div]:justify-center [&>div]:items-center [&>div>h1]:text-lg xl:[&>div>h1]:text-2xl [&>div>h1]:font-semibold [&>div>h1]:uppercase [&>div>p]:text-sm xl:[&>div>p]:text-lg [&>div>p]:font-medium [&>div>p]:text-gray-600  [&>div>h1]:text-gray-800 [&>div]:border ">
-            <div className="bg-gray-200 p-2 xl:p-2 xl:w-full xl:h-full  ">
+        <div className="w-[98%] xl:h-[92%]  mx-auto flex flex-col gap-4 overflow-auto xl:overflow-hidden">
+          <div className="flex flex-wrap justify-center h-[20vh] xl:grid xl:grid-cols-4 gap-3 xl:w-full [&>div]:rounded [&>div]:shadow-lg xl:grid-rows-1 xl:h-[20vh] [&>div]:flex [&>div]:flex-col [&>div]:justify-center [&>div]:items-center [&>div>h1]:text-lg xl:[&>div>h1]:text-2xl [&>div>h1]:font-semibold [&>div>h1]:uppercase [&>div>p]:text-sm xl:[&>div>p]:text-lg [&>div>p]:font-medium [&>div>p]:text-gray-600  [&>div>h1]:text-gray-800 [&>div]:border ">
+            <div className="bg-gray-200 w-[23%] p-2 xl:p-2 xl:w-full xl:h-full  ">
               <h1>Total Lectures</h1>
-              <p>
-                {lecture.reduce(
-                  (count, lec) => count + lec.TotalScheduled,
-                  0
-                ) || 0}
-              </p>
+
+              <p>{totalConductedThisMonth}</p>
+
+              <span className="text-xs text-gray-500">
+                {monlist[currentMonth]} {currentYear}
+              </span>
             </div>
 
-            <div className="bg-gray-200 p-2 xl:p-2 xl:w-full xl:h-full  ">
+            <div className="bg-gray-200 p-2 w-[23%] xl:p-2 xl:w-full xl:h-full  ">
               <h1>Remaining Lecture</h1>
-              <p>
-                {lecture.reduce((count, lec) => count + lec.TotalScheduled, 0) -
-                  lecture.reduce((count, lec) => {
-                    if (!Array.isArray(lec.attendance)) return count;
-
-                    const conductedCount = lec.attendance.filter(
-                      (att) => att.status === "CONDUCTED"
-                    ).length;
-
-                    return count + conductedCount;
-                  }, 0)}
-              </p>
+              <p>{remainingThisMonth}</p>
+              <span className="text-xs text-gray-500">
+                {monlist[currentMonth]} {currentYear}
+              </span>
             </div>
 
-            <div className="bg-gray-200 p-2 xl:p-2 xl:w-full xl:h-full  ">
+            <div className="bg-gray-200 p-2 w-[23%] xl:p-2 xl:w-full xl:h-full  ">
               <h1>Total Penalties</h1>
-              <p>
-                {lecture.reduce((count, lec) => {
-                  if (!Array.isArray(lec.attendance)) return count;
+              <p>{penaltiesThisMonth}</p>
 
-                  const penaltiesInLecture = lec.attendance.filter(
-                    (att) => att.penalty && att.penalty !== "NONE"
-                  ).length;
-
-                  return count + penaltiesInLecture;
-                }, 0)}
-              </p>
+              <span className="text-xs text-gray-500">
+                {monlist[currentMonth]} {currentYear}
+              </span>
             </div>
 
-            <div className="bg-gray-200 p-2 xl:p-2 xl:w-full xl:h-full  ">
+            <div className="bg-gray-200 w-[23%] p-2 xl:p-2 xl:w-full xl:h-full  ">
               <h1>Salary</h1>
               <p className="flex">
                 ₹
@@ -206,7 +260,7 @@ const FacMain = () => {
           </div>
 
           <div className="flex xl:flex-wrap flex-col xl:flex-row gap-3 [&>div]:border ">
-            <div className="xl:w-[30vw] h-[50vh] bg-gray-100 rounded m-1 shadow-lg overflow-hidden p-2">
+            {/* <div className="xl:w-[30vw] h-[50vh] bg-gray-100 rounded m-1 shadow-lg overflow-hidden p-2">
               <h1 className="text-xl font-semibold">Today&apos;s Lecture</h1>
               <div className="w-full h-full  [&>ul]:grid [&>ul]:grid-cols-3 flex flex-col [&>ul]:gap-10  mt-5 [&>ul]:text-center ">
                 <ul className="font-bold mb-5">
@@ -222,13 +276,15 @@ const FacMain = () => {
                   </ul>
                 ))}
               </div>
-            </div>
+            </div> */}
 
-            <div className="xl:w-[50vw] h-[50vh] bg-gray-100 rounded m-1 shadow-lg overflow-hidden p-2">
+            <div className="xl:w-full h-[50vh] bg-gray-100 rounded m-1 shadow-lg overflow-hidden p-2">
               <h1 className="text-xl font-semibold">
                 Lecture History (Last 5 Lectures)
               </h1>
-              <div className={`w-full h-full overflow-auto  [&>ul]:grid [&>ul]:grid-cols-[100px_180px_260px_220px_140px_140px]  ${faculty.facultyType === "LECTURE_BASED"?" [&>ul]:grid [&>ul]:grid-cols-[100px_180px_260px_220px_140px_140px] xl:[&>ul]:grid-cols-6":"[&>ul]:grid [&>ul]:grid-cols-[100px_180px_260px_220px_140px_140px] xl:[&>ul]:grid-cols-5"} flex flex-col [&>ul]:gap-10  mt-5 [&>ul]:text-center `}>
+              <div
+                className={`w-full h-full overflow-auto  [&>ul]:grid [&>ul]:grid-cols-[100px_180px_260px_220px_140px_140px_140px_140px]  ${faculty.facultyType === "LECTURE_BASED" ? " [&>ul]:grid [&>ul]:grid-cols-[100px_180px_260px_220px_140px_140px] xl:[&>ul]:grid-cols-8" : "[&>ul]:grid [&>ul]:grid-cols-[100px_180px_260px_220px_140px_140px_140px_140px] xl:[&>ul]:grid-cols-5"} flex flex-col [&>ul]:gap-10  mt-5 [&>ul]:text-center `}
+              >
                 <ul className="font-bold mb-5 [&>li]:font-semibold">
                   {(faculty.facultyType === "SALARY_BASED"
                     ? lecturehistory.filter((h) => h !== "Actual Time")
@@ -237,16 +293,6 @@ const FacMain = () => {
                     <li key={i}>{item}</li>
                   ))}
                 </ul>
-                {/* {lecture.map((item, i) => (
-                  <ul key={i} className="bg-[#ffffff] my-1 rounded p-1">
-                    <li className="">{item.date}</li>
-                    <li>{item.subject}</li>
-                    <li>{item.planned}</li>
-                    <li>{item.actual}</li>
-                    <li>{item.status}</li>
-                    <li>{item.penalty}</li>
-                  </ul>
-                ))} */}
 
                 {attendances.map((item, i) => {
                   const attendance = item.attendance[0];
@@ -255,6 +301,8 @@ const FacMain = () => {
                     <ul key={i} className="xl:bg-white my-1 rounded p-1">
                       <li>{formatDate(item.StartDate)}</li>
                       <li>{item.subject?.name}</li>
+                      <li>{item.batch?.name}</li>
+                      <li>{item.batch?.course?.branch?.name}</li>
                       <li>
                         {formatTime(item.startTime)} –{" "}
                         {formatTime(item.endTime)}
@@ -267,7 +315,7 @@ const FacMain = () => {
                           </>
                         </li>
                       )}
-                      <li className="text-green-600">Conducted</li>
+                      <li className="text-green-600">{attendance.status}</li>
                       <li>{attendance.penalty}</li>
                     </ul>
                   );

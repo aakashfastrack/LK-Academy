@@ -42,7 +42,7 @@ const FacProfile = () => {
       alert("Password Changed");
     }
   };
-  
+
   return (
     <div className="h-full p-3 bg-white m-2 rounded flex flex-col  gap-5 [&>div]:p-5 [&>div]:rounded [&>div]:shadow-lg  [&>div]:bg-gray-100 [&>div>h1]:text-3xl [&>div>h1]:font-semibold [&>div>ul]:pl-10 [&>div>ul]:my-5 [&>div>ul>li]:font-bold  [&>div>ul>li>span]:font-normal overflow-auto ">
       <div className="">
@@ -52,7 +52,7 @@ const FacProfile = () => {
             Name: <span>{users?.name}</span>
           </li>
           <li>
-            Email: <span>{users?.phoneNumber}</span>
+            Mobile Number: <span>{users?.phoneNumber}</span>
           </li>
         </ul>
       </div>
@@ -72,7 +72,7 @@ const FacProfile = () => {
           <li>
             Role: <span>{users?.role}</span>
           </li>
-          <li>
+          {/* <li>
             Branch Admin:{" "}
             <span>
               {
@@ -81,13 +81,24 @@ const FacProfile = () => {
                   .find((user) => user.role === "BRANCH_ADMIN")?.name
               }
             </span>
-          </li>
+          </li> */}
           <li>
-            Assigned Subject:{" "}
-            <span>
-              {(
-                users?.facultySubjects?.map((fs) => fs.subject.name) || []
-              ).join(", ")}
+            Assigned Subject{" "}
+            <span className="flex flex-wrap gap-2 mt-2">
+              {[
+                ...new Set(
+                  (users?.facultySubjects || [])
+                    .map((fs) => fs.subject?.name)
+                    .filter(Boolean),
+                ),
+              ].map((subject, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-gray-200 rounded-full text-sm font-normal"
+                >
+                  {subject}
+                </span>
+              ))}
             </span>
           </li>
           <li>

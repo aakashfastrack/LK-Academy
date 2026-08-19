@@ -16,21 +16,31 @@ const FacNavbar = ({ open, setOpen }) => {
       icon: "",
       link: "/faculty",
     },
-    {
-      name: "My Lecture",
-      icon: "",
-      link: "/faculty/lecture",
-    },
+    // {
+    //   name:"Lecture History",
+    //   icon:"",
+    //   link:"#"
+    // },
     {
       name: "Attendance",
       icon: "",
       link: "/faculty/attendance",
     },
     // {
-    //     name:"Report",
-    //     icon:"",
-    //     link:"/faculty/report"
+    //   name:"Earnings",
+    //   icon:"",
+    //   link:"#"
     // },
+    // {
+    //   name:"Penalties & Exceptions",
+    //   icon:"",
+    //   link:"#"
+    // },
+    {
+      name: "My Subject & Batches",
+      icon: "",
+      link: "/faculty/lecture",
+    },
     {
       name: "Profile",
       icon: "",

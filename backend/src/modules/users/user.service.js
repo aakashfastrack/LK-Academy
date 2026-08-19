@@ -448,7 +448,11 @@ const userDashboard = async ({ branchId, userId }) => {
       subject: true,
       batch: {
         include: {
-          course: true,
+          course: {
+            include:{
+              branch
+            }
+          },
         },
       },
       attendance: true,
